@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import * as Sentry from '@sentry/browser';
 import * as Integrations from '@sentry/integrations';
-import App from './App.vue';
+import UnistraSchedule from './UnistraSchedule.vue';
 import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false;
@@ -20,5 +20,5 @@ Sentry.init({
 
 new Vue({
   vuetify,
-  render: h => h(App),
-}).$mount('#app');
+  render: h => h(UnistraSchedule),
+}).$mount('#unistra-schedule-container');
