@@ -11,7 +11,12 @@ export default new VueRouter({
     {
       path: '/config',
       alias: '',
+      name:'config',
       component: ScheduleConfigurator,
+    },
+    {
+      path: '/auth/cas/logout',
+      name: 'cas-auth-logout',
     },
   ],
 });

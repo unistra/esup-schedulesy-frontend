@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'ResourcesSelector',
   props: {
@@ -37,7 +35,7 @@ export default {
   }),
   methods: {
     getRoot() {
-      axios.get(`${process.env.VUE_APP_BACKEND_URL}/resource/${this.resource}`)
+      this.axios.get(`${process.env.VUE_APP_BACKEND_URL}/resource/${this.resource}`)
         .then((response) => {
           const children = response.data.children
             .map(child => this.childrenEntryGenerator(child));
@@ -53,7 +51,7 @@ export default {
         });
     },
     loadChildren(node) {
-      const axiosCall = axios.get(node.id)
+      const axiosCall = this.axios.get(node.id)
         .then(response => response.data.children)
         .then(rawChildren => rawChildren.map(child => this.childrenEntryGenerator(child)))
         .then(children => node.children.push(...children))
