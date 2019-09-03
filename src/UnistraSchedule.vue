@@ -2,7 +2,7 @@
   <v-app id="unistra-schedule">
     <v-content>
       <v-container>
-        <schedule-configurator />
+        <router-view></router-view>
       </v-container>
     </v-content>
   </v-app>
@@ -10,13 +10,9 @@
 </template>
 
 <script>
-import ScheduleConfigurator from '@/components/configurator/UnistraScheduleConfigurator.vue';
 
 export default {
   name: 'UnitraSchedule',
-  components: {
-    ScheduleConfigurator,
-  },
 };
 </script>
 
