@@ -42,9 +42,12 @@
                       :userDisplayType="userDisplayType"
                       @update-display-type="updateDisplayType">
     </display-selector>
-      <v-flex>
-        <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
-      </v-flex>
+    <v-flex>
+      <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
+    </v-flex>
+    <v-flex>
+      <h2><a :href="icsURL">ICS URL</a></h2>
+    </v-flex>
   </v-layout>
 </template>
 
@@ -74,6 +77,12 @@ export default {
       legacy: `${process.env.VUE_APP_BACKEND_LEGACY_URL}`,
       resources: `${process.env.VUE_APP_BACKEND_API_URL}/resource`,
       customization: `${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`,
+      ics: 'https://adewebcons.unistra.fr/jsp/custom/modules/plannings/anonymous_cal.jsp',
+    },
+    icsParams: {
+      projectId : "10",
+      calType: "ical",
+      nbWeeks: "40"
     },
   }),
   computed: {
@@ -88,6 +97,15 @@ export default {
     userDisplayType() {
       if (typeof this.userCustomization.display_configuration === 'string' && this.userCustomization.display_configuration) {
         return this.userCustomization.display_configuration;
+      }
+      return '';
+    },
+    icsURL() {
+      if (typeof this.userCustomization.resources === 'string' && this.userCustomization.resources) {
+        const params = Object.entries(this.icsParams).map(param => `${param[0]}=${param[1]}`).join('&');
+        const resources = this.userCustomization.resources.split(',').map(resource => `resources=${resource}`).join('&');
+        console.log(`${this.urls.ics}?${params}&${resources}`);
+        return `${this.urls.ics}?${params}&${resources}`;
       }
       return '';
     },
