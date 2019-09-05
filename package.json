@@ -14,6 +14,7 @@
     "@sentry/integrations": "^5.6.1",
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
+    "jwt-decode": "^2.2.0",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.4",
     "vue-cas-authentication": "git+https://git.unistra.fr/vue/cas-authentication.git#master",
