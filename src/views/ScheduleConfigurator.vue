@@ -45,8 +45,8 @@
     <v-flex>
       <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
     </v-flex>
-    <v-flex>
-      <h2><a :href="icsURL">ICS URL</a></h2>
+    <v-flex v-if="userCustomization.resources">
+      <h2><a :href="icsURL">EXPORT CALENDRIER MOBILE</a></h2>
     </v-flex>
   </v-layout>
 </template>
