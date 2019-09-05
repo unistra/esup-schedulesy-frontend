@@ -2,7 +2,9 @@
   <v-flex>
     <v-select filled
               color="#3e8f93"
-              :items="items"
+              :items="displayTypes"
+              :value="userDisplayType"
+              @change="updateCustomization"
               persistent-hint>
     </v-select>
   </v-flex>
@@ -11,23 +13,22 @@
 <script>
 export default {
   name: 'DisplaySelector',
-  data: () => ({
-    items: [
-      'Affichage ENT (Couleur)',
-      'Affichage ENT (Noir/Blanc)',
-      'Affichage ENT (Tableaux)',
-      'Dentaire',
-      'Ecole de management de Strasbourg',
-      'ESBS',
-      'ESPE',
-      'Faculté de droit',
-      'IUT de Haguenau (Couleur)',
-      'IUT de Haguenau (Noir/Blanc)',
-      'IUT Louis Pasteur (Couleur)',
-      'IUT Louis Pasteur (Noir/Blanc)',
-    ],
-  }),
-
+  props: {
+    displayTypes: {
+      type: Array,
+      required: true,
+    },
+    userDisplayType: {
+      type: String,
+      required: true,
+    },
+  },
+  data: () => ({}),
+  methods: {
+    updateCustomization(displayType) {
+      this.$emit('update-display-type', displayType);
+    },
+  },
 };
 </script>
 
