@@ -80,13 +80,9 @@ export default {
       legacy: `${process.env.VUE_APP_BACKEND_LEGACY_URL}`,
       resources: `${process.env.VUE_APP_BACKEND_API_URL}/resource`,
       customization: `${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`,
-      ics: 'https://adewebcons.unistra.fr/jsp/custom/modules/plannings/anonymous_cal.jsp',
+      ics: String,
     },
-    icsParams: {
-      projectId: '10',
-      calType: 'ical',
-      nbWeeks: '40',
-    },
+    icsParams: {},
   }),
   computed: {
     userResources() {
@@ -107,7 +103,6 @@ export default {
       if (typeof this.userCustomization.resources === 'string' && this.userCustomization.resources) {
         const params = Object.entries(this.icsParams).map(param => `${param[0]}=${param[1]}`).join('&');
         const resources = this.userCustomization.resources.split(',').map(resource => `resources=${resource}`).join('&');
-        console.log(`${this.urls.ics}?${params}&${resources}`);
         return `${this.urls.ics}?${params}&${resources}`;
       }
       return '';
@@ -117,6 +112,7 @@ export default {
     this.getUserCustomization();
     this.getResourceSelectorRoot();
     this.getDisplayTypes();
+    this.getIcsData();
   },
   methods: {
     getUserCustomization() {
@@ -190,6 +186,13 @@ export default {
     },
     updateDisplayType(displayType) {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType });
+    },
+    getIcsData() {
+      this.axios.get(`${this.urls.api}/ade_config.json`)
+        .then((response) => {
+          this.urls.ics = response.data.base_url;
+          this.icsParams = response.data.params;
+        });
     },
   },
 };
