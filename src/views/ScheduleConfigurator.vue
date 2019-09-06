@@ -47,11 +47,13 @@
     </v-flex>
     <v-flex v-if="userCustomization.resources">
       <h2><a :href="icsURL">EXPORT CALENDRIER MOBILE</a></h2>
+      <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import VueQrcode from '@chenfengyuan/vue-qrcode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 // import ResourcesRemover from '@/components/configurator/ResourcesRemover.vue';
 import ResourcesSelector from '@/components/configurator/ResourcesSelector.vue';
@@ -64,6 +66,7 @@ export default {
     // ResourcesRemover,
     ResourcesSelector,
     DisplaySelector,
+    VueQrcode,
   },
   mixins: [
     childrenEntryGenerator,
@@ -80,9 +83,9 @@ export default {
       ics: 'https://adewebcons.unistra.fr/jsp/custom/modules/plannings/anonymous_cal.jsp',
     },
     icsParams: {
-      projectId : "10",
-      calType: "ical",
-      nbWeeks: "40"
+      projectId: '10',
+      calType: 'ical',
+      nbWeeks: '40',
     },
   }),
   computed: {
