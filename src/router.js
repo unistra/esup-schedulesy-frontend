@@ -11,7 +11,7 @@ export default new VueRouter({
     {
       path: '/config',
       alias: '',
-      name:'config',
+      name: 'config',
       component: ScheduleConfigurator,
     },
     {

@@ -5,10 +5,10 @@ import fr from 'vuetify/es5/locale/fr';
 Vue.use(Vuetify);
 
 export default new Vuetify({
-    lang: {
-      locales: { fr },
-      current: 'fr',
-    },
+  lang: {
+    locales: { fr },
+    current: 'fr',
+  },
   icons: {
     iconfont: 'mdi',
   },

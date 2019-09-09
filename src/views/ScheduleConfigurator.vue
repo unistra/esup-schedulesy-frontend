@@ -26,7 +26,7 @@
         </li>
       </ul>
     </v-flex>
-    <resources-selector :root="resourcesSelectorRoot"
+    <resources-selector :root="resourcesRoot"
                         :userResources="userResources"
                         @update-resources="updateResources">
     </resources-selector>
@@ -53,12 +53,13 @@
 </template>
 
 <script>
+import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
+import jwt_decode from 'jwt-decode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 // import ResourcesRemover from '@/components/configurator/ResourcesRemover.vue';
 import ResourcesSelector from '@/components/configurator/ResourcesSelector.vue';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
-import jwt_decode from 'jwt-decode';
 
 export default {
   name: 'ScheduleConfigurator',
@@ -72,8 +73,9 @@ export default {
     childrenEntryGenerator,
   ],
   data: () => ({
+    token: jwt_decode(localStorage.getItem('JWT__access__token')),
     userCustomization: {},
-    resourcesSelectorRoot: [],
+    resourcesRoot: [],
     displayTypes: [],
     urls: {
       api: `${process.env.VUE_APP_BACKEND_API_URL}`,
@@ -109,90 +111,68 @@ export default {
     },
   },
   created() {
-    this.getUserCustomization();
-    this.getResourceSelectorRoot();
-    this.getDisplayTypes();
-    this.getIcsData();
+    this.getInitData();
   },
   methods: {
-    getUserCustomization() {
-      const token = localStorage.getItem('JWT__access__token');
-      if (token) {
-        const decodedToken = jwt_decode(token);
-        this.axios.get(`${this.urls.customization}/${decodedToken.user_id}.json`)
-          .then((response) => {
-            this.userCustomization = response.data;
-          })
-          .catch((getError) => {
-            if (getError.response.status === 404) {
-              const payload = {
-                username: decodedToken.user_id,
-                directory_id: decodedToken.directory_id,
-              };
-              this.axios.post(`${this.urls.customization}.json`, payload)
-                .then((response) => {
-                  this.userCustomization = response.data;
-                })
-                .catch((postError) => {
-                  console.log(postError);
-                });
-            } else {
-              console.log(getError);
-            }
-          });
-      }
-    },
-    async getResourceSelectorRoot() {
+    getInitData() {
+      const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
+      const postUserCustomization = () => this.axios.post(`${this.urls.customization}.json`, { username: this.token.user_id, directory_id: this.token.directory_id });
+
       const resourceTypes = [
-        { label: 'Etudiants', id: 'trainee' },
-        { label: 'Enseignants', id: 'instructor' },
-        { label: 'Salles', id: 'classroom' },
-        { label: 'Matières', id: 'category5' },
+        'trainee',
+        'instructor',
+        'classroom',
+        'category5',
       ];
-      const resourcesPromises = resourceTypes.map((type) => {
-        return this.axios.get(`${this.urls.resources}/${type.id}.json`)
-          .then((response) => {
-            const children = this.sortChildren(response.data.children
-              .map(child => this.childrenEntryGenerator(child)));
-            const name = type.label;
-            const payload = {
-              ...response.data,
-              ...{ children },
-              ...{ name },
-            };
-            return payload;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      });
-      this.resourcesSelectorRoot = await Promise.all(resourcesPromises);
+      const getResourcesRoot = resourceTypes.map(type => () => this.axios.get(`${this.urls.resources}/${type}.json`));
+
+      const getDisplayTypes = () => this.axios.get(`${this.urls.api}/display_types.json`);
+      const getIcsParams = () => this.axios.get(`${this.urls.api}/ade_config.json`);
+
+      axios
+        .all([
+          getUserCustomization().catch(error => (error.response.status === 404 ? postUserCustomization() : error)),
+          ...(getResourcesRoot.map(request => request())),
+          getDisplayTypes(),
+          getIcsParams(),
+        ])
+        .then(axios.spread((userCustomization, traineeRoot, instructorRoot, classroomRoot, courseRoot, displayTypes, icsParams) => {
+          this.userCustomization = userCustomization.data;
+          this.resourcesRoot = this.forgeResourcesRoot([
+            traineeRoot.data,
+            instructorRoot.data,
+            classroomRoot.data,
+            courseRoot.data,
+          ]);
+          this.displayTypes = displayTypes.data;
+          this.urls.ics = icsParams.data.base_url;
+          this.icsParams = icsParams.data.params;
+        }));
+    },
+    forgeResourcesRoot(rawResourcesRoot) {
+      const rootNames = {
+        trainee: 'Etudiants',
+        instructor: 'Enseignants',
+        classroom: 'Salles',
+        category5: 'Matières',
+      };
+      const children = resource => resource.children.map(child => this.childrenEntryGenerator(child));
+      const resourcesRoot = rawResourcesRoot.map(resource => ({
+        ...resource,
+        ...{ children: this.sortChildren(children(resource)) },
+        ...{ name: rootNames[resource.name] },
+      }));
+      return resourcesRoot;
     },
     updateResources(resourcesList) {
       const resources = {
         resources: resourcesList.map(resource => resource.replace(`${this.urls.resources}/`, '').match(/\d+/g).map(Number)).join(),
       };
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
-        .then(() => this.getUserCustomization());
-    },
-    getDisplayTypes() {
-      this.axios.get(`${this.urls.api}/display_types.json`)
-        .then((response) => {
-          this.displayTypes = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        .then((response) => { this.userCustomization = response.data; });
     },
     updateDisplayType(displayType) {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType });
-    },
-    getIcsData() {
-      this.axios.get(`${this.urls.api}/ade_config.json`)
-        .then((response) => {
-          this.urls.ics = response.data.base_url;
-          this.icsParams = response.data.params;
-        });
     },
   },
 };
