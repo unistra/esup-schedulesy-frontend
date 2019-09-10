@@ -37,6 +37,10 @@ Vue.use(Cas, {
   options,
 });
 
+process.env.VUE_APP_DEPLOYMENT_ENV === 'dev' || process.env.VUE_APP_DEPLOYMENT_ENV === 'test'
+  ? Vue.config.devtools = true
+  : Vue.config.devtools = false;
+
 new Vue({
   vuetify,
   router,
