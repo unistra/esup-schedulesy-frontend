@@ -9,7 +9,8 @@ import axios from '@/axios';
 
 Vue.config.productionTip = false;
 
-if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev') {
+if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev'
+  || process.env.VUE_APP_DEPLOYMENT_ENV !== 'test') {
   Sentry.init({
     dsn: 'https://74d930ab848d4d40a99c2e8326d5d079@sentry-test.app.unistra.fr/23',
     release: VERSION,
@@ -21,6 +22,7 @@ if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev') {
       }),
     ],
   });
+  Vue.config.devtools = false;
 }
 
 const options = {
