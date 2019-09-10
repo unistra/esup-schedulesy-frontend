@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import * as Sentry from '@sentry/browser';
 import * as Integrations from '@sentry/integrations';
+import AsyncComputed from 'vue-async-computed';
 import Cas from 'vue-cas-authentication';
 import UnistraSchedule from './UnistraSchedule.vue';
 import vuetify from './plugins/vuetify';
@@ -9,8 +10,7 @@ import axios from '@/axios';
 
 Vue.config.productionTip = false;
 
-if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev'
-  || process.env.VUE_APP_DEPLOYMENT_ENV !== 'test') {
+if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev') {
   Sentry.init({
     dsn: 'https://74d930ab848d4d40a99c2e8326d5d079@sentry-test.app.unistra.fr/23',
     release: VERSION,
@@ -22,8 +22,9 @@ if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev'
       }),
     ],
   });
-  Vue.config.devtools = false;
 }
+
+Vue.use(AsyncComputed);
 
 const options = {
   appIsAllAuth: true,

@@ -17,6 +17,7 @@
     "core-js": "^2.6.5",
     "jwt-decode": "^2.2.0",
     "vue": "^2.6.10",
+    "vue-async-computed": "^3.7.0",
     "vue-axios": "^2.1.4",
     "vue-cas-authentication": "git+https://git.unistra.fr/vue/cas-authentication.git#master",
     "vue-router": "^3.1.3",

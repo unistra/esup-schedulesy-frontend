@@ -6,9 +6,17 @@
         des ressources et de la configuration d'affichage.
       </p>
     </v-flex>
-    <!-- <resources&#45;remover :userResources="userResources" -->
-    <!--                     @remove&#45;resources="updateResources"> -->
-    <!-- </resources&#45;remover> -->
+    <v-flex>
+      <h2 v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</h2>
+      <h2 v-else>Votre sélection enregistrée actuellement est la suivante :</h2>
+      <v-list color="#fafafa">
+        <resource-remover v-for="(resourceId, index) in userResources"
+                           :key="index"
+                           :resourceId="resourceId"
+                           @remove-resource="removeResource(index)">
+        </resource-remover>
+      </v-list>
+    </v-flex>
     <v-flex>
       <h2>Sélectionnez vos ressources dans l'arbre ci dessous :</h2>
       <p>L'affichage des ressources est le même que dans la consultation.</p>
@@ -57,14 +65,14 @@ import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import jwt_decode from 'jwt-decode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
-// import ResourcesRemover from '@/components/configurator/ResourcesRemover.vue';
+import ResourceRemover from '@/components/configurator/ResourceRemover.vue';
 import ResourcesSelector from '@/components/configurator/ResourcesSelector.vue';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 
 export default {
   name: 'ScheduleConfigurator',
   components: {
-    // ResourcesRemover,
+    ResourceRemover,
     ResourcesSelector,
     DisplaySelector,
     VueQrcode,
@@ -163,6 +171,10 @@ export default {
         ...{ name: rootNames[resource.name] },
       }));
       return resourcesRoot;
+    },
+    removeResource(index) {
+      this.userResources.splice(index, 1);
+      this.updateResources(this.userResources);
     },
     updateResources(resourcesList) {
       const resources = {
