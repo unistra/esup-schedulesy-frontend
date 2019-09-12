@@ -13,18 +13,32 @@
               des ressources et de la configuration d'affichage.
             </p>
             <div v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</div>
-            <div v-else>Votre sélection enregistrée actuellement est la suivante :</div>
-            <v-list color="#fafafa">
-              <resource-remover v-for="(resourceId, index) in userResources"
-                                :key="index"
-                                :resourceId="resourceId"
-                                @remove-resource="removeResource(index)">
-              </resource-remover>
-            </v-list>
+            <div v-else>
+              <div>Votre sélection enregistrée actuellement est la suivante :</div>
+              <v-list>
+                <resource-remover v-for="(resourceId, index) in userResources"
+                                  :key="index"
+                                  :resourceId="resourceId"
+                                  @remove-resource="removeResource(index)">
+                </resource-remover>
+              </v-list>
+            </div>
           </v-card-text>
+          <v-card-actions>
+            <div class="flex-grow-1"></div>
+            <v-btn
+              class="info"
+              @click="show = !show"
+            >
+              <span v-show="! show">Modifier</span><span v-show="show">Fermer</span> la séléction
+              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+    <v-expand-transition>
+      <div v-show="show">
     <v-row>
       <v-col>
         <v-card>
@@ -33,18 +47,8 @@
             <p>L'affichage des ressources est le même que dans la consultation.</p>
 
           </v-card-text>
-          <v-card-actions>
-            <div class="flex-grow-1"></div>
-            <v-btn
 
-              @click="show = !show"
-            >
-              <span v-show="! show">Ouvrir</span><span v-show="show">Fermer</span> la séléction
-              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-            </v-btn>
-          </v-card-actions>
-          <v-expand-transition>
-            <div v-show="show">
+
               <v-card-text>
                 <ul>
                   <li>
@@ -64,8 +68,7 @@
                                     @update-resources="updateResources">
                 </resources-selector>
               </v-card-text>
-            </div>
-          </v-expand-transition>
+
         </v-card>
       </v-col>
     </v-row>
@@ -87,21 +90,24 @@
           </v-card-text>
         </v-card>
       </v-col>
-    </v-row>
+    </v-row></div>
+    </v-expand-transition>
     <v-row v-if="userCustomization.resources">
       <v-col>
         <v-card>
           <v-card-text>
           <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
-        <v-flex>
-          <h2 class="headline"><v-icon>mdi-monitor-cellphone</v-icon> Lien de calendrier mobile</h2>
-          <a :href="icsURL">Utilisez ce lien dans votre application préférée</a>
-        </v-flex>
+          <h2 class="headline"><v-icon>mdi-monitor-cellphone</v-icon> Intégration mobile</h2>
+            <v-card-actions><div><v-btn target="icsURL" class="success">Intégration directe</v-btn></div></v-card-actions>
+
+          <div>
+            ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
+          </div>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="userCustomization.resources">
       <v-col>
         <v-card>
           <v-card-text>
