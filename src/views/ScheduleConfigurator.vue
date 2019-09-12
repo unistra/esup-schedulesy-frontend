@@ -113,7 +113,7 @@
             </h2>
             <v-card-actions>
               <div>
-                <v-btn target="icsURL" class="success">Intégration directe</v-btn>
+                <v-btn target="_blank" :href="icsURL" class="success">Intégration directe</v-btn>
               </div>
             </v-card-actions>
 
