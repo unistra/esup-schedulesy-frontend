@@ -1,63 +1,101 @@
 <template>
-  <v-layout column>
-    <v-flex>
-      <p>
-        La configuration de votre emploi du temps s'opère par sélection
-        des ressources et de la configuration d'affichage.
-      </p>
-    </v-flex>
-    <v-flex>
-      <h2 v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</h2>
-      <h2 v-else>Votre sélection enregistrée actuellement est la suivante :</h2>
-      <v-list color="#fafafa">
-        <resource-remover v-for="(resourceId, index) in userResources"
-                           :key="index"
-                           :resourceId="resourceId"
-                           @remove-resource="removeResource(index)">
-        </resource-remover>
-      </v-list>
-    </v-flex>
-    <v-flex>
-      <h2>Sélectionnez vos ressources dans l'arbre ci dessous :</h2>
-      <p>L'affichage des ressources est le même que dans la consultation.</p>
-      <ul>
-        <li>
-          Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
-        </li>
-        <li>
-          Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
-          vos groupes de matières.
-        </li>
-        <li>
-          Enfin, si vous êtes enseignant, sélectionnez les ressources
-          que vous voulez voir s'afficher.
-        </li>
-      </ul>
-    </v-flex>
-    <resources-selector :root="resourcesRoot"
-                        :userResources="userResources"
-                        @update-resources="updateResources">
-    </resources-selector>
-    <v-flex>
-      <h2>Choisissez votre configuration d'affichage :</h2>
-      <p>
-        La configuration d'affichage par défaut correspond à celle de votre promotion.
-        Veuillez tester les autres configurations disponibles dans la consultation avant
-        d'en sauvegarder une autre.
-      </p>
-    </v-flex>
-    <display-selector :displayTypes="displayTypes"
-                      :userDisplayType="userDisplayType"
-                      @update-display-type="updateDisplayType">
-    </display-selector>
-    <v-flex>
-      <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
-    </v-flex>
-    <v-flex v-if="userCustomization.resources">
-      <h2><a :href="icsURL">EXPORT CALENDRIER MOBILE</a></h2>
-      <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
-    </v-flex>
-  </v-layout>
+  <v-container
+    class="pa-2"
+    fluid
+  >
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-text>
+            <h2 class="headline"><v-icon>mdi-calendar-check-outline</v-icon> Ressources sélectionnées</h2>
+            <p>
+              La configuration de votre emploi du temps s'opère par sélection
+              des ressources et de la configuration d'affichage.
+            </p>
+            <div v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</div>
+            <div v-else>Votre sélection enregistrée actuellement est la suivante :</div>
+            <v-list color="#fafafa">
+              <resource-remover v-for="(resourceId, index) in userResources"
+                                :key="index"
+                                :resourceId="resourceId"
+                                @remove-resource="removeResource(index)">
+              </resource-remover>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-text>
+            <h2 class="headline"><v-icon>mdi-guitar-pick-outline</v-icon> Sélectionnez vos ressources dans l'arbre ci dessous</h2>
+            <p>L'affichage des ressources est le même que dans la consultation.</p>
+            <ul>
+              <li>
+                Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
+              </li>
+              <li>
+                Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
+                vos groupes de matières.
+              </li>
+              <li>
+                Enfin, si vous êtes enseignant, sélectionnez les ressources
+                que vous voulez voir s'afficher.
+              </li>
+            </ul>
+        <resources-selector :root="resourcesRoot"
+                            :userResources="userResources"
+                            @update-resources="updateResources">
+        </resources-selector>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-text>
+            <h2 class="headline"><v-icon>mdi-shape</v-icon> Choisissez votre configuration d'affichage :</h2>
+          <p>
+            La configuration d'affichage par défaut correspond à celle de votre promotion.
+            Veuillez tester les autres configurations disponibles dans la consultation avant
+            d'en sauvegarder une autre.
+          </p>
+
+        <display-selector :displayTypes="displayTypes"
+                          :userDisplayType="userDisplayType"
+                          @update-display-type="updateDisplayType">
+        </display-selector>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row v-if="userCustomization.resources">
+      <v-col>
+        <v-card height="250px">
+          <v-card-text>
+          <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
+        <v-flex>
+          <h2 class="headline"><v-icon>mdi-monitor-cellphone</v-icon> Lien de calendrier mobile</h2>
+          <a :href="icsURL">Utilisez ce lien dans votre application préférée</a>
+        </v-flex>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card height="250px">
+          <v-card-text>
+            <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
+            <v-flex>
+              <h2 class="headline"><v-icon>mdi-qrcode-scan</v-icon> Version QRCode</h2>
+              <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
+            </v-flex>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -124,7 +162,10 @@ export default {
   methods: {
     getInitData() {
       const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
-      const postUserCustomization = () => this.axios.post(`${this.urls.customization}.json`, { username: this.token.user_id, directory_id: this.token.directory_id });
+      const postUserCustomization = () => this.axios.post(`${this.urls.customization}.json`, {
+        username: this.token.user_id,
+        directory_id: this.token.directory_id
+      });
 
       const resourceTypes = [
         'trainee',
@@ -167,8 +208,8 @@ export default {
       const children = resource => resource.children.map(child => this.childrenEntryGenerator(child));
       const resourcesRoot = rawResourcesRoot.map(resource => ({
         ...resource,
-        ...{ children: this.sortChildren(children(resource)) },
-        ...{ name: rootNames[resource.name] },
+        ...{children: this.sortChildren(children(resource))},
+        ...{name: rootNames[resource.name]},
       }));
       return resourcesRoot;
     },
@@ -181,10 +222,12 @@ export default {
         resources: resourcesList.map(resource => resource.replace(`${this.urls.resources}/`, '').match(/\d+/g).map(Number)).join(),
       };
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
-        .then((response) => { this.userCustomization = response.data; });
+        .then((response) => {
+          this.userCustomization = response.data;
+        });
     },
     updateDisplayType(displayType) {
-      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType });
+      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, {display_configuration: displayType});
     },
   },
 };
