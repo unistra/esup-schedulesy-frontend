@@ -13,14 +13,16 @@
               des ressources et de la configuration d'affichage.
             </p>
             <div v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</div>
-            <div v-else>Votre sélection enregistrée actuellement est la suivante :</div>
-            <v-list color="#fafafa">
-              <resource-remover v-for="(resourceId, index) in userResources"
-                                :key="index"
-                                :resourceId="resourceId"
-                                @remove-resource="removeResource(index)">
-              </resource-remover>
-            </v-list>
+            <div v-else>
+              <div>Votre sélection enregistrée actuellement est la suivante :</div>
+              <v-list>
+                <resource-remover v-for="(resourceId, index) in userResources"
+                                  :key="index"
+                                  :resourceId="resourceId"
+                                  @remove-resource="removeResource(index)">
+                </resource-remover>
+             </v-list>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
