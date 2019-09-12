@@ -17,8 +17,4 @@ export default {
 </script>
 
 <style scoped>
-#unistra-schedule {
-  font-family: "Unistra A", Arial, sans-serif;
-  font-size: 18px;
-}
 </style>
