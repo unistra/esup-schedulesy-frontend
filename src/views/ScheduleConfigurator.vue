@@ -29,26 +29,43 @@
       <v-col>
         <v-card>
           <v-card-text>
-            <h2 class="headline"><v-icon>mdi-guitar-pick-outline</v-icon> Sélectionnez vos ressources dans l'arbre ci dessous</h2>
+            <h2 class="headline"><v-icon>mdi-guitar-pick-outline</v-icon> Modifier la sélection des ressources</h2>
             <p>L'affichage des ressources est le même que dans la consultation.</p>
-            <ul>
-              <li>
-                Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
-              </li>
-              <li>
-                Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
-                vos groupes de matières.
-              </li>
-              <li>
-                Enfin, si vous êtes enseignant, sélectionnez les ressources
-                que vous voulez voir s'afficher.
-              </li>
-            </ul>
-        <resources-selector :root="resourcesRoot"
-                            :userResources="userResources"
-                            @update-resources="updateResources">
-        </resources-selector>
+
           </v-card-text>
+          <v-card-actions>
+            <div class="flex-grow-1"></div>
+            <v-btn
+
+              @click="show = !show"
+            >
+              <span v-show="! show">Ouvrir</span><span v-show="show">Fermer</span> la séléction
+              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </v-btn>
+          </v-card-actions>
+          <v-expand-transition>
+            <div v-show="show">
+              <v-card-text>
+                <ul>
+                  <li>
+                    Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
+                  </li>
+                  <li>
+                    Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
+                    vos groupes de matières.
+                  </li>
+                  <li>
+                    Enfin, si vous êtes enseignant, sélectionnez les ressources
+                    que vous voulez voir s'afficher.
+                  </li>
+                </ul>
+                <resources-selector :root="resourcesRoot"
+                                    :userResources="userResources"
+                                    @update-resources="updateResources">
+                </resources-selector>
+              </v-card-text>
+            </div>
+          </v-expand-transition>
         </v-card>
       </v-col>
     </v-row>
@@ -73,7 +90,7 @@
     </v-row>
     <v-row v-if="userCustomization.resources">
       <v-col>
-        <v-card height="250px">
+        <v-card>
           <v-card-text>
           <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
         <v-flex>
@@ -83,8 +100,10 @@
           </v-card-text>
         </v-card>
       </v-col>
+    </v-row>
+    <v-row>
       <v-col>
-        <v-card height="250px">
+        <v-card>
           <v-card-text>
             <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
             <v-flex>
@@ -131,6 +150,7 @@ export default {
       ics: String,
     },
     icsParams: {},
+    show: false,
   }),
   computed: {
     userResources() {
