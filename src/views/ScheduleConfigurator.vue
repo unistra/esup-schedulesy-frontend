@@ -7,7 +7,10 @@
       <v-col>
         <v-card>
           <v-card-text>
-            <h2 class="headline"><v-icon>mdi-calendar-check-outline</v-icon> Ressources sélectionnées</h2>
+            <h2 class="headline">
+              <v-icon>mdi-calendar-check-outline</v-icon>
+              Ressources sélectionnées
+            </h2>
             <p>
               La configuration de votre emploi du temps s'opère par sélection
               des ressources et de la configuration d'affichage.
@@ -39,14 +42,17 @@
     </v-row>
     <v-expand-transition>
       <div v-show="show">
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-text>
-            <h2 class="headline"><v-icon>mdi-guitar-pick-outline</v-icon> Modifier la sélection des ressources</h2>
-            <p>L'affichage des ressources est le même que dans la consultation.</p>
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card-text>
+                <h2 class="headline">
+                  <v-icon>mdi-guitar-pick-outline</v-icon>
+                  Modifier la sélection des ressources
+                </h2>
+                <p>L'affichage des ressources est le même que dans la consultation.</p>
 
-          </v-card-text>
+              </v-card-text>
 
 
               <v-card-text>
@@ -69,40 +75,51 @@
                 </resources-selector>
               </v-card-text>
 
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-text>
-            <h2 class="headline"><v-icon>mdi-shape</v-icon> Choisissez votre configuration d'affichage :</h2>
-          <p>
-            La configuration d'affichage par défaut correspond à celle de votre promotion.
-            Veuillez tester les autres configurations disponibles dans la consultation avant
-            d'en sauvegarder une autre.
-          </p>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card-text>
+                <h2 class="headline">
+                  <v-icon>mdi-shape</v-icon>
+                  Choisissez votre configuration d'affichage :
+                </h2>
+                <p>
+                  La configuration d'affichage par défaut correspond à celle de votre promotion.
+                  Veuillez tester les autres configurations disponibles dans la consultation avant
+                  d'en sauvegarder une autre.
+                </p>
 
-        <display-selector :displayTypes="displayTypes"
-                          :userDisplayType="userDisplayType"
-                          @update-display-type="updateDisplayType">
-        </display-selector>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row></div>
+                <display-selector :displayTypes="displayTypes"
+                                  :userDisplayType="userDisplayType"
+                                  @update-display-type="updateDisplayType">
+                </display-selector>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </v-expand-transition>
     <v-row v-if="userCustomization.resources">
       <v-col>
         <v-card>
           <v-card-text>
-          <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
-          <h2 class="headline"><v-icon>mdi-monitor-cellphone</v-icon> Intégration mobile</h2>
-            <v-card-actions><div><v-btn target="icsURL" class="success">Intégration directe</v-btn></div></v-card-actions>
+            <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
+            <h2 class="headline">
+              <v-icon>mdi-monitor-cellphone</v-icon>
+              Intégration mobile
+            </h2>
+            <v-card-actions>
+              <div>
+                <v-btn target="icsURL" class="success">Intégration directe</v-btn>
+              </div>
+            </v-card-actions>
 
-          <div>
-            ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
-          </div>
+            <div>
+              ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -113,7 +130,10 @@
           <v-card-text>
             <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
             <v-flex>
-              <h2 class="headline"><v-icon>mdi-qrcode-scan</v-icon> Version QRCode</h2>
+              <h2 class="headline">
+                <v-icon>mdi-qrcode-scan</v-icon>
+                Version QRCode
+              </h2>
               <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
             </v-flex>
           </v-card-text>
