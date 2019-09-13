@@ -1,8 +1,6 @@
 <template>
-  <v-container
-    class="pa-2"
-    fluid
-    >
+  <v-container class="pa-2"
+               fluid>
     <v-row>
       <v-col>
         <v-card>
@@ -18,7 +16,7 @@
             <div v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</div>
             <div v-else>
               <div>Votre sélection enregistrée actuellement est la suivante :</div>
-              <v-list>
+              <v-list dense>
                 <resource-remover v-for="(resourceId, index) in userResources"
                                   :key="index"
                                   :resourceId="resourceId"
@@ -30,10 +28,8 @@
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn
-              class="info"
-              @click="show = !show"
-              >
+            <v-btn class="info"
+                   @click="show = !show">
               <span v-show="! show">Modifier</span><span v-show="show">Fermer</span> la séléction
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
@@ -52,10 +48,7 @@
                   Modifier la sélection des ressources
                 </h2>
                 <p>L'affichage des ressources est le même que dans la consultation.</p>
-
               </v-card-text>
-
-
               <v-card-text>
                 <ul>
                   <li>
@@ -71,11 +64,10 @@
                   </li>
                 </ul>
                 <resources-selector :root="resourcesRoot"
-                  :userResources="userResources"
-                  @update-resources="updateResources">
+                                    :userResources="userResources"
+                                    @update-resources="updateResources">
                 </resources-selector>
               </v-card-text>
-
             </v-card>
           </v-col>
         </v-row>
@@ -94,8 +86,8 @@
                 </p>
 
                 <display-selector :displayTypes="displayTypes"
-                  :userDisplayType="userDisplayType"
-                  @update-display-type="updateDisplayType">
+                                  :userDisplayType="userDisplayType"
+                                  @update-display-type="updateDisplayType">
                 </display-selector>
               </v-card-text>
             </v-card>
@@ -116,7 +108,6 @@
                 <v-btn target="_blank" :href="icsURL" class="success">Intégration directe</v-btn>
               </div>
             </v-card-actions>
-
             <div>
               ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
             </div>
@@ -200,7 +191,9 @@ export default {
     },
   },
   created() {
-    this.getInitData();
+    if (this.token.user_id) {
+      this.getInitData();
+    }
   },
   methods: {
     getInitData() {
