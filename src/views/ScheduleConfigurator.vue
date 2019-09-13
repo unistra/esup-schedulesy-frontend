@@ -2,7 +2,7 @@
   <v-container
     class="pa-2"
     fluid
-  >
+    >
     <v-row>
       <v-col>
         <v-card>
@@ -26,13 +26,14 @@
                 </resource-remover>
               </v-list>
             </div>
+            <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1"></div>
             <v-btn
               class="info"
               @click="show = !show"
-            >
+              >
               <span v-show="! show">Modifier</span><span v-show="show">Fermer</span> la séléction
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
@@ -70,8 +71,8 @@
                   </li>
                 </ul>
                 <resources-selector :root="resourcesRoot"
-                                    :userResources="userResources"
-                                    @update-resources="updateResources">
+                  :userResources="userResources"
+                  @update-resources="updateResources">
                 </resources-selector>
               </v-card-text>
 
@@ -93,8 +94,8 @@
                 </p>
 
                 <display-selector :displayTypes="displayTypes"
-                                  :userDisplayType="userDisplayType"
-                                  @update-display-type="updateDisplayType">
+                  :userDisplayType="userDisplayType"
+                  @update-display-type="updateDisplayType">
                 </display-selector>
               </v-card-text>
             </v-card>
@@ -106,7 +107,6 @@
       <v-col>
         <v-card>
           <v-card-text>
-            <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
             <h2 class="headline">
               <v-icon>mdi-monitor-cellphone</v-icon>
               Intégration mobile
@@ -128,14 +128,11 @@
       <v-col>
         <v-card>
           <v-card-text>
-            <!--h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2-->
-            <v-flex>
-              <h2 class="headline">
-                <v-icon>mdi-qrcode-scan</v-icon>
-                Version QRCode
-              </h2>
-              <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
-            </v-flex>
+            <h2 class="headline">
+              <v-icon>mdi-qrcode-scan</v-icon>
+              Version QRCode
+            </h2>
+            <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
           </v-card-text>
         </v-card>
       </v-col>
@@ -164,7 +161,7 @@ export default {
     childrenEntryGenerator,
   ],
   data: () => ({
-    token: jwt_decode(localStorage.getItem('JWT__access__token')),
+    token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
     userCustomization: {},
     resourcesRoot: [],
     displayTypes: [],
