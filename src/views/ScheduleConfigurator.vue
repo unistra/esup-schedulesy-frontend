@@ -24,13 +24,13 @@
                 </resource-remover>
               </v-list>
             </div>
-            <h2 class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</h2>
+            <strong class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</strong>
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1"></div>
             <v-btn class="info"
-                   @click="show = !show">
-              <span v-show="! show">Modifier</span><span v-show="show">Fermer</span> la séléction
+                   @click="showResourcesSelector">
+              {{ show ? 'Fermer' : 'Modifier' }} la séléction
               <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
             </v-btn>
           </v-card-actions>
@@ -42,7 +42,7 @@
         <v-row>
           <v-col>
             <v-card>
-              <v-card-text>
+              <v-card-text id="resources-selection">
                 <h2 class="headline">
                   <v-icon>mdi-guitar-pick-outline</v-icon>
                   Modifier la sélection des ressources
@@ -264,6 +264,21 @@ export default {
     },
     updateDisplayType(displayType) {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, {display_configuration: displayType});
+    },
+    showResourcesSelector() {
+      console.log('IN SHOWRESOURCESSELECTOR');
+      this.show = !this.show;
+      if (this.show) {
+        console.log(this.show);
+        const options = {
+          duration: 275,
+          offset: 67,
+          easing: 'linear',
+        };
+        this.$nextTick(() => {
+          this.$vuetify.goTo('#resources-selection', options);
+        });
+      }
     },
   },
 };
