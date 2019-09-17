@@ -107,12 +107,11 @@
               Avant import, nous vous conseillons d'effectuer une sauvegarde de votre agenda.
             </p>
             <v-card-actions>
-              <div>
                 <v-btn target="_blank" :href="icsURL" class="success">
                   Télécharger
                   <v-icon right>mdi-file-download-outline</v-icon>
                 </v-btn>
-                <v-btn class="warning" @click.stop="showQRCode = true">
+                <v-btn class="warning d-none d-md-block" @click.stop="showQRCode = true">
                   Afficher QRCode
                   <v-icon right>mdi-qrcode</v-icon>
                 </v-btn>
@@ -131,7 +130,6 @@
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
-              </div>
             </v-card-actions>
             <div>
               ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
