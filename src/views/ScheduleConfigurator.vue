@@ -1,156 +1,113 @@
 <template>
   <v-container class="pa-2"
                fluid>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-text>
-            <h2 class="headline">
-              <v-icon>mdi-calendar-check-outline</v-icon>
-              Ressources sélectionnées
-            </h2>
-            <p>
-              La configuration de votre emploi du temps s'opère par sélection
-              des ressources et de la configuration d'affichage.
-            </p>
-            <div v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</div>
-            <div v-else>
-              <div>Votre sélection enregistrée actuellement est la suivante :</div>
-              <v-list dense>
-                <resource-remover v-for="(resourceId, index) in userResources"
-                                  :key="index"
-                                  :resourceId="resourceId"
-                                  @remove-resource="removeResource(index)">
-                </resource-remover>
-              </v-list>
-            </div>
-            <strong class="red--text">Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !</strong>
-          </v-card-text>
-          <v-card-actions>
-            <div class="flex-grow-1"></div>
-            <v-btn class="info"
-                   @click="showResourcesSelector">
-              {{ show ? 'Fermer' : 'Modifier' }} la séléction
-              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+    <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
+      <p>
+        La configuration de votre emploi du temps s'opère par sélection
+        des ressources et de la configuration d'affichage.
+      </p>
+      <p v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</p>
+      <p v-else>
+        Votre sélection enregistrée actuellement est la suivante :
+        <v-list>
+          <resource-remover v-for="(resourceId, index) in userResources"
+                            :key="index"
+                            :resourceId="resourceId"
+                            @remove-resource="removeResource(index)">
+          </resource-remover>
+        </v-list>
+      </p>
+      <strong class="red--text">
+        Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !
+      </strong>
+      <template #actions>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn class="info"
+                 @click="showResourcesSelector">
+            <strong>{{ show ? 'Fermer' : 'Modifier' }} la séléction</strong>
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+      </template>
+    </conf-section>
     <v-expand-transition>
-      <div v-show="show">
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-text id="resources-selection">
-                <h2 class="headline">
-                  <v-icon>mdi-guitar-pick-outline</v-icon>
-                  Modifier la sélection des ressources
-                </h2>
-                <p>L'affichage des ressources est le même que dans la consultation.</p>
-                <ul>
-                  <li>
-                    Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
-                  </li>
-                  <li>
-                    Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
-                    vos groupes de matières.
-                  </li>
-                  <li>
-                    Enfin, si vous êtes enseignant, sélectionnez les ressources
-                    que vous voulez voir s'afficher.
-                  </li>
-                </ul>
-                <resources-selector :root="resourcesRoot"
-                                    :userResources="userResources"
-                                    @update-resources="updateResources">
-                </resources-selector>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      <v-row>
-          <v-col>
+      <conf-section v-if="show"
+                    id="resources-selection"
+                    :title="{ icon: 'mdi-guitar-pick-outline', text: 'Modifier la sélection des ressources' }">
+        <p>L'affichage des ressources est le même que dans la consultation.</p>
+        <ul>
+          <li>
+            Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
+          </li>
+          <li>
+            Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
+            vos groupes de matières.
+          </li>
+          <li>
+            Enfin, si vous êtes enseignant, sélectionnez les ressources
+            que vous voulez voir s'afficher.
+          </li>
+        </ul>
+        <resources-selector :root="resourcesRoot"
+          :userResources="userResources"
+          @update-resources="updateResources">
+        </resources-selector>
+      </conf-section>
+    </v-expand-transition>
+    <conf-section :title="{ icon: 'mdi-shape', text: 'Choisissez votre configuration d\'affichage' }">
+      <p>
+        La configuration d'affichage par défaut correspond à celle de votre promotion.
+        Veuillez tester les autres configurations disponibles dans la consultation avant
+        d'en sauvegarder une autre.
+      </p>
+      <display-selector :displayTypes="displayTypes"
+        :userDisplayType="userDisplayType"
+        @update-display-type="updateDisplayType">
+      </display-selector>
+    </conf-section>
+    <conf-section  v-if="userCustomization.resources"
+                   :title="{ icon: 'mdi-calendar-export', text: 'Export d\'agenda' }">
+      <p>
+        Attention, selon le client agenda utilisé, des doublons peuvent survenir lors d'un second import.
+        L'interprétation du format icalendar reste très libre, en particulier sur la définition de l'unicité des évènements.
+        Avant import, nous vous conseillons d'effectuer une sauvegarde de votre agenda.
+      </p>
+      <template #actions>
+        <v-card-actions>
+          <v-btn target="_blank" :href="icsURL" class="success">
+            <strong>Télécharger</strong>
+            <v-icon right>mdi-file-download-outline</v-icon>
+          </v-btn>
+          <v-btn class="warning d-none d-md-block" @click.stop="showQRCode = true">
+            <strong>Afficher QRCode</strong>
+            <v-icon right>mdi-qrcode</v-icon>
+          </v-btn>
+          <v-dialog v-model="showQRCode" max-width="250">
             <v-card>
               <v-card-text>
-                <h2 class="headline">
-                  <v-icon>mdi-shape</v-icon>
-                  Choisissez votre configuration d'affichage :
-                </h2>
-                <p>
-                  La configuration d'affichage par défaut correspond à celle de votre promotion.
-                  Veuillez tester les autres configurations disponibles dans la consultation avant
-                  d'en sauvegarder une autre.
-                </p>
-
-                <display-selector :displayTypes="displayTypes"
-                                  :userDisplayType="userDisplayType"
-                                  @update-display-type="updateDisplayType">
-                </display-selector>
+                <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
               </v-card-text>
+              <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn color="#3e8f93"
+                       text
+                       @click.stop="showQRCode = false">
+                  <strong>FERMER</strong>
+                </v-btn>
+              </v-card-actions>
             </v-card>
-          </v-col>
-        </v-row>
-      </div>
-    </v-expand-transition>
-    <v-row v-if="userCustomization.resources">
-      <v-col>
-        <v-card>
-          <v-card-text>
-            <h2 class="headline">
-              <v-icon>mdi-calendar-export</v-icon>
-              Export d'agenda
-            </h2>
-            <p>
-              Attention, selon le client agenda utilisé, des doublons peuvent survenir lors d'un second import.
-              L'interprétation du format icalendar reste très libre, en particulier sur la définition de l'unicité des évènements.
-              Avant import, nous vous conseillons d'effectuer une sauvegarde de votre agenda.
-            </p>
-            <v-card-actions>
-                <v-btn target="_blank" :href="icsURL" class="success">
-                  Télécharger
-                  <v-icon right>mdi-file-download-outline</v-icon>
-                </v-btn>
-                <v-btn class="warning d-none d-md-block" @click.stop="showQRCode = true">
-                  Afficher QRCode
-                  <v-icon right>mdi-qrcode</v-icon>
-                </v-btn>
-                <v-dialog v-model="showQRCode" max-width="250">
-                  <v-card>
-                    <v-card-text>
-                      <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
-                    </v-card-text>
-                    <v-card-actions>
-                      <div class="flex-grow-1"></div>
-                      <v-btn color="#3e8f93"
-                             text
-                             @click.stop="showQRCode = false">
-                        <strong>FERMER</strong>
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-            </v-card-actions>
-            <div>
-              ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <!-- <v&#45;row v&#45;if="userCustomization.resources"> -->
-    <!--   <v&#45;col> -->
-    <!--     <v&#45;card> -->
-    <!--       <v&#45;card&#45;text> -->
-    <!--         <h2 class="headline"> -->
-    <!--           <v&#45;icon>mdi&#45;qrcode&#45;scan</v&#45;icon> -->
-    <!--           Version QRCode -->
-    <!--         </h2> -->
-    <!--         <vue&#45;qrcode :value="icsURL" :options="{ width: 200 }"></vue&#45;qrcode> -->
-    <!--       </v&#45;card&#45;text> -->
-    <!--     </v&#45;card> -->
-    <!--   </v&#45;col> -->
-    <!-- </v&#45;row> -->
+          </v-dialog>
+        </v-card-actions>
+      </template>
+      <template #extra>
+        <v-card-text>
+          <p>
+            ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
+          </p>
+        </v-card-text>
+      </template>
+    </conf-section>
   </v-container>
 </template>
 
@@ -159,17 +116,17 @@ import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import jwt_decode from 'jwt-decode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
-import ResourceRemover from '@/components/configurator/ResourceRemover.vue';
-import ResourcesSelector from '@/components/configurator/ResourcesSelector.vue';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
+import ConfSection from '@/components/configurator/ConfSection.vue';
 
 export default {
   name: 'ScheduleConfigurator',
   components: {
-    ResourceRemover,
-    ResourcesSelector,
+    ResourceRemover: () => import('@/components/configurator/ResourceRemover.vue'),
+    ResourcesSelector: () => import('@/components/configurator/ResourcesSelector.vue'),
     DisplaySelector,
     VueQrcode,
+    ConfSection,
   },
   mixins: [
     childrenEntryGenerator,
@@ -224,7 +181,7 @@ export default {
       const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
       const postUserCustomization = () => this.axios.post(`${this.urls.customization}.json`, {
         username: this.token.user_id,
-        directory_id: this.token.directory_id
+        directory_id: this.token.directory_id,
       });
 
       const resourceTypes = [
@@ -290,10 +247,8 @@ export default {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, {display_configuration: displayType});
     },
     showResourcesSelector() {
-      console.log('IN SHOWRESOURCESSELECTOR');
       this.show = !this.show;
       if (this.show) {
-        console.log(this.show);
         const options = {
           duration: 275,
           offset: 67,
