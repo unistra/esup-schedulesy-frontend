@@ -2,6 +2,7 @@
   <v-flex>
     <v-treeview selected-color="#3e8f93"
                 dense
+                open-on-click
                 :load-children="loadChildren"
                 :items="root">
       <template v-slot:prepend="{ item }">

@@ -48,8 +48,6 @@
                   Modifier la sélection des ressources
                 </h2>
                 <p>L'affichage des ressources est le même que dans la consultation.</p>
-              </v-card-text>
-              <v-card-text>
                 <ul>
                   <li>
                     Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
@@ -71,7 +69,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row>
+      <v-row>
           <v-col>
             <v-card>
               <v-card-text>
@@ -100,12 +98,39 @@
         <v-card>
           <v-card-text>
             <h2 class="headline">
-              <v-icon>mdi-monitor-cellphone</v-icon>
-              Intégration mobile
+              <v-icon>mdi-calendar-export</v-icon>
+              Export d'agenda
             </h2>
+            <p>
+              Attention, selon le client agenda utilisé, des doublons peuvent survenir lors d'un second import.
+              L'interprétation du format icalendar reste très libre, en particulier sur la définition de l'unicité des évènements.
+              Avant import, nous vous conseillons d'effectuer une sauvegarde de votre agenda.
+            </p>
             <v-card-actions>
               <div>
-                <v-btn target="_blank" :href="icsURL" class="success">Intégration directe</v-btn>
+                <v-btn target="_blank" :href="icsURL" class="success">
+                  Télécharger
+                  <v-icon right>mdi-file-download-outline</v-icon>
+                </v-btn>
+                <v-btn class="warning" @click.stop="showQRCode = true">
+                  Afficher QRCode
+                  <v-icon right>mdi-qrcode</v-icon>
+                </v-btn>
+                <v-dialog v-model="showQRCode" max-width="250">
+                  <v-card>
+                    <v-card-text>
+                      <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
+                    </v-card-text>
+                    <v-card-actions>
+                      <div class="flex-grow-1"></div>
+                      <v-btn color="#3e8f93"
+                             text
+                             @click.stop="showQRCode = false">
+                        <strong>FERMER</strong>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </div>
             </v-card-actions>
             <div>
@@ -115,19 +140,19 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-if="userCustomization.resources">
-      <v-col>
-        <v-card>
-          <v-card-text>
-            <h2 class="headline">
-              <v-icon>mdi-qrcode-scan</v-icon>
-              Version QRCode
-            </h2>
-            <vue-qrcode :value="icsURL" :options="{ width: 200 }"></vue-qrcode>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <!-- <v&#45;row v&#45;if="userCustomization.resources"> -->
+    <!--   <v&#45;col> -->
+    <!--     <v&#45;card> -->
+    <!--       <v&#45;card&#45;text> -->
+    <!--         <h2 class="headline"> -->
+    <!--           <v&#45;icon>mdi&#45;qrcode&#45;scan</v&#45;icon> -->
+    <!--           Version QRCode -->
+    <!--         </h2> -->
+    <!--         <vue&#45;qrcode :value="icsURL" :options="{ width: 200 }"></vue&#45;qrcode> -->
+    <!--       </v&#45;card&#45;text> -->
+    <!--     </v&#45;card> -->
+    <!--   </v&#45;col> -->
+    <!-- </v&#45;row> -->
   </v-container>
 </template>
 
@@ -165,6 +190,7 @@ export default {
     },
     icsParams: {},
     show: false,
+    showQRCode: false,
   }),
   computed: {
     userResources() {
