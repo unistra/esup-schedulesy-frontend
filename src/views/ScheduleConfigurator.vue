@@ -1,6 +1,16 @@
 <template>
   <v-container class="pa-2"
                fluid>
+    <v-snackbar v-model="snackbar.isVisible"
+                top
+                :color="snackbar.color"
+                :timeout="snackbar.timeout">
+      {{ snackbar.message }}
+      <v-btn text
+             @click.stop="snackbar.isVisible = false">
+        <strong>CLOSE</strong>
+      </v-btn>
+    </v-snackbar>
     <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
       <p>
         La configuration de votre emploi du temps s'opère par sélection
@@ -75,7 +85,7 @@
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn target="_blank" :href="icsURL" class="success">
+          <v-btn :href="icsURL" class="success">
             <strong>Télécharger</strong>
             <v-icon right>mdi-file-download-outline</v-icon>
           </v-btn>
@@ -122,8 +132,8 @@ import ConfSection from '@/components/configurator/ConfSection.vue';
 export default {
   name: 'ScheduleConfigurator',
   components: {
-    ResourceRemover: () => import('@/components/configurator/ResourceRemover.vue'),
-    ResourcesSelector: () => import('@/components/configurator/ResourcesSelector.vue'),
+    ResourceRemover: () => import(/* webpackChunkName: "resource-remover" */ '@/components/configurator/ResourceRemover.vue'),
+    ResourcesSelector: () => import(/* webpackChunkName: "resource-selector" */ '@/components/configurator/ResourcesSelector.vue'),
     DisplaySelector,
     VueQrcode,
     ConfSection,
@@ -146,6 +156,12 @@ export default {
     icsParams: {},
     show: false,
     showQRCode: false,
+    snackbar: {
+      isVisible: false,
+      color: '',
+      message: '',
+      timeout: 0,
+    },
   }),
   computed: {
     userResources() {
@@ -241,10 +257,40 @@ export default {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
         .then((response) => {
           this.userCustomization = response.data;
+          this.snackbar = {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre séléction de ressources a bien été mise à jour.',
+            timeout: 6000,
+          };
+        })
+        .catch(() => {
+          this.snackbar = {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre séléction de ressources',
+            timeout: 6000,
+          };
         });
     },
     updateDisplayType(displayType) {
-      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, {display_configuration: displayType});
+      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType })
+        .then(() => {
+          this.snackbar = {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          };
+        })
+        .catch(() => {
+          this.snackbar = {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          };
+        });
     },
     showResourcesSelector() {
       this.show = !this.show;
