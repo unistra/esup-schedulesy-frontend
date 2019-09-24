@@ -1,6 +1,8 @@
 <template>
-  <v-container class="pa-2"
-               fluid>
+  <v-flex xs12
+          sm11
+          md10
+          lg9>
     <v-snackbar v-model="snackbar.isVisible"
                 top
                 :color="snackbar.color"
@@ -11,6 +13,36 @@
         <strong>CLOSE</strong>
       </v-btn>
     </v-snackbar>
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-header class="px-4">
+          <h2 class="headline">
+            <v-icon>mdi-book-open-variant</v-icon>
+            Mode d'emploi
+          </h2>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          ADE est l’application de gestion des emplois du temps de l'Université : elle permet de gérer
+          les plannings des salles ainsi que les emplois du temps des enseignants et des étudiants.
+          <br />
+          <br />
+          L'outil de personnalisation de l’emploi du temps vous permet de le paramétrer en choisissant:
+          <ul>
+            <li>
+              les ressources à afficher (groupe d'étudiants et/ou matières, enseignants, salles)
+            </li>
+            <li>
+              une configuration d’affichage
+            </li>
+          </ul>
+          <br />
+          NB: Les choix que vous effectuerez seront sauvegardés automatiquement.
+          <br />
+          <br />
+          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans ADE (lien dans le lanceur d’applications ou via le moteur de recherche).
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
     <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
       <p>
         La configuration de votre emploi du temps s'opère par sélection
@@ -27,9 +59,15 @@
           </resource-remover>
         </v-list>
       </p>
-      <strong class="red--text">
-        Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !
-      </strong>
+      <p>
+        Si vous souhaitez désélectionner une des ressources de la liste, cliquez sur l’icône
+        représentant une croix.
+      </p>
+      <p>
+        <strong class="red--text">
+          Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !
+        </strong>
+      </p>
       <template #actions>
         <v-card-actions>
           <div class="flex-grow-1"></div>
@@ -48,15 +86,10 @@
         <p>L'affichage des ressources est le même que dans la consultation.</p>
         <ul>
           <li>
-            Si vous êtes étudiant, veuillez sélectionner les groupes d'étudiants qui vous concernent.
+            Etudiants : sélectionnez les groupes d'étudiants et/ou les matières qui vous concernent.
           </li>
           <li>
-            Si vous êtes étudiant des sciences humaines, vous devrez sélectionner
-            vos groupes de matières.
-          </li>
-          <li>
-            Enfin, si vous êtes enseignant, sélectionnez les ressources
-            que vous voulez voir s'afficher.
+            Enseignants et personnels administratifs : sélectionnez les ressources de votre choix.
           </li>
         </ul>
         <resources-selector :root="resourcesRoot"
@@ -67,9 +100,8 @@
     </v-expand-transition>
     <conf-section :title="{ icon: 'mdi-shape', text: 'Choisissez votre configuration d\'affichage' }">
       <p>
-        La configuration d'affichage par défaut correspond à celle de votre promotion.
-        Veuillez tester les autres configurations disponibles dans la consultation avant
-        d'en sauvegarder une autre.
+        Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
+        institut, ...) ou l'une de celles proposées par défaut en début de liste.
       </p>
       <display-selector :displayTypes="displayTypes"
         :userDisplayType="userDisplayType"
@@ -79,16 +111,23 @@
     <conf-section  v-if="userCustomization.resources"
                    :title="{ icon: 'mdi-calendar-export', text: 'Export d\'agenda' }">
       <p>
-        Attention, selon le client agenda utilisé, des doublons peuvent survenir lors d'un second import.
-        L'interprétation du format icalendar reste très libre, en particulier sur la définition de l'unicité des évènements.
-        Avant import, nous vous conseillons d'effectuer une sauvegarde de votre agenda.
+        L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
+        client de gestion d’agendas (type Google Agenda, iCal ou Agenda Partage) sur votre
+        ordinateur et/ou sur un appareil mobile. Votre calendrier sera synchronisé avec ADE et
+        sera donc toujours à jour.
+      </p>
+      <p>
+        Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier puis
+        copiez-collez l’URL suivante:
+        <br />
+        <a :href="icsURL">{{ icsURL }}</a>
+      </p>
+      <p>
+        Vous pouvez également scanner le QRCODE ci-dessous pour vous abonner à votre agenda sur
+        votre appareil mobile.
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn :href="icsURL" class="success">
-            <strong>Télécharger</strong>
-            <v-icon right>mdi-file-download-outline</v-icon>
-          </v-btn>
           <v-btn class="warning d-none d-md-block" @click.stop="showQRCode = true">
             <strong>Afficher QRCode</strong>
             <v-icon right>mdi-qrcode</v-icon>
@@ -110,15 +149,8 @@
           </v-dialog>
         </v-card-actions>
       </template>
-      <template #extra>
-        <v-card-text>
-          <p>
-            ou utilisez ce lien : <a :href="icsURL">{{ icsURL }}</a>
-          </p>
-        </v-card-text>
-      </template>
     </conf-section>
-  </v-container>
+  </v-flex>
 </template>
 
 <script>
@@ -132,8 +164,8 @@ import ConfSection from '@/components/configurator/ConfSection.vue';
 export default {
   name: 'ScheduleConfigurator',
   components: {
-    ResourceRemover: () => import(/* webpackChunkName: "resource-remover" */ '@/components/configurator/ResourceRemover.vue'),
-    ResourcesSelector: () => import(/* webpackChunkName: "resource-selector" */ '@/components/configurator/ResourcesSelector.vue'),
+    ResourceRemover: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourceRemover.vue'),
+    ResourcesSelector: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourcesSelector.vue'),
     DisplaySelector,
     VueQrcode,
     ConfSection,
