@@ -10,7 +10,7 @@
       {{ snackbar.message }}
       <v-btn text
              @click.stop="snackbar.isVisible = false">
-        <strong>CLOSE</strong>
+        <strong>FERMER</strong>
       </v-btn>
     </v-snackbar>
     <v-expansion-panels>
@@ -83,7 +83,10 @@
       <conf-section v-if="show"
                     id="resources-selection"
                     :title="{ icon: 'mdi-guitar-pick-outline', text: 'Modifier la sélection des ressources' }">
-        <p>L'affichage des ressources est le même que dans la consultation.</p>
+        <p>
+          Sélectionnez des ressources en cliquant sur un type de ressources (Etudiants, enseignants,
+          salles, matières) puis en cochant les cases de votre choix.
+        </p>
         <ul>
           <li>
             Etudiants : sélectionnez les groupes d'étudiants et/ou les matières qui vous concernent.
