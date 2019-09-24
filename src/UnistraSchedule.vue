@@ -69,13 +69,13 @@ export default {
           return '170';
         case 'sm':
           console.log('sm');
-          return '247';
+          return '230';
         case 'md':
           console.log('md');
-          return '324';
+          return '290';
         default:
           console.log('lg');
-          return '400';
+          return '350';
       }
     },
   },
