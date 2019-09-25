@@ -125,13 +125,13 @@
         <br />
         <a :href="icsURL">{{ icsURL }}</a>
       </p>
-      <p>
+      <p class="d-none hidden-sm-and-down">
         Vous pouvez également scanner le QRCODE ci-dessous pour vous abonner à votre agenda sur
         votre appareil mobile.
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn class="warning d-none d-md-block" @click.stop="showQRCode = true">
+          <v-btn class="warning hidden-sm-and-down" @click.stop="showQRCode = true">
             <strong>Afficher QRCode</strong>
             <v-icon right>mdi-qrcode</v-icon>
           </v-btn>

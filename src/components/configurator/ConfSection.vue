@@ -12,7 +12,6 @@
           <slot></slot>
         </v-card-text>
         <slot name="actions"></slot>
-        <slot name="extra"></slot>
       </v-card>
     </v-col>
   </v-row>

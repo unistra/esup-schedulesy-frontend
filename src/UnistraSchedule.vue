@@ -18,13 +18,13 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar app dense>
-      <v-app-bar-nav-icon class="d-sm-none"
+      <v-app-bar-nav-icon class="hidden-md-and-up"
                           @click.stop="drawer = !drawer">
       </v-app-bar-nav-icon>
-      <v-btn color="primary" icon class="d-none d-sm-block">
-      <v-icon>mdi-home-outline</v-icon>
+      <v-btn color="primary" icon class="hidden-sm-and-down">
+        <v-icon>mdi-home-outline</v-icon>
       </v-btn>
-      <v-toolbar-items class="d-none d-sm-block">
+      <v-toolbar-items class="hidden-sm-and-down">
         <v-btn text to="config"><strong>Personnaliser</strong></v-btn>
         <!-- <v&#45;btn text><strong>Consulter</strong></v&#45;btn> -->
       </v-toolbar-items>
@@ -65,16 +65,12 @@ export default {
     imageHeight() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
-          console.log('xs');
           return '170';
         case 'sm':
-          console.log('sm');
           return '230';
         case 'md':
-          console.log('md');
           return '290';
         default:
-          console.log('lg');
           return '350';
       }
     },
