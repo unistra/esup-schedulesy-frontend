@@ -44,11 +44,14 @@
       </v-expansion-panel>
     </v-expansion-panels>
     <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
-      <p>
-        La configuration de votre emploi du temps s'opère par sélection
-        des ressources et de la configuration d'affichage.
+      <p v-if="userResources.length === 0">
+        Vous n'avez actuellement aucune ressource sélectionnée.
+        <br />
+        Cliquez sur le bouton "Modifier la sélection" pour effectuer votre choix.
+        <br />
+        <br />
+        NB : Les choix que vous effectuerez seront sauvegardés automatiquement.
       </p>
-      <p v-if="userResources.length === 0">Vous n'avez actuellement aucune séléction enregistrée</p>
       <p v-else>
         Votre sélection enregistrée actuellement est la suivante :
         <v-list>
@@ -58,10 +61,10 @@
                             @remove-resource="removeResource(index)">
           </resource-remover>
         </v-list>
-      </p>
-      <p>
         Si vous souhaitez désélectionner une des ressources de la liste, cliquez sur l’icône
         représentant une croix.
+      </p>
+      <p>
       </p>
       <p>
         <strong class="red--text">
@@ -73,7 +76,7 @@
           <div class="flex-grow-1"></div>
           <v-btn class="info"
                  @click="showResourcesSelector">
-            <strong>{{ show ? 'Fermer' : 'Modifier' }} la séléction</strong>
+            <strong>{{ show ? 'Fermer' : 'Modifier' }} la sélection</strong>
             <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
           </v-btn>
         </v-card-actions>
@@ -82,7 +85,7 @@
     <v-expand-transition>
       <conf-section v-if="show"
                     id="resources-selection"
-                    :title="{ icon: 'mdi-guitar-pick-outline', text: 'Modifier la sélection des ressources' }">
+                    :title="{ icon: 'mdi-guitar-pick-outline', text: 'Sélection des ressources' }">
         <p>
           Sélectionnez des ressources en cliquant sur un type de ressources (Etudiants, enseignants,
           salles, matières) puis en cochant les cases de votre choix.
@@ -101,7 +104,7 @@
         </resources-selector>
       </conf-section>
     </v-expand-transition>
-    <conf-section :title="{ icon: 'mdi-shape', text: 'Choisissez votre configuration d\'affichage' }">
+    <conf-section :title="{ icon: 'mdi-shape', text: 'Configuration d\'affichage' }">
       <p>
         Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
         institut, ...) ou l'une de celles proposées par défaut en début de liste.
@@ -125,7 +128,7 @@
         <br />
         <a :href="icsURL">{{ icsURL }}</a>
       </p>
-      <p class="d-none hidden-sm-and-down">
+      <p class="hidden-sm-and-down">
         Vous pouvez également scanner le QRCODE ci-dessous pour vous abonner à votre agenda sur
         votre appareil mobile.
       </p>
@@ -295,7 +298,7 @@ export default {
           this.snackbar = {
             isVisible: true,
             color: 'success',
-            message: 'Votre séléction de ressources a bien été mise à jour.',
+            message: 'Votre sélection de ressources a bien été mise à jour.',
             timeout: 6000,
           };
         })
@@ -303,7 +306,7 @@ export default {
           this.snackbar = {
             isVisible: true,
             color: 'error',
-            message: 'Une erreur est survenue pendant la mise à jour de votre séléction de ressources',
+            message: 'Une erreur est survenue pendant la mise à jour de votre sélection de ressources',
             timeout: 6000,
           };
         });

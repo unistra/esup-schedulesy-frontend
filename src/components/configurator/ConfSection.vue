@@ -8,7 +8,7 @@
             {{ title.text }}
           </h2>
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="text--primary">
           <slot></slot>
         </v-card-text>
         <slot name="actions"></slot>

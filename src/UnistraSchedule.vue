@@ -1,6 +1,7 @@
 <template>
   <v-app id="unistra-schedule">
     <v-navigation-drawer v-model="drawer"
+                         disable-resize-watcher
                          app>
       <v-list dense>
         <v-list-item to="config">
