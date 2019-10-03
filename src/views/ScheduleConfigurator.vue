@@ -43,7 +43,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
+    <core-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
       <p v-if="userResources.length === 0">
         Vous n'avez actuellement aucune ressource sélectionnée.
         <br />
@@ -81,9 +81,9 @@
           </v-btn>
         </v-card-actions>
       </template>
-    </conf-section>
+    </core-section>
     <v-expand-transition>
-      <conf-section v-if="show"
+      <core-section v-if="show"
                     id="resources-selection"
                     :title="{ icon: 'mdi-guitar-pick-outline', text: 'Sélection des ressources' }">
         <p>
@@ -102,9 +102,9 @@
           :userResources="userResources"
           @update-resources="updateResources">
         </resources-selector>
-      </conf-section>
+      </core-section>
     </v-expand-transition>
-    <conf-section :title="{ icon: 'mdi-shape', text: 'Configuration d\'affichage' }">
+    <core-section :title="{ icon: 'mdi-shape', text: 'Configuration d\'affichage' }">
       <p>
         Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
         institut, ...) ou l'une de celles proposées par défaut en début de liste.
@@ -113,8 +113,8 @@
         :userDisplayType="userDisplayType"
         @update-display-type="updateDisplayType">
       </display-selector>
-    </conf-section>
-    <conf-section  v-if="userCustomization.resources"
+    </core-section>
+    <core-section  v-if="userCustomization.resources"
                    :title="{ icon: 'mdi-calendar-export', text: 'Export d\'agenda' }">
       <p>
         L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
@@ -155,7 +155,7 @@
           </v-dialog>
         </v-card-actions>
       </template>
-    </conf-section>
+    </core-section>
   </v-flex>
 </template>
 
@@ -165,7 +165,7 @@ import VueQrcode from '@chenfengyuan/vue-qrcode';
 import jwt_decode from 'jwt-decode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
-import ConfSection from '@/components/configurator/ConfSection.vue';
+import CoreSection from '@/components/core/CoreSection.vue';
 
 export default {
   name: 'ScheduleConfigurator',
@@ -174,7 +174,7 @@ export default {
     ResourcesSelector: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourcesSelector.vue'),
     DisplaySelector,
     VueQrcode,
-    ConfSection,
+    CoreSection,
   },
   mixins: [
     childrenEntryGenerator,
@@ -335,7 +335,6 @@ export default {
       if (this.show) {
         const options = {
           duration: 275,
-          offset: 67,
           easing: 'linear',
         };
         this.$nextTick(() => {
