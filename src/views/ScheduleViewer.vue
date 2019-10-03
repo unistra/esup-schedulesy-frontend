@@ -24,18 +24,21 @@
                 outlined
                 v-on="on"
                 >
-                <span>{{ typeToLabel[type] }}</span>
+                <span>{{ customTypeToLabel[customType] }}</span>
                 <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
             <v-list>
-              <v-list-item @click="type = 'day'">
+              <v-list-item @click="customType = 'day'">
                 <v-list-item-title>Jour</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="type = 'week'">
+              <v-list-item @click="customType = '6days'">
+                <v-list-item-title>Lun - Sam</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="customType = 'week'">
                 <v-list-item-title>Semaine</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="type = 'month'">
+              <v-list-item @click="customType = 'month'">
                 <v-list-item-title>Mois</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -85,6 +88,22 @@
           </v-toolbar>
           <v-card-text class="pa-0">
             <v-list dense>
+              <v-list-item v-if="selectedEvent.trainees">
+                <v-list-item-icon>
+                  <v-icon>mdi-account-group</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <p class="ma-0">
+                    <span>
+                      {{ eventsTrainees[selectedEvent.trainees[0]].name }}
+                    </span>
+                    <span v-for="(trainee, index) in selectedEvent.trainees.slice(1)"
+                          :key="index">
+                      - {{ eventsTrainees[trainee].name }}
+                    </span>
+                  </p>
+                </v-list-item-content>
+              </v-list-item>
               <v-list-item v-for="instructor in selectedEvent.instructors"
                            :key="instructor">
                 <v-list-item-icon>
@@ -168,24 +187,32 @@ export default {
     },
     today: moment().format().substring(0, 10),
     focus: moment().format().substring(0, 10),
-    type: 'week',
-    weekdays: [1, 2, 3, 4, 5, 6, 0],
+    customType: 'week',
     intervalHeight: 20,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     start: null,
     end: null,
-    typeToLabel: {
+    customTypeToLabel: {
       month: 'Mois',
       week: 'Semaine',
+      '6days': 'Lun - Sam',
       day: 'Jour',
     },
     userEvents: null,
     eventsInstructors: null,
-    eventsClassrooms: null
+    eventsClassrooms: null,
+    eventsTrainees: null,
+    eventsCategory5: null,
   }),
   computed: {
+    type() {
+      return this.customType === '6days' ? 'week' : this.customType;
+    },
+    weekdays() {
+      return this.customType === '6days' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+    },
     events() {
       if (this.userEvents) {
         return this.userEvents.map((event) => {
@@ -219,6 +246,7 @@ export default {
         case 'month':
           return `${startMonth} ${startYear}`
         case 'week':
+        case '6days':
           return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
         case 'day':
           return `${startDay} ${startMonth} ${startYear}`;
@@ -287,13 +315,27 @@ export default {
       this.start = start;
       this.end = end;
     },
+    updateType(value) {
+      this.type = value === '6days' ? 'week' : value,
+      this.weekdays = value === '6days' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+    },
   },
   mounted() {
     this.axios.get(`${this.urls.api}/calendar/${this.token.user_id}.json`)
       .then((response) => {
-        this.userEvents = response.data.events;
-        this.eventsInstructors = response.data.instructors;
-        this.eventsClassrooms = response.data.classrooms;
+        console.log(response.data);
+        this.userEvents = response.data.events.map((event) => {
+          return {
+            ...event,
+            ...{
+              trainees: event.trainees.reverse(),
+            },
+          };
+        });
+        this.eventsInstructors = response.data.instructors ? response.data.instructors : null;
+        this.eventsClassrooms = response.data.classrooms ? response.data.classrooms : null;
+        this.eventsTrainees = response.data.trainees ? response.data.trainees : null;
+        this.eventsCategory5 = response.data.category5 ? response.data.category5 : null;
       });
     this.$refs.calendar.checkChange();
   },
