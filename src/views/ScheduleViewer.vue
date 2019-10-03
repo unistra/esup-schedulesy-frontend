@@ -2,7 +2,7 @@
   <v-flex xs12
           sm11
           md10
-          lg10>
+          lg9>
     <core-section :title="{ icon: 'mdi-calendar', text: 'Emploi du temps' }">
       <v-sheet height="64">
         <v-toolbar flat color="white">
@@ -36,7 +36,7 @@
                 <v-list-item-title>Semaine</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
+                <v-list-item-title>Mois</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -96,7 +96,7 @@
               </v-list-item>
               <v-sheet v-for="classroom in selectedEvent.classrooms"
                        :key="classroom">
-                <v-list-item v-if="eventsClassrooms[classroom].genealogy">
+                <v-list-item v-if="eventsClassrooms[classroom].genealogy.length > 0">
                   <v-list-item-icon>
                     <v-icon>mdi-home-map-marker</v-icon>
                   </v-list-item-icon>
