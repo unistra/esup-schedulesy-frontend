@@ -35,6 +35,9 @@
               <v-list-item @click="type = 'week'">
                 <v-list-item-title>Semaine</v-list-item-title>
               </v-list-item>
+              <v-list-item @click="type = 'month'">
+                <v-list-item-title>Month</v-list-item-title>
+              </v-list-item>
             </v-list>
           </v-menu>
         </v-toolbar>
@@ -91,15 +94,32 @@
                   <span>{{ eventsInstructors[instructor].name }}</span>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item v-for="classroom in selectedEvent.classrooms"
-                           :key="classroom">
-                <v-list-item-icon>
-                  <v-icon>mdi-map-marker</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <span>{{ eventsClassrooms[classroom].name }}</span>
-                </v-list-item-content>
-              </v-list-item>
+              <v-sheet v-for="classroom in selectedEvent.classrooms"
+                       :key="classroom">
+                <v-list-item v-if="eventsClassrooms[classroom].genealogy">
+                  <v-list-item-icon>
+                    <v-icon>mdi-home-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <p class="ma-0">
+                      <span>
+                        {{ eventsClassrooms[classroom].genealogy[0] }}
+                      </span>
+                      <span v-if="eventsClassrooms[classroom].genealogy.length > 1">
+                        - {{ eventsClassrooms[classroom].genealogy[1] }}
+                      </span>
+                    </p>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <span>{{ eventsClassrooms[classroom].name }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-sheet>
               <v-list-item v-if="selectedEvent.start">
                 <v-list-item-icon>
                   <v-icon>mdi-clock-outline</v-icon>
@@ -157,6 +177,7 @@ export default {
     start: null,
     end: null,
     typeToLabel: {
+      month: 'Mois',
       week: 'Semaine',
       day: 'Jour',
     },
@@ -195,6 +216,8 @@ export default {
       const endYear = end.year;
 
       switch(this.type) {
+        case 'month':
+          return `${startMonth} ${startYear}`
         case 'week':
           return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
         case 'day':
@@ -235,7 +258,7 @@ export default {
       const {
         name,
         instructors = '',
-        classrooms,
+        classrooms = '',
       } = event.input;
       const htmlInstructors = instructors.length > 0 ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
       const htmlClassrooms = classrooms.length > 0 ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
