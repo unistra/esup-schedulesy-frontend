@@ -144,7 +144,7 @@
                   <v-icon>mdi-clock-outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <p>
+                  <p class="ma-0">
                     <span>{{ selectedEvent.start.length > 10 ? selectedEvent.start.substring(11) : selectedEvent.start }}</span>
                     <span v-if="selectedEvent.end"> - {{
                       selectedEvent.start.length > 10 ?
@@ -300,7 +300,7 @@ export default {
     },
     viewDay({ date }) {
       this.focus = date;
-      this.type = 'day';
+      this.customType = 'day';
     },
     setToday() {
       this.focus = this.today;
@@ -316,7 +316,7 @@ export default {
       this.end = end;
     },
     updateType(value) {
-      this.type = value === '6days' ? 'week' : value,
+      this.type = value === '6days' ? 'week' : value;
       this.weekdays = value === '6days' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
     },
   },
@@ -328,7 +328,7 @@ export default {
           return {
             ...event,
             ...{
-              trainees: event.trainees.reverse(),
+              trainees: event.trainees ? event.trainees.reverse() : [],
             },
           };
         });
