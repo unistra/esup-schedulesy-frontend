@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar flat height="30" extension-height="30" color="white">
+  <v-toolbar flat height="30" extension-height="30">
     <v-btn fab text x-small @click="$emit('previous')">
       <v-icon small>mdi-chevron-left</v-icon>
     </v-btn>

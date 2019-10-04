@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar flat color="white">
+  <v-toolbar flat>
     <v-btn outlined tile class="mr-4" @click="$emit('today')">
       Aujourd'hui
     </v-btn>

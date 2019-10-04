@@ -29,6 +29,15 @@
         <v-btn text to="config"><strong>{{ buttons.customize }}</strong></v-btn>
         <v-btn text to="consult"><strong>Consulter</strong></v-btn>
       </v-toolbar-items>
+      <div class="flex-grow-1"></div>
+      <v-tooltip left>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" @click="$vuetify.theme.isDark = !$vuetify.theme.isDark">
+            <v-icon>mdi-lightbulb</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $vuetify.theme.isDark ? 'Light mode' : 'Dark mode' }}</span>
+      </v-tooltip>
     </v-app-bar>
     <v-content>
       <v-img :src="require('@/assets/img/business.jpg')"
@@ -47,7 +56,7 @@
       </v-container>
     </v-content>
     <v-divider></v-divider>
-    <v-footer color="white">
+    <v-footer>
       <v-spacer></v-spacer>
       <span>2019 - <strong> Université de Strasbourg</strong> - Tous droits réservés</span>
       <v-spacer></v-spacer>
