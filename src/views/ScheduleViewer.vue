@@ -4,47 +4,22 @@
           md10
           lg9>
     <core-section :title="{ icon: 'mdi-calendar', text: 'Emploi du temps' }">
-      <v-sheet height="64">
-        <v-toolbar flat color="white">
-          <v-btn outlined tile class="mr-4" @click="setToday">
-            Aujourd'hui
-          </v-btn>
-          <v-btn fab text small @click="prev">
-            <v-icon small>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn fab text small @click="next">
-            <v-icon small>mdi-chevron-right</v-icon>
-          </v-btn>
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
-          <div class="flex-grow-1"></div>
-          <v-menu bottom right>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                tile
-                outlined
-                v-on="on"
-                >
-                <span>{{ customTypeToLabel[customType] }}</span>
-                <v-icon right>mdi-menu-down</v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="customType = 'day'">
-                <v-list-item-title>Jour</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="customType = '6days'">
-                <v-list-item-title>Lun - Sam</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="customType = 'week'">
-                <v-list-item-title>Semaine</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="customType = 'month'">
-                <v-list-item-title>Mois</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-toolbar>
-      </v-sheet>
+      <viewer-toolbar-md class="hidden-sm-and-down"
+                         :title="title"
+                         :type="customTypeToLabel[customType]"
+                         @today="setToday"
+                         @previous="prev"
+                         @next="next"
+                         @change-type="setType">
+      </viewer-toolbar-md>
+      <viewer-toolbar-sm class="hidden-md-and-up"
+                         :title="title"
+                         :type="customType"
+                         @today="setToday"
+                         @previous="prev"
+                         @next="next"
+                         @change-type="setType">
+      </viewer-toolbar-sm>
       <v-calendar locale="fr-FR"
                   ref="calendar"
                   v-model="focus"
@@ -73,7 +48,7 @@
         offset-x>
         <v-card
           color="grey lighten-4"
-          min-width="350px"
+          min-width="250"
           flat>
           <v-toolbar
             :color="selectedEvent.color"
@@ -88,7 +63,7 @@
           </v-toolbar>
           <v-card-text class="pa-0">
             <v-list dense>
-              <v-list-item v-if="selectedEvent.trainees">
+              <v-list-item v-if="selectedEvent.trainees && selectedEvent.trainees > 0">
                 <v-list-item-icon>
                   <v-icon>mdi-account-group</v-icon>
                 </v-list-item-icon>
@@ -169,12 +144,17 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import moment from 'moment';
+
 import CoreSection from '@/components/core/CoreSection.vue';
+import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue'
+import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue'
 
 export default {
   name: 'ScheduleViewer',
   components: {
     CoreSection,
+    ViewerToolbarMd,
+    ViewerToolbarSm,
   },
   data: () => ({
     token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
@@ -235,6 +215,7 @@ export default {
 
       const startDay = start.day;
       const endDay = end.day;
+      const weekNumber = moment(start).week()
 
       const startMonth = this.monthFormatter(start);
       const endMonth = this.monthFormatter(end);
@@ -247,6 +228,9 @@ export default {
           return `${startMonth} ${startYear}`
         case 'week':
         case '6days':
+          if (this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs') {
+            return `${startMonth} ${startYear} - semaine ${weekNumber}`;
+          }
           return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
         case 'day':
           return `${startDay} ${startMonth} ${startYear}`;
@@ -260,6 +244,9 @@ export default {
     },
   },
   methods: {
+    setType(type) {
+      this.customType = type;
+    },
     intervalFormat(interval) {
       return interval.time;
     },
@@ -323,7 +310,7 @@ export default {
   mounted() {
     this.axios.get(`${this.urls.api}/calendar/${this.token.user_id}.json`)
       .then((response) => {
-        console.log(response.data);
+        console.log(this);
         this.userEvents = response.data.events.map((event) => {
           return {
             ...event,
