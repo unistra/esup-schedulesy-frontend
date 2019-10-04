@@ -20,10 +20,10 @@
                          @next="next"
                          @change-type="setType">
       </viewer-toolbar-sm>
+      <v-sheet height="600">
       <v-calendar locale="fr-FR"
                   ref="calendar"
                   v-model="focus"
-                  start="2019-09-23"
                   color="primary"
                   :type="type"
                   :weekdays="weekdays"
@@ -39,6 +39,7 @@
                   :interval-format="intervalFormat"
                   @click:event="showEvent"
                   @click:date="viewDay"
+                  @click:more="viewDay"
                   @change="updateRange">
       </v-calendar>
       <v-menu
@@ -136,6 +137,7 @@
           </v-card-text>
         </v-card>
       </v-menu>
+      </v-sheet>
     </core-section>
   </v-flex>
 </template>

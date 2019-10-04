@@ -4,7 +4,7 @@
       <v-icon small>mdi-chevron-left</v-icon>
     </v-btn>
     <div class="flex-grow-1"></div>
-      <v-toolbar-title class="body-2">{{ title }}</v-toolbar-title>
+    <v-toolbar-title class="body-2">{{ title }}</v-toolbar-title>
     <div class="flex-grow-1"></div>
     <v-btn fab text x-small @click="$emit('next')">
       <v-icon small>mdi-chevron-right</v-icon>
@@ -16,7 +16,7 @@
       </v-btn>
     <div class="flex-grow-1"></div>
       <v-btn outlined tile x-small :color="type === 'week' ? 'primary' : undefined" @click="$emit('change-type', 'week')">
-        semaine
+        Semaine
       </v-btn>
     <div class="flex-grow-1"></div>
       <v-btn outlined tile x-small :color="type === '6days' ? 'primary' : undefined" @click="$emit('change-type', '6days')">
