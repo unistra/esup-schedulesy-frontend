@@ -9,7 +9,15 @@
         <v-icon dark>mdi-close-outline</v-icon>
       </v-btn>
     </v-list-item-action>
-    <v-list-item-content class="py-0">{{ resource }}</v-list-item-content>
+    <v-list-item-content class="py-0">
+      <p class="ma-0">
+        <span v-for="parent in resource.genealogy"
+              :key="parent.id">
+          {{ getParentName(parent) }} ->
+        </span>
+        {{ resource.name }}
+      </p>
+    </v-list-item-content>
   </v-list-item>
 </template>
 
@@ -25,7 +33,7 @@ export default {
   asyncComputed: {
     resource: {
       get() {
-        return this.axios.get(this.resourceId).then(response => response.data.name);
+        return this.axios.get(this.resourceId).then(response => response.data);
       },
       default: () => 'Loading',
     },
@@ -33,6 +41,15 @@ export default {
   methods: {
     removeResource() {
       this.$emit('remove-resource');
+    },
+    getParentName(parent) {
+      const rootMapping = {
+        trainee: 'Etudiants',
+        instructor: 'Enseignants',
+        classroom: 'Salles',
+        category5: 'Matières',
+      };
+      return rootMapping[parent.name] || parent.name;
     },
   },
 };

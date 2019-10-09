@@ -7,7 +7,7 @@
                 :items="root">
       <template v-slot:prepend="{ item }">
         <v-checkbox v-if="item.selectable"
-                    color="#3e8f93"
+                    color="primary"
                     :input-value="userResources"
                     @change="updateCustomization"
                     :value="item.id"

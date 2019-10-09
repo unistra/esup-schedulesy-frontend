@@ -13,37 +13,9 @@
         <strong>FERMER</strong>
       </v-btn>
     </v-snackbar>
-    <v-expansion-panels>
-      <v-expansion-panel>
-        <v-expansion-panel-header class="px-4">
-          <h2 class="headline">
-            <v-icon>mdi-book-open-variant</v-icon>
-            Mode d'emploi
-          </h2>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          ADE est l’application de gestion des emplois du temps de l'Université : elle permet de gérer
-          les plannings des salles ainsi que les emplois du temps des enseignants et des étudiants.
-          <br />
-          <br />
-          L'outil de personnalisation de l’emploi du temps vous permet de le paramétrer en choisissant:
-          <ul>
-            <li>
-              les ressources à afficher (groupe d'étudiants et/ou matières, enseignants, salles)
-            </li>
-            <li>
-              une configuration d’affichage
-            </li>
-          </ul>
-          <br />
-          NB: Les choix que vous effectuerez seront sauvegardés automatiquement.
-          <br />
-          <br />
-          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans ADE (lien dans le lanceur d’applications ou via le moteur de recherche).
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-    <conf-section :title="{ icon: 'mdi-calendar-check-outline', text: 'Ressources sélectionnées' }">
+    <core-expansion-panels :panels="[htmlContent.howTo]">
+    </core-expansion-panels>
+    <core-section :title="{ icon: 'mdi-calendar-check-outline', content: 'Ressources sélectionnées', level: 2 }">
       <p v-if="userResources.length === 0">
         Vous n'avez actuellement aucune ressource sélectionnée.
         <br />
@@ -65,8 +37,6 @@
         représentant une croix.
       </p>
       <p>
-      </p>
-      <p>
         <strong class="red--text">
           Attention : si vous oubliez une ressource, votre emploi du temps sera incomplet !
         </strong>
@@ -74,18 +44,18 @@
       <template #actions>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn class="info"
-                 @click="showResourcesSelector">
-            <strong>{{ show ? 'Fermer' : 'Modifier' }} la sélection</strong>
+          <v-btn tile color="primary"
+                      @click="showResourcesSelector">
+            {{ show ? 'Fermer' : 'Modifier' }} la sélection
             <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
           </v-btn>
         </v-card-actions>
       </template>
-    </conf-section>
+    </core-section>
     <v-expand-transition>
-      <conf-section v-if="show"
+      <core-section v-if="show"
                     id="resources-selection"
-                    :title="{ icon: 'mdi-guitar-pick-outline', text: 'Sélection des ressources' }">
+                    :title="{ icon: 'mdi-guitar-pick-outline', content: 'Sélection des ressources', level: 2 }">
         <p>
           Sélectionnez des ressources en cliquant sur un type de ressources (Etudiants, enseignants,
           salles, matières) puis en cochant les cases de votre choix.
@@ -102,20 +72,43 @@
           :userResources="userResources"
           @update-resources="updateResources">
         </resources-selector>
-      </conf-section>
+      </core-section>
     </v-expand-transition>
-    <conf-section :title="{ icon: 'mdi-shape', text: 'Configuration d\'affichage' }">
+    <core-section :title="{ icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
       <p>
         Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
         institut, ...) ou l'une de celles proposées par défaut en début de liste.
       </p>
       <display-selector :displayTypes="displayTypes"
-        :userDisplayType="userDisplayType"
-        @update-display-type="updateDisplayType">
+                        :userDisplayType="userDisplayType"
+                        @update-display-type="updateDisplayType">
       </display-selector>
-    </conf-section>
-    <conf-section  v-if="userCustomization.resources"
-                   :title="{ icon: 'mdi-calendar-export', text: 'Export d\'agenda' }">
+      <p v-if="false">
+        <v-subheader class="text--primary"><strong>Jours</strong></v-subheader>
+        <v-row v-if="false">
+          <v-col v-for="(day, index) in displayedDays"
+                 :key="index">
+            <v-checkbox hide-details
+                        class="ma-0 pa-0"
+                        :label="day.label"
+                        :value="day.value">
+            </v-checkbox>
+          </v-col>
+        </v-row>
+        <v-select multiple
+                  chips
+                  deletable-chips
+                  label="Jours à afficher"
+                  :items="displayedDays"
+                  item-text="label"
+                  item-value="value"
+                  :value="userWeekdays"
+                  @change="updateUserWeekdays">
+        </v-select>
+      </p>
+    </core-section>
+    <core-section  v-if="userCustomization.resources"
+                   :title="{ icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
       <p>
         L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
         client de gestion d’agendas (type Google Agenda, iCal ou Agenda Partage) sur votre
@@ -134,8 +127,8 @@
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn class="warning hidden-sm-and-down" @click.stop="showQRCode = true">
-            <strong>Afficher QRCode</strong>
+          <v-btn class="hidden-sm-and-down" tile color="primary" @click.stop="showQRCode = true">
+            Afficher QRCode
             <v-icon right>mdi-qrcode</v-icon>
           </v-btn>
           <v-dialog v-model="showQRCode" max-width="250">
@@ -145,17 +138,17 @@
               </v-card-text>
               <v-card-actions>
                 <div class="flex-grow-1"></div>
-                <v-btn color="#3e8f93"
-                       text
+                <v-btn color="primary"
+                       tile
                        @click.stop="showQRCode = false">
-                  <strong>FERMER</strong>
+                  FERMER
                 </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
         </v-card-actions>
       </template>
-    </conf-section>
+    </core-section>
   </v-flex>
 </template>
 
@@ -165,7 +158,9 @@ import VueQrcode from '@chenfengyuan/vue-qrcode';
 import jwt_decode from 'jwt-decode';
 import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
-import ConfSection from '@/components/configurator/ConfSection.vue';
+import CoreSection from '@/components/core/CoreSection.vue';
+import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
+import CoreTitle from '@/components/core/CoreTitle.vue';
 
 export default {
   name: 'ScheduleConfigurator',
@@ -174,7 +169,9 @@ export default {
     ResourcesSelector: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourcesSelector.vue'),
     DisplaySelector,
     VueQrcode,
-    ConfSection,
+    CoreSection,
+    CoreExpansionPanels,
+    CoreTitle,
   },
   mixins: [
     childrenEntryGenerator,
@@ -200,6 +197,44 @@ export default {
       message: '',
       timeout: 0,
     },
+    htmlContent: {
+      howTo: {
+        title: {
+          level: 2,
+          icon: 'mdi-book-open-variant',
+          content: 'Mode d\'emploi',
+        },
+        content: `
+          ADE est l’application de gestion des emplois du temps de l'Université : elle permet de gérer
+          les plannings des salles ainsi que les emplois du temps des enseignants et des étudiants.
+          <br />
+          <br />
+          L'outil de personnalisation de l’emploi du temps vous permet de le paramétrer en choisissant:
+          <ul>
+            <li>
+              les ressources à afficher (groupe d'étudiants et/ou matières, enseignants, salles),
+            </li>
+            <li>
+              une configuration d’affichage.
+            </li>
+          </ul>
+          <br />
+          NB : Les choix que vous effectuerez seront sauvegardés automatiquement.
+          <br />
+          <br />
+          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans ADE (lien dans le lanceur d’applications ou via le moteur de recherche).
+        `,
+      },
+    },
+    displayedDays: [
+      { label: 'Lundi', value: 1 },
+      { label: 'Mardi', value: 2 },
+      { label: 'Mercredi', value: 3 },
+      { label: 'Jeudi', value: 4 },
+      { label: 'Vendredi', value: 5 },
+      { label: 'Samedi', value: 6 },
+      { label: 'Dimanche', value: 0 },
+    ],
   }),
   computed: {
     userResources() {
@@ -215,6 +250,12 @@ export default {
         return this.userCustomization.display_configuration;
       }
       return '';
+    },
+    userWeekdays() {
+      if (this.userCustomization.configuration && this.userCustomization.configuration.weekdays) {
+        return this.userCustomization.configuration.weekdays;
+      }
+      return [];
     },
     icsURL() {
       if (typeof this.userCustomization.resources === 'string' && this.userCustomization.resources) {
@@ -294,6 +335,7 @@ export default {
       };
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
         .then((response) => {
+          console.log(response.data)
           this.userCustomization = response.data;
           this.snackbar = {
             isVisible: true,
@@ -330,12 +372,37 @@ export default {
           };
         });
     },
+    updateUserWeekdays(payload) {
+      const base = [1, 2, 3, 4, 5, 6, 0];
+      const newUserWeekdays = base.filter(day => payload.includes(day));
+      const newUserConf = { 
+        ...this.userCustomization.configuration,
+        ...{ weekdays: newUserWeekdays },
+      };
+      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { configuration: newUserConf })
+        .then((response) => {
+          this.userCustomization = response.data;
+          this.snackbar = {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          };
+        })
+        .catch(() => {
+          this.snackbar = {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          };
+        });
+    },
     showResourcesSelector() {
       this.show = !this.show;
       if (this.show) {
         const options = {
           duration: 275,
-          offset: 67,
           easing: 'linear',
         };
         this.$nextTick(() => {

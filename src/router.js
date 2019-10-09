@@ -14,6 +14,11 @@ export default new VueRouter({
       component: () => import(/* webpackChunkName: "configurator" */ '@/views/ScheduleConfigurator.vue'),
     },
     {
+      path: '/consult',
+      name: 'consult',
+      component: () => import(/* webpackChunkName: "viewer" */ '@/views/ScheduleViewer.vue'),
+    },
+    {
       path: '/auth/cas/logout',
       name: 'cas-auth-logout',
     },
