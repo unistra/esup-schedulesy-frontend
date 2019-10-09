@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve --mode dev",
     "build:dev": "vue-cli-service build --mode dev",
     "build:test": "vue-cli-service build --mode test",
+    "build:preprod": "vue-cli-service build --mode preprod",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
