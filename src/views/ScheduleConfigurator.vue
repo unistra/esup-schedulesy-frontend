@@ -335,7 +335,6 @@ export default {
       };
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
         .then((response) => {
-          console.log(response.data)
           this.userCustomization = response.data;
           this.snackbar = {
             isVisible: true,

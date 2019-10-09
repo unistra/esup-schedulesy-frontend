@@ -18,7 +18,8 @@
 </template>
 
 <script>
-import CoreTitle from '@/components/core/CoreTitle.vue'
+import CoreTitle from '@/components/core/CoreTitle.vue';
+
 export default {
   name: 'ConfSection',
   components: {
