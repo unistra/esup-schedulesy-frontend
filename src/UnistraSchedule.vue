@@ -32,7 +32,7 @@
       <div class="flex-grow-1"></div>
       <v-tooltip left>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" @click="$vuetify.theme.isDark = !$vuetify.theme.isDark">
+          <v-btn icon v-on="on" @click="$vuetify.theme.dark = !$vuetify.theme.dark">
             <v-icon>mdi-lightbulb</v-icon>
           </v-btn>
         </template>

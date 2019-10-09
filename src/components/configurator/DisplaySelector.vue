@@ -1,7 +1,8 @@
 <template>
   <v-flex>
     <v-select filled
-              color="#3e8f93"
+              color="primary"
+              label="Type d'affichage"
               :items="displayTypes"
               :value="userDisplayType"
               @change="updateCustomization"
