@@ -19,10 +19,10 @@
         Semaine
       </v-btn>
     <div class="flex-grow-1"></div>
-      <v-btn outlined tile x-small :color="type === '6days' ? 'primary' : undefined" @click="$emit('change-type', '6days')">
-        Lun - Sam
+      <v-btn v-if="showCustom" outlined tile x-small :color="type === 'custom' ? 'primary' : undefined" @click="$emit('change-type', 'custom')">
+        Custom
       </v-btn>
-    <div class="flex-grow-1"></div>
+    <div v-if="showCustom" class="flex-grow-1"></div>
       <v-btn outlined tile x-small :color="type === 'day' ? 'primary' : undefined" @click="$emit('change-type', 'day')">
         Jour
       </v-btn>
@@ -40,6 +40,10 @@ export default {
     },
     type: {
       type: String,
+      required: true,
+    },
+    showCustom: {
+      type: Boolean,
       required: true,
     },
   },

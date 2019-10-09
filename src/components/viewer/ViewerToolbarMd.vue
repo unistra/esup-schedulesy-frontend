@@ -12,7 +12,7 @@
       <v-icon small>mdi-chevron-right</v-icon>
     </v-btn>
     <div class="flex-grow-1"></div>
-    <v-menu bottom right>
+    <v-menu offset-y bottom right>
       <template v-slot:activator="{ on }">
         <v-btn
           tile
@@ -27,8 +27,8 @@
         <v-list-item @click="$emit('change-type', 'day')">
           <v-list-item-title>Jour</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$emit('change-type', '6days')">
-          <v-list-item-title>Lun - Sam</v-list-item-title>
+        <v-list-item v-if="showCustom" @click="$emit('change-type', 'custom')">
+          <v-list-item-title>Custom</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$emit('change-type', 'week')">
           <v-list-item-title>Semaine</v-list-item-title>
@@ -51,6 +51,10 @@ export default {
     },
     type: {
       type: String,
+      required: true,
+    },
+    showCustom: {
+      type: Boolean,
       required: true,
     },
   },

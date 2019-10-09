@@ -3,10 +3,11 @@
           sm11
           md10
           lg9>
-    <core-section :title="{ icon: 'mdi-calendar', text: 'Emploi du temps' }">
+    <core-section :title="{ icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
       <viewer-toolbar-md class="hidden-sm-and-down"
                          :title="title"
                          :type="customTypeToLabel[customType]"
+                         :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
                          @today="setToday"
                          @previous="prev"
                          @next="next"
@@ -15,16 +16,17 @@
       <viewer-toolbar-sm class="hidden-md-and-up"
                          :title="title"
                          :type="customType"
+                         :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
                          @today="setToday"
                          @previous="prev"
                          @next="next"
                          @change-type="setType">
       </viewer-toolbar-sm>
       <v-sheet height="600">
-        <v-calendar locale="fr-FR"
-                    ref="calendar"
-                    v-model="focus"
+        <v-calendar v-model="focus"
+                    locale="fr-FR"
                     color="primary"
+                    ref="calendar"
                     :type="type"
                     :weekdays="weekdays"
                     :now="today"
@@ -32,11 +34,11 @@
                     first-interval="14"
                     interval-minutes="30"
                     interval-count="26"
+                    :interval-format="intervalFormat"
                     :events="events"
                     :event-name="eventName"
                     :event-color="getEventColor"
                     event-text-color="secondary"
-                    :interval-format="intervalFormat"
                     @click:event="showEvent"
                     @click:date="viewDay"
                     @click:more="viewDay"
@@ -148,8 +150,8 @@ import jwt_decode from 'jwt-decode';
 import moment from 'moment';
 
 import CoreSection from '@/components/core/CoreSection.vue';
-import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue'
-import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue'
+import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
+import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 
 export default {
   name: 'ScheduleViewer',
@@ -168,18 +170,19 @@ export default {
       ics: String,
     },
     today: moment().format().substring(0, 10),
-    focus: moment().format().substring(0, 10),
+    focus: null,
     customType: 'week',
     intervalHeight: 20,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     start: null,
+    calStart: '2019-10-10',
     end: null,
     customTypeToLabel: {
       month: 'Mois',
       week: 'Semaine',
-      '6days': 'Lun - Sam',
+      custom: 'Custom',
       day: 'Jour',
     },
     userEvents: null,
@@ -187,25 +190,29 @@ export default {
     eventsClassrooms: null,
     eventsTrainees: null,
     eventsCategory5: null,
+    userConf: {},
   }),
   computed: {
     type() {
-      return this.customType === '6days' ? 'week' : this.customType;
+      return this.customType === 'custom' ? 'week' : this.customType;
     },
     weekdays() {
-      return this.customType === '6days' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+      if (this.customType === 'custom' && this.userConf.weekdays) {
+        return this.userConf.weekdays;
+      }
+      return [1, 2, 3, 4, 5, 6, 0];
     },
     events() {
       if (this.userEvents) {
-        return this.userEvents.map((event) => {
-          return {
+        return this.userEvents.map(event => (
+          {
             ...event,
             ...{
               start: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.startHour}`,
               end: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.endHour}`,
             },
-          };
-        });
+          }
+        ));
       }
       return [];
     },
@@ -217,7 +224,7 @@ export default {
 
       const startDay = start.day;
       const endDay = end.day;
-      const weekNumber = moment(start).week()
+      const weekNumber = moment(start).week();
 
       const startMonth = this.monthFormatter(start);
       const endMonth = this.monthFormatter(end);
@@ -225,11 +232,10 @@ export default {
       const startYear = start.year;
       const endYear = end.year;
 
-      switch(this.type) {
+      switch (this.type) {
         case 'month':
-          return `${startMonth} ${startYear}`
+          return `${startMonth} ${startYear}`;
         case 'week':
-        case '6days':
           if (this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs') {
             return `${startMonth} ${startYear} - semaine ${weekNumber}`;
           }
@@ -248,6 +254,7 @@ export default {
   methods: {
     setType(type) {
       this.customType = type;
+      this.setFocus();
     },
     intervalFormat(interval) {
       return interval.time;
@@ -287,12 +294,26 @@ export default {
       }
       return name;
     },
+    setFocus() {
+      if (this.userConf.weekdays) {
+        const closestNextDayWithEvents = this.events
+          .filter(event => moment(event.start, 'YYYY-MM-DD') > moment(this.today, 'YYYY-MM-DD'))
+          .filter(event => moment(event.start, 'YYYY-MM-DD').day() >= this.userConf.weekdays[0])
+          .sort((a, b) => moment(a.start, 'YYYY-MM-DD') - moment(b.start, 'YYYY-MM-DD'))[0]
+          .start.substring(0, 10);
+        this.focus = this.customType
+          ? closestNextDayWithEvents
+          : this.today;
+      } else {
+        this.focus = this.today;
+      }
+    },
     viewDay({ date }) {
       this.focus = date;
       this.customType = 'day';
     },
     setToday() {
-      this.focus = this.today;
+      this.setFocus();
     },
     prev() {
       this.$refs.calendar.prev();
@@ -304,28 +325,40 @@ export default {
       this.start = start;
       this.end = end;
     },
-    updateType(value) {
-      this.type = value === '6days' ? 'week' : value;
-      this.weekdays = value === '6days' ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
+    getInitData() {
+      const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
+      const getUSerEvents = () => this.axios.get(`${this.urls.api}/calendar/${this.token.user_id}.json`);
+
+      axios
+        .all([
+          getUSerEvents(),
+          getUserCustomization(),
+        ])
+        .then(axios.spread((userEvents, userCustomization) => {
+          this.userEvents = userEvents.data.events.map(event => (
+            {
+              ...event,
+              ...{
+                trainees: event.trainees ? event.trainees.reverse() : [],
+              },
+            }
+          ));
+          this.eventsInstructors = userEvents.data.instructors ? userEvents.data.instructors : null;
+          this.eventsClassrooms = userEvents.data.classrooms ? userEvents.data.classrooms : null;
+          this.eventsTrainees = userEvents.data.trainees ? userEvents.data.trainees : null;
+          this.eventsCategory5 = userEvents.data.category5 ? userEvents.data.category5 : null;
+          this.userConf = userCustomization.data.configuration
+            ? userCustomization.data.configuration
+            : {};
+          this.customType = this.userConf.weekdays && this.userConf.weekdays.length > 0
+            ? 'custom'
+            : 'week';
+          this.setFocus();
+        }));
     },
   },
   mounted() {
-    this.axios.get(`${this.urls.api}/calendar/${this.token.user_id}.json`)
-      .then((response) => {
-        console.log(this);
-        this.userEvents = response.data.events.map((event) => {
-          return {
-            ...event,
-            ...{
-              trainees: event.trainees ? event.trainees.reverse() : [],
-            },
-          };
-        });
-        this.eventsInstructors = response.data.instructors ? response.data.instructors : null;
-        this.eventsClassrooms = response.data.classrooms ? response.data.classrooms : null;
-        this.eventsTrainees = response.data.trainees ? response.data.trainees : null;
-        this.eventsCategory5 = response.data.category5 ? response.data.category5 : null;
-      });
+    this.getInitData();
     this.$refs.calendar.checkChange();
   },
 };
