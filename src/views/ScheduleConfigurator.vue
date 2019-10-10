@@ -79,11 +79,12 @@
         Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
         institut, ...) ou l'une de celles proposées par défaut en début de liste.
       </p>
-      <display-selector :displayTypes="displayTypes"
+      <display-selector v-if="false"
+                        :displayTypes="displayTypes"
                         :userDisplayType="userDisplayType"
                         @update-display-type="updateDisplayType">
       </display-selector>
-      <p v-if="false">
+      <p v-if="true">
         <v-subheader class="text--primary"><strong>Jours</strong></v-subheader>
         <v-row v-if="false">
           <v-col v-for="(day, index) in displayedDays"
@@ -107,8 +108,8 @@
         </v-select>
       </p>
     </core-section>
-    <core-section  v-if="userCustomization.resources"
-                   :title="{ icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
+    <core-section v-if="userCustomization.resources"
+                  :title="{ icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
       <p>
         L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
         client de gestion d’agendas (type Google Agenda, iCal ou Agenda Partage) sur votre
@@ -160,7 +161,6 @@ import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
-import CoreTitle from '@/components/core/CoreTitle.vue';
 
 export default {
   name: 'ScheduleConfigurator',
@@ -171,7 +171,6 @@ export default {
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,
-    CoreTitle,
   },
   mixins: [
     childrenEntryGenerator,
@@ -374,7 +373,7 @@ export default {
     updateUserWeekdays(payload) {
       const base = [1, 2, 3, 4, 5, 6, 0];
       const newUserWeekdays = base.filter(day => payload.includes(day));
-      const newUserConf = { 
+      const newUserConf = {
         ...this.userCustomization.configuration,
         ...{ weekdays: newUserWeekdays },
       };
