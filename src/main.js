@@ -6,6 +6,7 @@ import Cas from 'vue-cas-authentication';
 import UnistraSchedule from './UnistraSchedule.vue';
 import vuetify from './plugins/vuetify';
 import router from '@/router';
+import store from '@/store/store';
 import axios from '@/axios';
 
 Vue.config.productionTip = false;
@@ -44,6 +45,7 @@ process.env.VUE_APP_DEPLOYMENT_ENV === 'dev' || process.env.VUE_APP_DEPLOYMENT_E
 new Vue({
   vuetify,
   router,
+  store,
   axios,
   render: h => h(UnistraSchedule),
 }).$mount('#unistra-schedule-container');
