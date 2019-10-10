@@ -335,7 +335,7 @@ export default {
           getUserCustomization(),
         ])
         .then(axios.spread((userEvents, userCustomization) => {
-          this.userEvents = userEvents.data.events.map(event => (
+          this.userEvents = userEvents.data.events.events.map(event => (
             {
               ...event,
               ...{
@@ -343,10 +343,10 @@ export default {
               },
             }
           ));
-          this.eventsInstructors = userEvents.data.instructors ? userEvents.data.instructors : null;
-          this.eventsClassrooms = userEvents.data.classrooms ? userEvents.data.classrooms : null;
-          this.eventsTrainees = userEvents.data.trainees ? userEvents.data.trainees : null;
-          this.eventsCategory5 = userEvents.data.category5 ? userEvents.data.category5 : null;
+          this.eventsInstructors = userEvents.data.events.instructors ? userEvents.data.events.instructors : null;
+          this.eventsClassrooms = userEvents.data.events.classrooms ? userEvents.data.events.classrooms : null;
+          this.eventsTrainees = userEvents.data.events.trainees ? userEvents.data.events.trainees : null;
+          this.eventsCategory5 = userEvents.data.events.category5 ? userEvents.data.events.category5 : null;
           this.userConf = userCustomization.data.configuration
             ? userCustomization.data.configuration
             : {};
