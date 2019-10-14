@@ -123,14 +123,15 @@
     <core-section v-if="userCustomization.resources"
                   :title="{ class: 'headline', icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
       <p>
-        L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
-        client de gestion d’agendas (type Google Agenda, iCal ou Agenda Partage) sur votre
-        ordinateur et/ou sur un appareil mobile. Votre calendrier sera synchronisé avec ADE et
-        sera donc toujours à jour.
+        Votre emploi du temps universitaire est consultable via l'onglet "Consulter". Vous
+        pouvez également le consulter via un client de gestion d'agendas (type Google Agenda, 
+        iCal ou Agenda Partage) sur votre ordinateur et/ou sur un appareil mobile.
+        <br />
+        Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour.
       </p>
       <p>
-        Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier puis
-        copiez-collez l’URL suivante:
+        Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier (type
+        iCal/ics) puis copiez-collez l’URL suivante:
         <br />
         <a :href="icsURL">{{ icsURL }}</a>
       </p>
