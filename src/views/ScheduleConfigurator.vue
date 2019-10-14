@@ -13,9 +13,19 @@
         <strong>FERMER</strong>
       </v-btn>
     </v-snackbar>
+    <v-row>
+      <v-col>
+        <v-sheet color="primary"
+                 class="pa-2 white--text"
+                 elevation="2">
+          <core-title :title="pageTitle">
+          </core-title>
+        </v-sheet>
+      </v-col>
+    </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
     </core-expansion-panels>
-    <core-section :title="{ icon: 'mdi-calendar-check-outline', content: 'Ressources sélectionnées', level: 2 }">
+    <core-section :title="{ class: 'headline', icon: 'mdi-calendar-check-outline', content: 'Ressources sélectionnées', level: 2 }">
       <p v-if="userResources.length === 0">
         Vous n'avez actuellement aucune ressource sélectionnée.
         <br />
@@ -55,7 +65,7 @@
     <v-expand-transition>
       <core-section v-if="show"
                     id="resources-selection"
-                    :title="{ icon: 'mdi-guitar-pick-outline', content: 'Sélection des ressources', level: 2 }">
+                    :title="{ class: 'headline', icon: 'mdi-guitar-pick-outline', content: 'Sélection des ressources', level: 2 }">
         <p>
           Sélectionnez des ressources en cliquant sur un type de ressources (Etudiants, enseignants,
           salles, matières) puis en cochant les cases de votre choix.
@@ -74,7 +84,7 @@
         </resources-selector>
       </core-section>
     </v-expand-transition>
-    <core-section :title="{ icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
+    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
       <p>
         Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
         institut, ...) ou l'une de celles proposées par défaut en début de liste.
@@ -109,7 +119,7 @@
       </p>
     </core-section>
     <core-section v-if="userCustomization.resources"
-                  :title="{ icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
+                  :title="{ class: 'headline', icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
       <p>
         L'export d'agenda vous permet de consulter votre emploi du temps universitaire via un
         client de gestion d’agendas (type Google Agenda, iCal ou Agenda Partage) sur votre
@@ -161,6 +171,7 @@ import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
+import CoreTitle from '@/components/core/CoreTitle.vue';
 
 export default {
   name: 'ScheduleConfigurator',
@@ -171,11 +182,17 @@ export default {
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,
+    CoreTitle,
   },
   mixins: [
     childrenEntryGenerator,
   ],
   data: () => ({
+    pageTitle: {
+      level: 1,
+      class: 'display-1',
+      content: 'Personnaliser votre emploi du temps',
+    },
     token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
     userCustomization: {},
     resourcesRoot: [],
@@ -201,6 +218,7 @@ export default {
         title: {
           level: 2,
           icon: 'mdi-book-open-variant',
+          class: 'headline',
           content: 'Mode d\'emploi',
         },
         content: `

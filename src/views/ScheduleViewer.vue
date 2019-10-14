@@ -3,7 +3,17 @@
           sm11
           md10
           lg9>
-    <core-section :title="{ icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
+    <v-row>
+      <v-col>
+        <v-sheet color="primary"
+                 class="pa-2 white--text"
+                 elevation="2">
+          <core-title :title="pageTitle">
+          </core-title>
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <core-section :title="{ class: 'headline', icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
       <viewer-toolbar-md class="hidden-sm-and-down"
                          :title="title"
                          :type="customTypeToLabel[customType]"
@@ -152,6 +162,7 @@ import moment from 'moment';
 import CoreSection from '@/components/core/CoreSection.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
 import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
+import CoreTitle from '@/components/core/CoreTitle.vue';
 
 export default {
   name: 'ScheduleViewer',
@@ -159,8 +170,14 @@ export default {
     CoreSection,
     ViewerToolbarMd,
     ViewerToolbarSm,
+    CoreTitle,
   },
   data: () => ({
+    pageTitle: {
+      level: 1,
+      class: 'display-1',
+      content: 'Consulter votre emploi du temps',
+    },
     token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
     urls: {
       api: `${process.env.VUE_APP_BACKEND_API_URL}`,
