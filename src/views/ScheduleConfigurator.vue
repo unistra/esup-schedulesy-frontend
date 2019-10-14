@@ -84,10 +84,12 @@
         </resources-selector>
       </core-section>
     </v-expand-transition>
-    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
+    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Jours de la semaine à afficher', level: 2 }">
       <p>
-        Choisissez la configuration d'affichage de votre composante (UFR, faculté, école,
-        institut, ...) ou l'une de celles proposées par défaut en début de liste.
+        Par défaut, on affiche la totalité des jours de la semaine (lundi au dimanche).
+        <br />
+        Vous pouvez choisir de n'afficher que certains jours en les selectionnant dans la liste
+        déroulante ci-dessous.
       </p>
       <display-selector v-if="false"
                         :displayTypes="displayTypes"
@@ -95,7 +97,7 @@
                         @update-display-type="updateDisplayType">
       </display-selector>
       <p v-if="true">
-        <v-subheader class="text--primary"><strong>Jours</strong></v-subheader>
+        <v-subheader class="text--primary"><strong>Jours à afficher</strong></v-subheader>
         <v-row v-if="false">
           <v-col v-for="(day, index) in displayedDays"
                  :key="index">
@@ -232,14 +234,14 @@ export default {
               les ressources à afficher (groupe d'étudiants et/ou matières, enseignants, salles),
             </li>
             <li>
-              une configuration d’affichage.
+              les jours de la semaine à afficher (par défaut, la totalité des jours est affichée).
             </li>
           </ul>
           <br />
-          NB : Les choix que vous effectuerez seront sauvegardés automatiquement.
+          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans l'onglet "Consulter".
           <br />
-          <br />
-          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans ADE (lien dans le lanceur d’applications ou via le moteur de recherche).
+          NB : Les choix que vous effectuerez seront sauvegardés automatiquement et conservés en mémoire
+          pour les consultations ultérieures de votre emploi du temps.
         `,
       },
     },
