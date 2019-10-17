@@ -1,6 +1,7 @@
 variables:
   CI_BRANCH: $CI_COMMIT_REF_NAME
   SSH_KEY: $SSH_KEY
+  SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
 
 stages:
   - deploy
@@ -12,6 +13,7 @@ before_script:
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   - chmod 600 $SSH_KEY
   - ssh-add $SSH_KEY
+  - export SENTRY_ORG='sentry'
 
 deploy_test:
   stage: deploy
