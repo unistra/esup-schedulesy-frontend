@@ -6,7 +6,7 @@ stages:
   - deploy
 
 before_script:
-  - 'which ssh-agent || ( apk update && apk add openssh-client )'
+  - 'which ssh-agent || ( apk update && apk add openssh-client && apk add bash)'
   - mkdir -p ~/.ssh
   - eval $(ssh-agent -s)
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
