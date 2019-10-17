@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+deploy_test:
+  stage: deploy
+  tags:
+    - docker
+  image: node:latest
+  script:
+    - npm install -g @sentry/cli --unsafe-perm
+    - bash deploy.sh develop test
+  environment:
+    name: test
+    url: https://schedulesy-test.app.unistra.fr/
