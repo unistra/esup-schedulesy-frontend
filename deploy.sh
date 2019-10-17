@@ -37,8 +37,6 @@ echo "🏗 Installing npm dependencies"
 npm install
 echo "📦 Packaging stuff"
 npm run build:$ENVIRONMENT
-echo "🔒 Adding server key"
-ssh-keyscan -H <ip-address> >> ~/.ssh/known_hosts
 echo "🚀 Deploying files"
 echo $(pwd)
 for i in "${TARGET[@]}"; do
