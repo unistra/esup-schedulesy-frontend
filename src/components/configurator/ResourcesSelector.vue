@@ -2,9 +2,9 @@
   <v-flex>
     <v-treeview selected-color="#3e8f93"
                 dense
-                open-on-click
+zsh:1: command not found: q
                 :load-children="loadChildren"
-                :items="root">
+                :items="resources">
       <template v-slot:prepend="{ item }">
         <v-checkbox v-if="item.selectable"
                     color="primary"
@@ -21,40 +21,29 @@
 </template>
 
 <script>
-import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
-
 export default {
   name: 'ResourcesSelector',
-  mixins: [
-    childrenEntryGenerator,
-  ],
   props: {
-    root: {
-      type: Array,
-      required: true,
-    },
     userResources: {
       type: Array,
       required: true,
     },
   },
-  data: () => ({
-    selectedResources: [],
-  }),
+  computed: {
+    resources() {
+      return this.$store.getters['config/getResources'];
+    },
+  },
   methods: {
     loadChildren(node) {
-      const axiosCall = this.axios.get(node.id)
-        .then(response => response.data.children)
-        .then(rawChildren => rawChildren.map(child => this.childrenEntryGenerator(child)))
-        .then(children => node.children.push(...(this.sortChildren(children))))
-        .catch((error) => {
-          console.log(error);
-        });
-      return axiosCall;
+      return this.$store.dispatch('config/loadResourceChildren', node);
     },
     updateCustomization(resourcesList) {
       this.$emit('update-resources', resourcesList);
     },
+  },
+  mounted() {
+    this.$store.dispatch('config/loadResources');
   },
 };
 </script>

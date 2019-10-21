@@ -3,26 +3,6 @@
           sm11
           md10
           lg9>
-    <v-snackbar v-model="snackbar.isVisible"
-                top
-                :color="snackbar.color"
-                :timeout="snackbar.timeout">
-      {{ snackbar.message }}
-      <v-btn text
-             @click.stop="snackbar.isVisible = false">
-        <strong>FERMER</strong>
-      </v-btn>
-    </v-snackbar>
-    <v-row>
-      <v-col>
-        <v-sheet color="primary"
-                 class="pa-2 white--text"
-                 elevation="2">
-          <core-title :title="pageTitle">
-          </core-title>
-        </v-sheet>
-      </v-col>
-    </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
     </core-expansion-panels>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar-check-outline', content: 'Ressources sélectionnées', level: 2 }">
@@ -78,9 +58,8 @@
             Enseignants et personnels administratifs : sélectionnez les ressources de votre choix.
           </li>
         </ul>
-        <resources-selector :root="resourcesRoot"
-          :userResources="userResources"
-          @update-resources="updateResources">
+        <resources-selector :userResources="userResources"
+                            @update-resources="updateResources">
         </resources-selector>
       </core-section>
     </v-expand-transition>
@@ -197,8 +176,6 @@ export default {
       content: 'Personnaliser votre emploi du temps',
     },
     token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
-    userCustomization: {},
-    resourcesRoot: [],
     displayTypes: [],
     urls: {
       api: `${process.env.VUE_APP_BACKEND_API_URL}`,
@@ -207,7 +184,6 @@ export default {
       customization: `${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`,
       ics: String,
     },
-    icsParams: {},
     show: false,
     showQRCode: false,
     snackbar: {
@@ -257,19 +233,14 @@ export default {
     ],
   }),
   computed: {
+    userCustomization() {
+      return this.$store.getters['config/getUserCustomization'];
+    },
     userResources() {
-      if (typeof this.userCustomization.resources === 'string' && this.userCustomization.resources) {
-        const payload = this.userCustomization.resources.split(',')
-          .map(resource => `${this.urls.resources}/${resource}.json/`);
-        return payload;
-      }
-      return [];
+      return this.$store.getters['config/getUserResourcesUrls'];
     },
     userDisplayType() {
-      if (typeof this.userCustomization.display_configuration === 'string' && this.userCustomization.display_configuration) {
-        return this.userCustomization.display_configuration;
-      }
-      return '';
+      return this.$store.getters['config/getUserDisplayType'];
     },
     userWeekdays() {
       if (this.userCustomization.configuration && this.userCustomization.configuration.weekdays) {
@@ -278,99 +249,70 @@ export default {
       return [];
     },
     icsURL() {
-      if (typeof this.userCustomization.resources === 'string' && this.userCustomization.resources) {
-        const params = Object.entries(this.icsParams).map(param => `${param[0]}=${param[1]}`).join('&');
-        const resources = this.userCustomization.resources.split(',').map(resource => `resources=${resource}`).join('&');
-        return `${this.urls.ics}?${params}&${resources}`;
-      }
-      return '';
+      return this.$store.getters['config/getBaseIcsUrl'];
     },
   },
   created() {
+    this.$store.dispatch('config/loadIcsParams');
     if (this.token.user_id) {
       this.getInitData();
     }
   },
   methods: {
     getInitData() {
-      const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
-      const postUserCustomization = () => this.axios.post(`${this.urls.customization}.json`, {
-        username: this.token.user_id,
-        directory_id: this.token.directory_id,
-      });
-
-      const resourceTypes = [
-        'trainee',
-        'instructor',
-        'classroom',
-        'category5',
-      ];
-      const getResourcesRoot = resourceTypes.map(type => () => this.axios.get(`${this.urls.resources}/${type}.json`));
-
       const getDisplayTypes = () => this.axios.get(`${this.urls.api}/display_types.json`);
-      const getIcsParams = () => this.axios.get(`${this.urls.api}/ade_config.json`);
 
       axios
         .all([
-          getUserCustomization().catch(error => (error.response.status === 404 ? postUserCustomization() : error)),
-          ...(getResourcesRoot.map(request => request())),
           getDisplayTypes(),
-          getIcsParams(),
         ])
-        .then(axios.spread((userCustomization, traineeRoot, instructorRoot, classroomRoot, courseRoot, displayTypes, icsParams) => {
-          this.userCustomization = userCustomization.data;
-          this.resourcesRoot = this.forgeResourcesRoot([
-            traineeRoot.data,
-            instructorRoot.data,
-            classroomRoot.data,
-            courseRoot.data,
-          ]);
+        .then(axios.spread((displayTypes, icsParams) => {
           this.displayTypes = displayTypes.data;
-          this.urls.ics = icsParams.data.base_url;
-          this.icsParams = icsParams.data.params;
         }));
     },
-    forgeResourcesRoot(rawResourcesRoot) {
-      const rootNames = {
-        trainee: 'Etudiants',
-        instructor: 'Enseignants',
-        classroom: 'Salles',
-        category5: 'Matières',
-      };
-      const children = resource => resource.children.map(child => this.childrenEntryGenerator(child));
-      const resourcesRoot = rawResourcesRoot.map(resource => ({
-        ...resource,
-        ...{children: this.sortChildren(children(resource))},
-        ...{name: rootNames[resource.name]},
-      }));
-      return resourcesRoot;
-    },
     removeResource(index) {
-      this.userResources.splice(index, 1);
-      this.updateResources(this.userResources);
-    },
-    updateResources(resourcesList) {
-      const resources = {
-        resources: resourcesList.map(resource => resource.replace(`${this.urls.resources}/`, '').match(/\d+/g).map(Number)).join(),
-      };
-      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, resources)
-        .then((response) => {
-          this.userCustomization = response.data;
-          this.snackbar = {
+      const payload = {
+        changes: {
+          resources: this.$store.getters['config/getUserResourcesIds'].filter((resource, idx) => { if (idx !== index) return resource; }).join(),
+        },
+        snackbar: {
+          success: {
             isVisible: true,
             color: 'success',
             message: 'Votre sélection de ressources a bien été mise à jour.',
             timeout: 6000,
-          };
-        })
-        .catch(() => {
-          this.snackbar = {
+          },
+          error: {
             isVisible: true,
             color: 'error',
             message: 'Une erreur est survenue pendant la mise à jour de votre sélection de ressources',
             timeout: 6000,
-          };
-        });
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', payload);
+    },
+    updateResources(resources) {
+      const payload = {
+        changes: {
+          resources: resources.map(resource => resource.match(/(\d+)/g)[0]).join(),
+        },
+        snackbar: {
+          success: {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre sélection de ressources a bien été mise à jour.',
+            timeout: 6000,
+          },
+          error: {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre sélection de ressources',
+            timeout: 6000,
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', payload);
     },
     updateDisplayType(displayType) {
       this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType })
