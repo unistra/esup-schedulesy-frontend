@@ -2,7 +2,7 @@
   <v-flex>
     <v-treeview selected-color="#3e8f93"
                 dense
-zsh:1: command not found: q
+                open-on-click
                 :load-children="loadChildren"
                 :items="resources">
       <template v-slot:prepend="{ item }">
@@ -42,7 +42,7 @@ export default {
       this.$emit('update-resources', resourcesList);
     },
   },
-  mounted() {
+  beforeCreate() {
     this.$store.dispatch('config/loadResources');
   },
 };

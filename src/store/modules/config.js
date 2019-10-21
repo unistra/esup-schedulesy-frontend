@@ -16,7 +16,7 @@ export default {
     icsParams: {},
   },
   getters: {
-    getResources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type)),
+    getResources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type) || {}),
     getDisplayTypes: state => state.displayTypes,
     getUserCustomization: state => state.userCustomization,
     getUserDisplayType: (state) => {

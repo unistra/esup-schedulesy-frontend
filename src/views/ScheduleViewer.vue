@@ -315,7 +315,7 @@ export default {
       return name;
     },
     setFocus() {
-      if (this.userConf.weekdays) {
+      if (this.userConf.weekdays && this.userConf.weekdays.length) {
         const closestNextDayWithEvents = this.events
           .filter(event => moment(event.start, 'YYYY-MM-DD') > moment(this.today, 'YYYY-MM-DD'))
           .filter(event => moment(event.start, 'YYYY-MM-DD').day() >= this.userConf.weekdays[0])
