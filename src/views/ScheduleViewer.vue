@@ -177,6 +177,11 @@ export default {
     CoreTitle,
   },
   data: () => ({
+    pageTitle: {
+      level: 1,
+      class: 'display-1',
+      content: 'Consulter votre emploi du temps',
+    },
     loading: true,
     today: moment().format().substring(0, 10),
     focus: null,

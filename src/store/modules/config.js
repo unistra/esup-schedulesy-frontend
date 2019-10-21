@@ -81,7 +81,20 @@ export default {
             dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
           }
           resolve();
-        }).catch(error => reject(error));
+        }).catch((error) => {
+          if (error.response.status === '404') {
+            Vue.axios
+              .post(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`)
+              .then(response => response.data)
+              .then((userCustomization) => {
+                commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+                dispatch('ui/updateCalendarCustomType', 'week', { root: true });
+                resolve();
+              }).catch(postError => reject(postError));
+          } else {
+            reject(error);
+          }
+        });
     }),
     patchUserCustomization: ({ dispatch, commit, rootGetters }, payload) => new Promise((resolve, reject) => {
       Vue.axios

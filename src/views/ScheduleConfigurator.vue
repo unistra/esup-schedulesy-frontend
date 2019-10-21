@@ -3,6 +3,16 @@
           sm11
           md10
           lg9>
+    <v-row>
+      <v-col>
+        <v-sheet color="primary"
+                 class="pa-2 white--text"
+                 elevation="2">
+          <core-title :title="pageTitle">
+          </core-title>
+        </v-sheet>
+      </v-col>
+    </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
     </core-expansion-panels>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar-check-outline', content: 'Ressources sélectionnées', level: 2 }">
@@ -149,7 +159,6 @@
 import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import jwt_decode from 'jwt-decode';
-import childrenEntryGenerator from '@/mixins/childrenEntryGenerator';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
@@ -166,32 +175,14 @@ export default {
     CoreExpansionPanels,
     CoreTitle,
   },
-  mixins: [
-    childrenEntryGenerator,
-  ],
   data: () => ({
     pageTitle: {
       level: 1,
       class: 'display-1',
       content: 'Personnaliser votre emploi du temps',
     },
-    token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
-    displayTypes: [],
-    urls: {
-      api: `${process.env.VUE_APP_BACKEND_API_URL}`,
-      legacy: `${process.env.VUE_APP_BACKEND_LEGACY_URL}`,
-      resources: `${process.env.VUE_APP_BACKEND_API_URL}/resource`,
-      customization: `${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`,
-      ics: String,
-    },
     show: false,
     showQRCode: false,
-    snackbar: {
-      isVisible: false,
-      color: '',
-      message: '',
-      timeout: 0,
-    },
     htmlContent: {
       howTo: {
         title: {
@@ -254,22 +245,8 @@ export default {
   },
   created() {
     this.$store.dispatch('config/loadIcsParams');
-    if (this.token.user_id) {
-      this.getInitData();
-    }
   },
   methods: {
-    getInitData() {
-      const getDisplayTypes = () => this.axios.get(`${this.urls.api}/display_types.json`);
-
-      axios
-        .all([
-          getDisplayTypes(),
-        ])
-        .then(axios.spread((displayTypes, icsParams) => {
-          this.displayTypes = displayTypes.data;
-        }));
-    },
     removeResource(index) {
       const payload = {
         changes: {
@@ -336,28 +313,29 @@ export default {
     updateUserWeekdays(payload) {
       const base = [1, 2, 3, 4, 5, 6, 0];
       const newUserWeekdays = base.filter(day => payload.includes(day));
-      const newUserConf = {
-        ...this.userCustomization.configuration,
-        ...{ weekdays: newUserWeekdays },
-      };
-      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { configuration: newUserConf })
-        .then((response) => {
-          this.userCustomization = response.data;
-          this.snackbar = {
+      const newWeekdays = {
+        changes: {
+          configuration: {
+            ...this.userCustomization.configuration,
+            ...{ weekdays: newUserWeekdays },
+          },
+        },
+        snackbar: {
+          success: {
             isVisible: true,
             color: 'success',
             message: 'Votre configuration d\'affichage a bien été mise à jour.',
             timeout: 6000,
-          };
-        })
-        .catch(() => {
-          this.snackbar = {
+          },
+          error: {
             isVisible: true,
             color: 'error',
             message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
             timeout: 6000,
-          };
-        });
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', newWeekdays);
     },
     showResourcesSelector() {
       this.show = !this.show;
