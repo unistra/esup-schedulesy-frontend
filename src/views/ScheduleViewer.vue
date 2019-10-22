@@ -33,6 +33,10 @@
                          @change-type="setType">
       </viewer-toolbar-sm>
       <v-sheet height="600">
+        <v-overlay absolute
+                   :value="loading">
+          <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
         <v-calendar v-model="focus"
                     locale="fr-FR"
                     color="primary"
@@ -178,23 +182,14 @@ export default {
       class: 'display-1',
       content: 'Consulter votre emploi du temps',
     },
-    token: localStorage.getItem('JWT__access__token') ? jwt_decode(localStorage.getItem('JWT__access__token')) : {},
-    urls: {
-      api: `${process.env.VUE_APP_BACKEND_API_URL}`,
-      legacy: `${process.env.VUE_APP_BACKEND_LEGACY_URL}`,
-      resources: `${process.env.VUE_APP_BACKEND_API_URL}/resource`,
-      customization: `${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`,
-      ics: String,
-    },
+    loading: true,
     today: moment().format().substring(0, 10),
     focus: null,
-    customType: 'week',
     intervalHeight: 20,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     start: null,
-    calStart: '2019-10-10',
     end: null,
     customTypeToLabel: {
       month: 'Mois',
@@ -202,36 +197,44 @@ export default {
       custom: 'Custom',
       day: 'Jour',
     },
-    userEvents: null,
-    eventsInstructors: null,
-    eventsClassrooms: null,
-    eventsTrainees: null,
-    eventsCategory5: null,
-    userConf: {},
   }),
   computed: {
     type() {
       return this.customType === 'custom' ? 'week' : this.customType;
     },
+    customType: {
+      get() {
+        return this.$store.getters['ui/getCalendarCustomType'];
+      },
+      set(value) {
+        this.$store.dispatch('ui/updateCalendarCustomType', value);
+      },
+    },
+    userConf() {
+      return this.$store.getters['config/getUserCustomization'].configuration
+        ? this.$store.getters['config/getUserCustomization'].configuration
+        : {};
+    },
     weekdays() {
-      if (this.customType === 'custom' && this.userConf.weekdays) {
+      if (this.customType === 'custom' && this.userConf.weekdays && this.userConf.weekdays.length) {
         return this.userConf.weekdays;
       }
       return [1, 2, 3, 4, 5, 6, 0];
     },
     events() {
-      if (this.userEvents) {
-        return this.userEvents.map(event => (
-          {
-            ...event,
-            ...{
-              start: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.startHour}`,
-              end: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.endHour}`,
-            },
-          }
-        ));
-      }
-      return [];
+      return this.$store.getters['calendar/getEvents'];
+    },
+    eventsInstructors() {
+      return this.$store.getters['calendar/getEventsInstructors'];
+    },
+    eventsClassrooms() {
+      return this.$store.getters['calendar/getEventsClassrooms'];
+    },
+    eventsTrainees() {
+      return this.$store.getters['calendar/getEventsTrainees'];
+    },
+    eventsCategory5() {
+      return this.$store.getters['calendar/getEventsCategory5'];
     },
     title() {
       const { start, end } = this;
@@ -301,8 +304,8 @@ export default {
         instructors = '',
         classrooms = '',
       } = event.input;
-      const htmlInstructors = instructors.length > 0 ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
-      const htmlClassrooms = classrooms.length > 0 ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
+      const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
+      const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
       if (event.start.hasTime) {
         if (timedEvent) {
           return `<strong>${name}</strong>${htmlInstructors}${htmlClassrooms}`;
@@ -312,7 +315,7 @@ export default {
       return name;
     },
     setFocus() {
-      if (this.userConf.weekdays) {
+      if (this.userConf.weekdays && this.userConf.weekdays.length) {
         const closestNextDayWithEvents = this.events
           .filter(event => moment(event.start, 'YYYY-MM-DD') > moment(this.today, 'YYYY-MM-DD'))
           .filter(event => moment(event.start, 'YYYY-MM-DD').day() >= this.userConf.weekdays[0])
@@ -342,41 +345,15 @@ export default {
       this.start = start;
       this.end = end;
     },
-    getInitData() {
-      const getUserCustomization = () => this.axios.get(`${this.urls.customization}/${this.token.user_id}.json`);
-      const getUSerEvents = () => this.axios.get(`${this.urls.api}/calendar/${this.token.user_id}.json`);
-
-      axios
-        .all([
-          getUSerEvents(),
-          getUserCustomization(),
-        ])
-        .then(axios.spread((userEvents, userCustomization) => {
-          this.userEvents = userEvents.data.events.events.map(event => (
-            {
-              ...event,
-              ...{
-                trainees: event.trainees ? event.trainees.reverse() : [],
-              },
-            }
-          ));
-          this.eventsInstructors = userEvents.data.events.instructors ? userEvents.data.events.instructors : null;
-          this.eventsClassrooms = userEvents.data.events.classrooms ? userEvents.data.events.classrooms : null;
-          this.eventsTrainees = userEvents.data.events.trainees ? userEvents.data.events.trainees : null;
-          this.eventsCategory5 = userEvents.data.events.category5 ? userEvents.data.events.category5 : null;
-          this.userConf = userCustomization.data.configuration
-            ? userCustomization.data.configuration
-            : {};
-          this.customType = this.userConf.weekdays && this.userConf.weekdays.length > 0
-            ? 'custom'
-            : 'week';
-          this.setFocus();
-        }));
-    },
   },
   mounted() {
-    this.getInitData();
-    this.$refs.calendar.checkChange();
+    this.$store
+      .dispatch('calendar/loadUserEvents')
+      .then(() => {
+        this.setFocus();
+        this.$refs.calendar.checkChange();
+        this.loading = false;
+      });
   },
 };
 </script>

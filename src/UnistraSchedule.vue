@@ -1,44 +1,8 @@
 <template>
   <v-app id="unistra-schedule">
-    <v-navigation-drawer v-model="drawer"
-                         disable-resize-watcher
-                         app>
-      <v-list dense>
-        <v-list-item to="config">
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Personnaliser</v-list-item-content>
-        </v-list-item>
-        <v-list-item to="consult">
-          <v-list-item-action>
-            <v-icon>mdi-eye-check</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Consulter</v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-app-bar id="app-toolbar" app dense>
-      <v-app-bar-nav-icon class="hidden-md-and-up"
-                          @click.stop="drawer = !drawer">
-      </v-app-bar-nav-icon>
-      <v-btn color="primary" icon class="hidden-sm-and-down">
-        <v-icon>mdi-home-outline</v-icon>
-      </v-btn>
-      <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn text to="config"><strong>{{ buttons.customize }}</strong></v-btn>
-        <v-btn text to="consult"><strong>Consulter</strong></v-btn>
-      </v-toolbar-items>
-      <div class="flex-grow-1"></div>
-      <v-tooltip left>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" @click="$vuetify.theme.dark = !$vuetify.theme.dark">
-            <v-icon>mdi-lightbulb</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $vuetify.theme.isDark ? 'Light mode' : 'Dark mode' }}</span>
-      </v-tooltip>
-    </v-app-bar>
+    <core-snackbar></core-snackbar>
+    <core-nav-drawer></core-nav-drawer>
+    <core-app-bar @dark-mode="setDarkMode"></core-app-bar>
     <v-content>
       <v-img :src="require('@/assets/img/business.jpg')"
              :max-height="imageHeight">
@@ -56,29 +20,26 @@
       </v-container>
     </v-content>
     <v-divider></v-divider>
-    <v-footer>
-      <v-spacer></v-spacer>
-      <span>2019 - <strong> Université de Strasbourg</strong> - Tous droits réservés</span>
-      <v-spacer></v-spacer>
-    </v-footer>
+    <core-footer></core-footer>
   </v-app>
 </template>
 
 <script>
 import Signature from '@/components/Signature.vue';
+import CoreSnackbar from '@/components/core/CoreSnackbar.vue';
+import CoreNavDrawer from '@/components/core/CoreNavDrawer.vue';
+import CoreAppBar from '@/components/core/CoreAppBar.vue';
+import CoreFooter from '@/components/core/CoreFooter.vue';
 
 export default {
   name: 'UnitraSchedule',
   components: {
     Signature,
+    CoreSnackbar,
+    CoreNavDrawer,
+    CoreAppBar,
+    CoreFooter,
   },
-  data: () => ({
-    drawer: false,
-    buttons: {
-      customize: 'Personnaliser',
-      view: 'Consulter',
-    },
-  }),
   computed: {
     imageHeight() {
       switch (this.$vuetify.breakpoint.name) {
@@ -93,12 +54,45 @@ export default {
       }
     },
   },
+  created() {
+    this.$store
+      .dispatch('config/loadUserCustomization')
+      .then(() => {
+        const userCustomization = this.$store.getters['config/getUserCustomization'];
+        if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
+      });
+  },
+  methods: {
+    setDarkMode(value) {
+      const payload = {
+        changes: {
+          configuration: {
+            ...this.$store.getters['config/getUserCustomization'].configuration,
+            ...{ darkMode: value },
+          },
+        },
+        snackbar: {
+          success: {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          },
+          error: {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          },
+        },
+      };
+      this.$store
+        .dispatch('config/patchUserCustomization', payload)
+        .then(() => { this.$vuetify.theme.dark = value; });
+    },
+  },
 };
 </script>
 
-<style scoped lang="sass">
-#app-toolbar
-  .v-toolbar__items
-    .v-btn
-      text-transform: capitalize
+<style scoped>
 </style>

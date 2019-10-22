@@ -5,8 +5,8 @@ const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
-  ? '/site_media'
-  : '',
+    ? '/site_media'
+    : '',
   filenameHashing: false,
   lintOnSave: false,
   css: {
@@ -15,7 +15,7 @@ module.exports = {
     },
     loaderOptions: {
       sass: {
-        data: `@import "~@/assets/main.scss"`,
+        data: '@import "~@/assets/main.scss"',
       },
     },
   },
