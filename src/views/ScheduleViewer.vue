@@ -61,8 +61,7 @@
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          :activator="selectedElement"
-          offset-x>
+          :activator="selectedElement">
           <v-card
             color="grey lighten-4"
             min-width="250"
@@ -107,21 +106,29 @@
                 </v-list-item>
                 <v-sheet v-for="classroom in selectedEvent.classrooms"
                          :key="classroom">
-                  <v-list-item v-if="eventsClassrooms[classroom].genealogy.length > 0">
-                    <v-list-item-icon>
-                      <v-icon>mdi-home-map-marker</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <p class="ma-0">
-                        <span>
-                          {{ eventsClassrooms[classroom].genealogy[0] }}
-                        </span>
-                        <span v-if="eventsClassrooms[classroom].genealogy.length > 1">
-                          - {{ eventsClassrooms[classroom].genealogy[1] }}
-                        </span>
-                      </p>
-                    </v-list-item-content>
-                  </v-list-item>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-list-item v-if="eventsClassrooms[classroom].genealogy.length > 0"
+                                   link
+                                   v-on="on"
+                                   @click="showMap(classroom)">
+                        <v-list-item-icon>
+                          <v-icon>mdi-home-map-marker</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content class="info--text">
+                          <p class="ma-0">
+                            <span>
+                              {{ eventsClassrooms[classroom].genealogy[0] }}
+                            </span>
+                            <span v-if="eventsClassrooms[classroom].genealogy.length > 1">
+                              - {{ eventsClassrooms[classroom].genealogy[1] }}
+                            </span>
+                          </p>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </template>
+                    <span>Cliquez pour afficher l'emplacement du batiment sur une carte</span>
+                  </v-tooltip>
                   <v-list-item>
                     <v-list-item-icon>
                       <v-icon>mdi-map-marker</v-icon>
@@ -153,6 +160,18 @@
             </v-card-text>
           </v-card>
         </v-menu>
+        <v-dialog v-model="showEventMap" fullscreen hide-overlay transition="dialog-bottom-transition">
+          <v-card tile>
+            <v-toolbar dark color="primary">
+              <v-btn icon dark @click="showEventMap = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-toolbar-title>Géolocalisation du bâtiment</v-toolbar-title>
+            </v-toolbar>
+            <viewer-map :coordinates="selectedEventGeolocation">
+            </viewer-map>
+          </v-card>
+        </v-dialog>
       </v-sheet>
     </core-section>
   </v-col>
@@ -163,18 +182,19 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import moment from 'moment';
 
+import CoreTitle from '@/components/core/CoreTitle.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
 import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
-import CoreTitle from '@/components/core/CoreTitle.vue';
 
 export default {
   name: 'ScheduleViewer',
   components: {
+    CoreTitle,
     CoreSection,
     ViewerToolbarMd,
     ViewerToolbarSm,
-    CoreTitle,
+    ViewerMap: () => import('@/components/viewer/ViewerMap.vue'),
   },
   data: () => ({
     environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
@@ -188,8 +208,10 @@ export default {
     focus: null,
     intervalHeight: 20,
     selectedEvent: {},
+    selectedEventGeolocation: [],
     selectedElement: null,
     selectedOpen: false,
+    showEventMap: false,
     start: null,
     end: null,
     customTypeToLabel: {
@@ -345,6 +367,10 @@ export default {
     updateRange({ start, end }) {
       this.start = start;
       this.end = end;
+    },
+    showMap(classroom) {
+      this.selectedEventGeolocation = this.eventsClassrooms[classroom].geolocation;
+      this.showEventMap = !this.showEventMap;
     },
   },
   mounted() {
