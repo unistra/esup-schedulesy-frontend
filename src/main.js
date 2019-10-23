@@ -10,8 +10,9 @@ import store from '@/store/store';
 import axios from '@/axios';
 
 Vue.config.productionTip = false;
+const environment = process.env.VUE_APP_DEPLOYMENT_ENV;
 
-if (process.env.VUE_APP_DEPLOYMENT_ENV !== 'dev') {
+if (environment !== 'dev' || environment !== 'ernestDev') {
   Sentry.init({
     dsn: 'https://74d930ab848d4d40a99c2e8326d5d079@sentry-test.app.unistra.fr/23',
     release: VERSION,
@@ -38,9 +39,7 @@ Vue.use(Cas, {
   options,
 });
 
-process.env.VUE_APP_DEPLOYMENT_ENV === 'dev' || process.env.VUE_APP_DEPLOYMENT_ENV === 'test'
-  ? Vue.config.devtools = true
-  : Vue.config.devtools = false;
+Vue.config.devtools = environment === 'dev' || environment === 'test' || environment === 'ernestDev';
 
 new Vue({
   vuetify,

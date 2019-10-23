@@ -2,7 +2,10 @@ $body-font-family: 'Unistra A';
 $font-size-root: 18px;
 
 @import '~vuetify/src/styles/styles.sass';
-
+$material-light: map-merge($material-light, (
+  background: map-get($grey, 'lighten-3'),
+  )
+);
 @import '~vuetify/src/components/VCalendar/_variables.scss';
 $calendar-daily-weekday-font-size: 13px;
 $calendar-daily-day-font-size: 42px;

@@ -7,8 +7,8 @@ export default {
   },
   getters: {
     isLogged: state => state.accessToken.length > 0,
-    getLogin: state => jwt_decode(state.accessToken).user_id,
-    getDirectoryId: state => jwt_decode(state.accessToken).directory_id,
+    getLogin: state => state.accessToken ? jwt_decode(state.accessToken).user_id : '',
+    getDirectoryId: state => state.accessToken ? jwt_decode(state.accessToken).directory_id : '',
   },
   actions: {
   },

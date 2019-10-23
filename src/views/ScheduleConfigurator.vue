@@ -1,9 +1,9 @@
 <template>
-  <v-flex xs12
-          sm11
-          md10
-          lg9>
-    <v-row>
+  <v-col xs="12"
+         :sm="environment === 'ernest' ? 12 : 11"
+         :md="environment === 'ernest' ? 12 : 10"
+         :lg="environment === 'ernest' ? 12 : 9">
+    <v-row v-if="environment !== 'ernest'">
       <v-col>
         <v-sheet color="primary"
                  class="pa-2 white--text"
@@ -152,7 +152,7 @@
         </v-card-actions>
       </template>
     </core-section>
-  </v-flex>
+  </v-col>
 </template>
 
 <script>
@@ -176,6 +176,7 @@ export default {
     CoreTitle,
   },
   data: () => ({
+    environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
     pageTitle: {
       level: 1,
       class: 'display-1',
@@ -244,7 +245,7 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('config/loadIcsParams');
+    if (this.$tore.getters['auth/isLogged']) this.$store.dispatch('config/loadIcsParams');
   },
   methods: {
     removeResource(index) {

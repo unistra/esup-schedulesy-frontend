@@ -1,26 +1,37 @@
 <template>
-  <v-app id="unistra-schedule">
-    <core-snackbar></core-snackbar>
-    <core-nav-drawer></core-nav-drawer>
-    <core-app-bar @dark-mode="setDarkMode"></core-app-bar>
-    <v-content>
-      <v-img :src="require('@/assets/img/business.jpg')"
-             :max-height="imageHeight">
-        <v-row class="lightbox fill-height" justify="center">
-          <v-col offset-sm="2" align-self="center" class="d-flex justify-center justify-sm-start">
-            <signature />
-          </v-col>
-        </v-row>
-      </v-img>
+  <v-app id="unistra-schedule"
+    class="primary">
+    <template v-if="environment !== 'ernest'">
+      <core-snackbar></core-snackbar>
+      <core-nav-drawer></core-nav-drawer>
+      <core-app-bar @dark-mode="setDarkMode"></core-app-bar>
+      <v-content>
+        <v-img :src="require('@/assets/img/business.jpg')"
+          :max-height="imageHeight">
+          <v-row class="lightbox fill-height" justify="center">
+            <v-col offset-sm="2" align-self="center" class="d-flex justify-center justify-sm-start">
+              <signature />
+            </v-col>
+          </v-row>
+        </v-img>
+        <v-container class="pa-2"
+                     fluid>
+          <v-layout justify-center>
+            <router-view></router-view>
+          </v-layout>
+        </v-container>
+      </v-content>
+      <v-divider></v-divider>
+      <core-footer></core-footer>
+    </template>
+    <template v-else>
       <v-container class="pa-2"
                    fluid>
-        <v-layout justify-center>
-          <router-view></router-view>
-        </v-layout>
+      <v-row justify="center">
+        <ernest-schedule></ernest-schedule>
+      </v-row>
       </v-container>
-    </v-content>
-    <v-divider></v-divider>
-    <core-footer></core-footer>
+    </template>
   </v-app>
 </template>
 
@@ -32,14 +43,18 @@ import CoreAppBar from '@/components/core/CoreAppBar.vue';
 import CoreFooter from '@/components/core/CoreFooter.vue';
 
 export default {
-  name: 'UnitraSchedule',
+  name: 'UnistraSchedule',
   components: {
     Signature,
     CoreSnackbar,
     CoreNavDrawer,
     CoreAppBar,
     CoreFooter,
+    ErnestSchedule: () => import('@/views/ErnestSchedule.vue'),
   },
+  data: () => ({
+    environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
+  }),
   computed: {
     imageHeight() {
       switch (this.$vuetify.breakpoint.name) {
@@ -55,12 +70,14 @@ export default {
     },
   },
   created() {
-    this.$store
-      .dispatch('config/loadUserCustomization')
-      .then(() => {
-        const userCustomization = this.$store.getters['config/getUserCustomization'];
-        if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
-      });
+    if (this.$store.getters['auth/isLogged']) {
+      this.$store
+        .dispatch('config/loadUserCustomization')
+        .then(() => {
+          const userCustomization = this.$store.getters['config/getUserCustomization'];
+          if (this.environment !== 'ernest' && userCustomization.configuration && 'darkMode' in userCustomization.configuration) this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
+        });
+    }
   },
   methods: {
     setDarkMode(value) {
