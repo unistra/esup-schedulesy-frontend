@@ -74,27 +74,37 @@ export default {
     loadUserCustomization: ({ dispatch, commit, rootGetters }) => new Promise((resolve, reject) => {
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`)
-        .then(response => response.data)
-        .then((userCustomization) => {
-          commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-          if(userCustomization.configuration && userCustomization.configuration.weekdays && userCustomization.configuration.weekdays.length) {
-            dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
-          }
-          resolve();
-        }).catch((error) => {
-          if (error.response.status === '404') {
-            Vue.axios
-              .post(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization`)
-              .then(response => response.data)
-              .then((userCustomization) => {
-                commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-                dispatch('ui/updateCalendarCustomType', 'week', { root: true });
-                resolve();
-              }).catch(postError => reject(postError));
-          } else {
-            reject(error);
-          }
-        });
+        .then(
+          (response) => {
+            const userCustomization = response.data;
+            commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+            if (userCustomization.configuration && userCustomization.configuration.weekdays && userCustomization.configuration.weekdays.length) {
+              dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
+            }
+            resolve();
+          },
+          (error) => {
+            if (error.response.status === 404) {
+              const user = {
+                username: rootGetters['auth/getLogin'],
+                directory_id: rootGetters['auth/getDirectoryId'],
+              };
+              Vue.axios
+                .post(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization.json`, user)
+                .then(
+                  (response) => {
+                    const userCustomization = response.data;
+                    commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+                    dispatch('ui/updateCalendarCustomType', 'week', { root: true });
+                    resolve();
+                  },
+                  postError => reject(postError),
+                );
+            } else {
+              reject(error);
+            }
+          },
+        );
     }),
     patchUserCustomization: ({ dispatch, commit, rootGetters }, payload) => new Promise((resolve, reject) => {
       Vue.axios
