@@ -245,7 +245,7 @@ export default {
     },
   },
   created() {
-    if (this.$tore.getters['auth/isLogged']) this.$store.dispatch('config/loadIcsParams');
+    if (this.$store.getters['auth/isLogged']) this.$store.dispatch('config/loadIcsParams');
   },
   methods: {
     removeResource(index) {
