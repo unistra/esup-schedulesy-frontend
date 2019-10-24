@@ -112,7 +112,7 @@
                                    link
                                    v-on="on"
                                    @click="showMap(classroom)">
-                        <v-list-item-icon>
+                        <v-list-item-icon class="my-4">
                           <v-icon>mdi-home-map-marker</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content class="info--text">
@@ -125,9 +125,14 @@
                             </span>
                           </p>
                         </v-list-item-content>
+                        <v-list-item-action>
+                          <v-btn fab x-small color="primary">
+                              <v-icon>mdi-map-search</v-icon>
+                          </v-btn>
+                        </v-list-item-action>
                       </v-list-item>
                     </template>
-                    <span>Cliquez pour afficher l'emplacement du batiment sur une carte</span>
+                    <span>Cliquez pour afficher l'emplacement du bâtiment sur une carte</span>
                   </v-tooltip>
                   <v-list-item>
                     <v-list-item-icon>
