@@ -52,24 +52,31 @@ export default {
       Object.keys(resourceTypes).forEach((type) => {
         Vue.axios
           .get(`${process.env.VUE_APP_BACKEND_API_URL}/resource/${type}.json`)
-          .then(response => response.data)
-          .then((rawResources) => {
-            commit('LOAD_RESOURCE', forgeResourcesRoot(rawResources, resourceTypes));
-            resolve();
-          }).catch(error => reject(error));
+          .then(
+            (response) => {
+              const rawResources = response.data;
+              commit('LOAD_RESOURCE', forgeResourcesRoot(rawResources, resourceTypes));
+              resolve();
+            },
+            error => reject(error),
+          );
       });
     }),
     loadResourceChildren: ({ commit }, payload) => new Promise((resolve, reject) => {
       Vue.axios
         .get(`${payload.id}`)
-        .then(response => response.data)
-        .then(rawNode => ({
-          ...rawNode,
-          ...{ children: rawNode.children.map(child => childrenEntryGenerator(child)) },
-        })).then((node) => {
-          commit('LOAD_CHILDREN', node);
-          resolve();
-        }).catch(error => reject(error));
+        .then(
+          (response) => {
+            const rawNode = response.data;
+            const node = {
+              ...rawNode,
+              ...{ children: rawNode.children.map(child => childrenEntryGenerator(child)) },
+            };
+            commit('LOAD_CHILDREN', node);
+            resolve();
+          },
+          error => reject(error),
+        );
     }),
     loadUserCustomization: ({ dispatch, commit, rootGetters }) => new Promise((resolve, reject) => {
       Vue.axios
@@ -109,23 +116,29 @@ export default {
     patchUserCustomization: ({ dispatch, commit, rootGetters }, payload) => new Promise((resolve, reject) => {
       Vue.axios
         .patch(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`, payload.changes)
-        .then((response) => {
-          dispatch('ui/updateSnackbar', payload.snackbar.success, { root: true });
-          commit('LOAD_USER_CUSTOMIZATION', response.data);
-          resolve();
-        }).catch((error) => {
-          dispatch('ui/updateSnackbar', payload.snackbar.error, { root: true });
-          reject(error);
-        });
+        .then(
+          (response) => {
+            dispatch('ui/updateSnackbar', payload.snackbar.success, { root: true });
+            commit('LOAD_USER_CUSTOMIZATION', response.data);
+            resolve();
+          },
+          (error) => {
+            dispatch('ui/updateSnackbar', payload.snackbar.error, { root: true });
+            reject(error);
+          },
+        );
     }),
     loadIcsParams: ({ commit }) => new Promise((resolve, reject) => {
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_API_URL}/ade_config.json`)
-        .then(response => response.data)
-        .then((icsParams) => {
-          commit('LOAD_ICS_PARAMS', icsParams);
-          resolve();
-        }).catch(error => reject(error));
+        .then(
+          (response) => {
+            const icsParams = response.data;
+            commit('LOAD_ICS_PARAMS', icsParams);
+            resolve();
+          },
+          error => reject(error),
+        );
     }),
   },
   mutations: {
