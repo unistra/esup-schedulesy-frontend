@@ -199,7 +199,7 @@ export default {
     CoreSection,
     ViewerToolbarMd,
     ViewerToolbarSm,
-    ViewerMap: () => import('@/components/viewer/ViewerMap.vue'),
+    ViewerMap: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerMap.vue'),
   },
   data: () => ({
     environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),

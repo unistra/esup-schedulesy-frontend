@@ -26,8 +26,8 @@
 export default {
   name: 'ErnestSchedule',
   components: {
-    ScheduleConfigurator: () => import('@/views/ScheduleConfigurator.vue'),
-    ScheduleViewer: () => import('@/views/ScheduleViewer.vue'),
+    ScheduleConfigurator: () => import(/* webpackChunkName: "configurator" */ '@/views/ScheduleConfigurator.vue'),
+    ScheduleViewer: () => import(/* webpackChunkName: "viewer" */ '@/views/ScheduleViewer.vue'),
   },
   data: () => ({
     activeTab: null,

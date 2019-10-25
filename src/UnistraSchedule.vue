@@ -50,7 +50,7 @@ export default {
     CoreNavDrawer,
     CoreAppBar,
     CoreFooter,
-    ErnestSchedule: () => import('@/views/ErnestSchedule.vue'),
+    ErnestSchedule: () => import(/* webpackChunkName: "ernest" */ '@/views/ErnestSchedule.vue'),
   },
   data: () => ({
     environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
