@@ -40,7 +40,7 @@ Vue.use(Cas, {
   options,
 });
 
-Vue.config.devtools = environment === 'dev' || environment === 'test' || environment === 'ernestDev';
+Vue.config.devtools = environment === 'dev' || environment === 'test' || environment === 'ernestDev' || environment === 'ernestTest';
 
 new Vue({
   vuetify,

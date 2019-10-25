@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --mode dev",
-    "serve:ernest": "vue-cli-service serve --mode ernestdev",
+    "serve:ernest": "vue-cli-service serve --mode dev_ernest",
     "build:dev": "vue-cli-service build --mode dev",
     "build:test": "vue-cli-service build --mode test",
+    "build:test_ernest": "vue-cli-service build --mode test_ernest",
     "build:preprod": "vue-cli-service build --mode preprod",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
