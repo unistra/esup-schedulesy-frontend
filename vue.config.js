@@ -4,9 +4,7 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/site_media'
-    : '',
+  publicPath: process.env.VUE_APP_PUBLIC_PATH,
   filenameHashing: false,
   lintOnSave: false,
   css: {
