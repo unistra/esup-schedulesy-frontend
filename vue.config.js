@@ -16,33 +16,22 @@ module.exports = {
       sass: {
         data: '@import "~@/assets/main.scss"',
       },
+      postcss: {
+        plugins: () => [
+          prefixer({
+            prefix: '.unistra-schedule',
+            transform: (prefix, selector, prefixedSelector) => {
+              if (selector === '.row') {
+                return `${prefix} .row`;
+              }
+              return selector;
+            },
+          }),
+        ],
+      },
     },
   },
   configureWebpack: {
-    module: {
-      test: /\.css$/,
-      use: [
-        require.resolve('style-loader'),
-        require.resolve('css-loader'),
-        {
-          loader: require.resolve('postcss-loader'),
-          options: {
-            modules: true,
-            plugins: () => [
-              prefixer({
-                prefix: '.my-module',
-                transform: (prefix, selector, prefixedSelector) => {
-                  if (selector === '.row') {
-                    return `${prefix} .row`;
-                  }
-                  return selector;
-                },
-              }),
-            ],
-          },
-        },
-      ],
-    },
     output: {
       filename: 'js/unistra-schedule.js',
     },
