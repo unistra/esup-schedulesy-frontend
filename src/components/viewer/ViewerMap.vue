@@ -1,6 +1,6 @@
 <template>
   <l-map  v-if="coordinates.length"
-          style="min-height: 80vh" 
+          style="min-height: calc(100vh - 64px)"
           :zoom="zoom"
           :center="coordinates">
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
