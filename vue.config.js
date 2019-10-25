@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const prefixer = require('postcss-prefix-selector');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
@@ -18,6 +19,30 @@ module.exports = {
     },
   },
   configureWebpack: {
+    module: {
+      test: /\.css$/,
+      use: [
+        require.resolve('style-loader'),
+        require.resolve('css-loader'),
+        {
+          loader: require.resolve('postcss-loader'),
+          options: {
+            modules: true,
+            plugins: () => [
+              prefixer({
+                prefix: '.my-module',
+                transform: (prefix, selector, prefixedSelector) => {
+                  if (selector === '.row') {
+                    return `${prefix} .row`;
+                  }
+                  return selector;
+                },
+              }),
+            ],
+          },
+        },
+      ],
+    },
     output: {
       filename: 'js/unistra-schedule.js',
     },
