@@ -13,7 +13,7 @@ import axios from '@/axios';
 Vue.config.productionTip = false;
 const environment = process.env.VUE_APP_DEPLOYMENT_ENV;
 
-if (environment !== 'dev' || environment !== 'ernestDev') {
+if (environment !== 'dev' && environment !== 'ernestDev' && environment !== 'ernestTest') {
   Sentry.init({
     dsn: 'https://74d930ab848d4d40a99c2e8326d5d079@sentry-test.app.unistra.fr/23',
     release: VERSION,
