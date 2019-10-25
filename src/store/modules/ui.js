@@ -18,11 +18,23 @@ export default {
       intervalMinutes: 30,
       intervalCount: 26,
     },
+    configurator: {
+      displayedDays: [
+        { label: 'Lundi', value: 1 },
+        { label: 'Mardi', value: 2 },
+        { label: 'Mercredi', value: 3 },
+        { label: 'Jeudi', value: 4 },
+        { label: 'Vendredi', value: 5 },
+        { label: 'Samedi', value: 6 },
+        { label: 'Dimanche', value: 0 },
+      ],
+    },
   },
   getters: {
     getIsNavDrawerOpen: state => state.isNavDrawerOpen,
     getSnackbar: state => state.snackbar,
     getCalendarCustomType: state => state.calendar.customType,
+    getDisplayedDays: state => state.configurator.displayedDays,
   },
   actions: {
     updateDrawerState: ({ commit }, payload) => commit('UPDATE_DRAWER_STATE', payload),

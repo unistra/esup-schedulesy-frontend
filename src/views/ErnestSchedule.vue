@@ -6,31 +6,20 @@
             background-color="white"
             color="#3e8f93">
       <v-tabs-slider color="#94cad1"></v-tabs-slider>
-      <v-tab><strong>Personnaliser</strong></v-tab>
-      <v-tab><strong>Consulter</strong></v-tab>
-      <v-tab-item style="background-color: #eeeeee">
-        <v-row>
-          <schedule-configurator v-if="activeTab === 0"/>
-        </v-row>
-      </v-tab-item>
-      <v-tab-item style="background-color: #eeeeee">
-        <v-row>
-          <schedule-viewer v-if="activeTab === 1" />
-        </v-row>
-      </v-tab-item>
+      <v-tab to="config"><strong>Personnaliser</strong></v-tab>
+      <v-tab to="consult"><strong>Consulter</strong></v-tab>
     </v-tabs>
+    <v-row>
+      <router-view></router-view>
+    </v-row>
   </v-col>
 </template>
 
 <script>
 export default {
   name: 'ErnestSchedule',
-  components: {
-    ScheduleConfigurator: () => import(/* webpackChunkName: "configurator" */ '@/views/ScheduleConfigurator.vue'),
-    ScheduleViewer: () => import(/* webpackChunkName: "viewer" */ '@/views/ScheduleViewer.vue'),
-  },
   data: () => ({
-    activeTab: null,
+    activeTab: '',
   }),
 };
 </script>

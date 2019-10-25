@@ -16,19 +16,6 @@ module.exports = {
       sass: {
         data: '@import "~@/assets/main.scss"',
       },
-      postcss: {
-        plugins: () => [
-          prefixer({
-            prefix: '.unistra-schedule',
-            transform: (prefix, selector, prefixedSelector) => {
-              if (selector === '.row') {
-                return `${prefix} .row`;
-              }
-              return selector;
-            },
-          }),
-        ],
-      },
     },
   },
   configureWebpack: {

@@ -12,7 +12,7 @@
       <v-icon small>mdi-chevron-right</v-icon>
     </v-btn>
     <div class="flex-grow-1"></div>
-    <v-menu offset-y bottom right>
+    <v-menu offset-y>
       <template v-slot:activator="{ on }">
         <v-btn
           tile
