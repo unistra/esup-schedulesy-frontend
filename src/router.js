@@ -10,7 +10,7 @@ const home = environment === 'ernest'
 
 export default new VueRouter({
   mode: 'history',
-  base: '',
+  base: process.env.VUE_APP_BASE_URL_ROUTER,
   routes: [
     {
       path: '',

@@ -1,6 +1,6 @@
 <template>
   <v-app id="unistra-schedule"
-    class=" unistra-schedule primary">
+         class=" unistra-schedule primary">
     <core-snackbar></core-snackbar>
     <router-view></router-view>
   </v-app>
