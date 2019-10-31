@@ -26,13 +26,13 @@ case "$ENVIRONMENT" in
 	;;
 esac
 
-cd "$TEMP"
-echo "🍻 Cloning repository"
-git clone "$REPOSITORY" "$WORKING_DIR"
-cd "$WORKING_DIR"
-echo
-echo "🔀 Switching to target build"
-git checkout $1
+#cd "$TEMP"
+#echo "🍻 Cloning repository"
+#git clone "$REPOSITORY" "$WORKING_DIR"
+#cd "$WORKING_DIR"
+#echo
+#echo "🔀 Switching to target build"
+#git checkout $1
 echo "🏗 Installing npm dependencies"
 npm install
 echo "📦 Packaging stuff"
