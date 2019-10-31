@@ -28,3 +28,5 @@ deploy_test:
   environment:
     name: test
     url: https://schedulesy-test.app.unistra.fr/
+  only:
+    - develop
