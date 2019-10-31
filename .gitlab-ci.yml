@@ -21,7 +21,7 @@ deploy_test:
   stage: deploy
   tags:
     - docker
-  image: node:12.12.0-alpine
+  image: node:12.13.0-alpine
   script:
     - npm install -g @sentry/cli --unsafe-perm
     - bash deploy.sh develop test
