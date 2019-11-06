@@ -5,12 +5,7 @@
          :lg="environment === 'ernest' ? 12 : 9">
     <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <v-sheet color="primary"
-                 class="pa-2 white--text"
-                 elevation="2">
-          <core-title :title="pageTitle">
-          </core-title>
-        </v-sheet>
+        <core-page-title :title="pageTitle"></core-page-title>
       </v-col>
     </v-row>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
@@ -39,7 +34,7 @@
         </v-overlay>
         <v-calendar v-model="focus"
                     locale="fr-FR"
-                    color="primary"
+                    color="primary darken-1"
                     ref="calendar"
                     :type="type"
                     :weekdays="weekdays"
@@ -52,7 +47,7 @@
                     :events="events"
                     :event-name="eventName"
                     :event-color="getEventColor"
-                    event-text-color="secondary"
+                    event-text-color="onsecondary"
                     @click:event="showEvent"
                     @click:date="viewDay"
                     @click:more="viewDay"
@@ -187,6 +182,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import moment from 'moment';
 
+import CorePageTitle from '@/components/core/CorePageTitle.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
@@ -195,6 +191,7 @@ import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 export default {
   name: 'ScheduleViewer',
   components: {
+    CorePageTitle,
     CoreTitle,
     CoreSection,
     ViewerToolbarMd,

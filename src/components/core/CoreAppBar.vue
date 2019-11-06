@@ -7,8 +7,10 @@
       <v-icon>mdi-home-outline</v-icon>
     </v-btn>
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn text to="config"><strong>Personnaliser</strong></v-btn>
-      <v-btn text to="consult"><strong>Consulter</strong></v-btn>
+      <v-tabs slider-size="4">
+        <v-tab to="config"><strong>Personnaliser</strong></v-tab>
+        <v-tab to="consult"><strong>Consulter</strong></v-tab>
+      </v-tabs>
     </v-toolbar-items>
     <div class="flex-grow-1"></div>
     <v-tooltip left>

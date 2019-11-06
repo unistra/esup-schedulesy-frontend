@@ -5,12 +5,7 @@
          :lg="environment === 'ernest' ? 12 : 9">
     <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <v-sheet color="primary"
-                 class="pa-2 white--text"
-                 elevation="2">
-          <core-title :title="pageTitle">
-          </core-title>
-        </v-sheet>
+        <core-page-title :title="pageTitle"></core-page-title>
       </v-col>
     </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
@@ -44,10 +39,14 @@
       <template #actions>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn tile color="primary"
-                      @click="showResourcesSelector">
-            {{ show ? 'Fermer' : 'Modifier' }} la sélection
-            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          <v-btn tile
+                 color="primary"
+                 class="on-primary"
+                 @click="showResourcesSelector">
+            <strong>
+              {{ show ? 'Fermer' : 'Modifier' }} la sélection
+              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </strong>
           </v-btn>
         </v-card-actions>
       </template>
@@ -132,8 +131,11 @@
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn class="hidden-sm-and-down" tile color="primary" @click.stop="showQRCode = true">
-            Afficher QRCode
+          <v-btn class="hidden-sm-and-down on-primary"
+                 tile
+                 color="primary"
+                 @click.stop="showQRCode = true">
+            <strong>Afficher QRCode</strong>
             <v-icon right>mdi-qrcode</v-icon>
           </v-btn>
           <v-dialog v-model="showQRCode" max-width="250">
@@ -144,9 +146,10 @@
               <v-card-actions>
                 <div class="flex-grow-1"></div>
                 <v-btn color="primary"
+                       class="on-primary"
                        tile
                        @click.stop="showQRCode = false">
-                  FERMER
+                  <strong>FERMER</strong>
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -160,8 +163,8 @@
 <script>
 import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
-import jwt_decode from 'jwt-decode';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
+import CorePageTitle from '@/components/core/CorePageTitle.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
@@ -175,6 +178,7 @@ export default {
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,
+    CorePageTitle,
     CoreTitle,
   },
   data: () => ({
@@ -351,5 +355,7 @@ export default {
 </script>
 
 <style scoped>
-
+.on-primary {
+  color: var(--v-onprimary-base) !important;
+}
 </style>
