@@ -5,7 +5,9 @@
          :lg="environment === 'ernest' ? 12 : 9">
     <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <core-page-title :title="pageTitle"></core-page-title>
+        <core-title class="primary--text"
+                    :title="pageTitle">
+        </core-title>
       </v-col>
     </v-row>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
@@ -182,7 +184,6 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import moment from 'moment';
 
-import CorePageTitle from '@/components/core/CorePageTitle.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
@@ -191,7 +192,6 @@ import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 export default {
   name: 'ScheduleViewer',
   components: {
-    CorePageTitle,
     CoreTitle,
     CoreSection,
     ViewerToolbarMd,

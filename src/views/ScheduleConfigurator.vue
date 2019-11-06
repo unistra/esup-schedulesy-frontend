@@ -5,7 +5,9 @@
          :lg="environment === 'ernest' ? 12 : 9">
     <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <core-page-title :title="pageTitle"></core-page-title>
+        <core-title class="primary--text"
+                    :title="pageTitle">
+        </core-title>
       </v-col>
     </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
@@ -164,7 +166,6 @@
 import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
-import CorePageTitle from '@/components/core/CorePageTitle.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
@@ -178,7 +179,6 @@ export default {
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,
-    CorePageTitle,
     CoreTitle,
   },
   data: () => ({

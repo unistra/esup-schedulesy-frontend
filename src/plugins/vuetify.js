@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import fr from 'vuetify/es5/locale/fr';
+import colors from 'vuetify/lib/util/colors'
 
 Vue.use(Vuetify);
 
@@ -29,7 +30,7 @@ export default new Vuetify({
           lighten1: '#c76f69',
           darken1: '#611518',
         },
-        onsecondary: '#000000',
+        onsecondary: colors.grey.darken4,
       },
       dark: {
         primary: {
@@ -37,13 +38,13 @@ export default new Vuetify({
           lighten1: '#c6fdff',
           darken1: '#6499a0',
         },
-        onprimary: '#000000',
+        onprimary: colors.grey.darken4,
         secondary: {
           base: '#d19b94',
           lighten1: '#ffccc4',
           darken1: '#9f6d66',
         },
-        onsecondary: '#000000',
+        onsecondary: colors.grey.darken4,
       },
     },
   },
