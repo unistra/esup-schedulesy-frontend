@@ -1,8 +1,8 @@
 const childrenEntryGenerator = (node) => {
   const childrenEntry = { children: [] };
-  const addSelectable = item => ({ ...item, ...{ selectable: true } });
+  // const addSelectable = item => ({ ...item, ...{ selectable: true } });
   const addChildren = item => (item.has_children ? { ...item, ...childrenEntry } : item);
-  return addChildren(addSelectable(node));
+  return addChildren(node);
 };
 
 const sortChildren = childrenList => childrenList.sort((a, b) => a.name > b.name);
