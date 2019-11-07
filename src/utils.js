@@ -17,4 +17,8 @@ const forgeResourcesRoot = (rawResource, rootMapping) => {
   return resourcesRoot;
 };
 
-export { forgeResourcesRoot, childrenEntryGenerator, sortChildren };
+export {
+  forgeResourcesRoot,
+  childrenEntryGenerator,
+  sortChildren,
+};

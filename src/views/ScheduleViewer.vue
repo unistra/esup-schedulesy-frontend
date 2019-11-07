@@ -55,112 +55,16 @@
                     @click:more="viewDay"
                     @change="updateRange">
         </v-calendar>
-        <v-menu
-          v-model="selectedOpen"
-          :close-on-content-click="false"
-          :activator="selectedElement">
-          <v-card
-            color="grey lighten-4"
-            min-width="250"
-            flat>
-            <v-toolbar
-              :color="selectedEvent.color"
-              light>
-              <v-toolbar-title >
-                <span>{{ selectedEvent.name }}</span>
-              </v-toolbar-title>
-              <div class="flex-grow-1"></div>
-              <v-btn icon @click="selectedOpen = false">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-toolbar>
-            <v-card-text class="pa-0">
-              <v-list dense>
-                <v-list-item v-if="selectedEvent.trainees && selectedEvent.trainees > 0">
-                  <v-list-item-icon>
-                    <v-icon>mdi-account-group</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <p class="ma-0">
-                      <span>
-                        {{ eventsTrainees[selectedEvent.trainees[0]].name }}
-                      </span>
-                      <span v-for="(trainee, index) in selectedEvent.trainees.slice(1)"
-                            :key="index">
-                        - {{ eventsTrainees[trainee].name }}
-                      </span>
-                    </p>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item v-for="instructor in selectedEvent.instructors"
-                             :key="instructor">
-                  <v-list-item-icon>
-                    <v-icon>mdi-account</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <span>{{ eventsInstructors[instructor].name }}</span>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-sheet v-for="classroom in selectedEvent.classrooms"
-                         :key="classroom">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-list-item v-if="eventsClassrooms[classroom].genealogy.length > 0"
-                                   link
-                                   v-on="on"
-                                   @click="showMap(classroom)">
-                        <v-list-item-icon class="my-4">
-                          <v-icon>mdi-home-map-marker</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-content class="info--text">
-                          <p class="ma-0">
-                            <span>
-                              {{ eventsClassrooms[classroom].genealogy[0] }}
-                            </span>
-                            <span v-if="eventsClassrooms[classroom].genealogy.length > 1">
-                              - {{ eventsClassrooms[classroom].genealogy[1] }}
-                            </span>
-                          </p>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-btn fab x-small color="primary">
-                              <v-icon>mdi-map-search</v-icon>
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </template>
-                    <span>Cliquez pour afficher l'emplacement du bâtiment sur une carte</span>
-                  </v-tooltip>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-map-marker</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <span>{{ eventsClassrooms[classroom].name }}</span>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-sheet>
-                <v-list-item v-if="selectedEvent.start">
-                  <v-list-item-icon>
-                    <v-icon>mdi-clock-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <p class="ma-0">
-                      <span>{{ selectedEvent.start.length > 10 ? selectedEvent.start.substring(11) : selectedEvent.start }}</span>
-                      <span v-if="selectedEvent.end"> - {{
-                        selectedEvent.start.length > 10 ?
-                        selectedEvent.end.length > 10 ?
-                        selectedEvent.end.substring(11)
-                        : selectedEvent.end
-                        : selectedEvent.end
-                        }}
-                      </span>
-                    </p>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
+        <v-menu v-model="selectedOpen"
+                :close-on-content-click="false"
+                :activator="selectedElement">
+          <viewer-event-detail :event="selectedEvent"
+                               :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
+                               :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
+                               :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
+                               @close="selectedOpen = false"
+                               @show-map="showMap">
+          </viewer-event-detail>
         </v-menu>
         <v-dialog v-model="showEventMap" fullscreen hide-overlay transition="dialog-bottom-transition">
           <v-card tile>
@@ -196,6 +100,7 @@ export default {
     CoreSection,
     ViewerToolbarMd,
     ViewerToolbarSm,
+    ViewerEventDetail: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerEventDetail.vue'),
     ViewerMap: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerMap.vue'),
   },
   data: () => ({
@@ -255,8 +160,18 @@ export default {
     eventsClassrooms() {
       return this.$store.getters['calendar/getEventsClassrooms'];
     },
+    selectedEventClassrooms() {
+      return this.selectedEvent.classrooms
+        ? objectFilter(this.eventsClassrooms, this.selectedEvent.classrooms)
+        : {};
+    },
     eventsTrainees() {
       return this.$store.getters['calendar/getEventsTrainees'];
+    },
+    selectedEventTrainees() {
+      return this.selectedEvent.trainees
+        ? objectFilter(this.eventsTrainees, this.selectedEvent.trainees)
+        : {};
     },
     eventsCategory5() {
       return this.$store.getters['calendar/getEventsCategory5'];
@@ -297,6 +212,7 @@ export default {
     },
   },
   methods: {
+    objectFilter: (toFilter, allowed=[]) => allowed.reduce((obj, key) => ({ ...obj, [key]: toFilter[key] }), {}),
     setType(type) {
       this.customType = type;
       this.setFocus();
