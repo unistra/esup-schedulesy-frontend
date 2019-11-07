@@ -70,7 +70,7 @@ export default {
             const rawNode = response.data;
             const node = {
               ...rawNode,
-              ...{ children: rawNode.children.map(child => childrenEntryGenerator(child)) },
+              ...{ children: rawNode.children.filter(child => child.has_children || child.selectable).map(child => childrenEntryGenerator(child)) },
             };
             commit('LOAD_CHILDREN', node);
             resolve();

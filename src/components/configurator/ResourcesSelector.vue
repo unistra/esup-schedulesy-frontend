@@ -15,6 +15,8 @@
                     class="ma-0 pa-0"
                     hide-details>
         </v-checkbox>
+        <v-sheet v-else min-width="32">
+        </v-sheet>
       </template>
     </v-treeview>
   </v-flex>
