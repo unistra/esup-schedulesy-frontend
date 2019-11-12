@@ -11,6 +11,13 @@ export default {
       timeout: 0,
     },
     calendar: {
+      displayModes: [
+        { label: 'Mois', value: 'month' },
+        { label: 'Semaine', value: 'week' },
+        { label: 'Personnalisé', value: 'custom' },
+        { label: 'Jour', value: 'day' },
+        { label: 'Liste', value: 'list' },
+      ],
       customType: 'week',
       now: moment().format().substring(0, 10),
       intervalHeight: 20,
@@ -33,6 +40,7 @@ export default {
   getters: {
     getIsNavDrawerOpen: state => state.isNavDrawerOpen,
     getSnackbar: state => state.snackbar,
+    getCalendarDisplayModes: state => state.calendar.displayModes,
     getCalendarCustomType: state => state.calendar.customType,
     getDisplayedDays: state => state.configurator.displayedDays,
   },

@@ -74,43 +74,53 @@
         </resources-selector>
       </core-section>
     </v-expand-transition>
-    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Jours de la semaine à afficher', level: 2 }">
+    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
+      <v-subheader class="text--primary"><strong>Mode d'affichage de la consultation</strong></v-subheader>
+      <p>
+        La consultation de votre emploi du temps offre le choix entre différents modes
+        d'affichage. Ce réglage vous permet de définir votre mode d'affichage par défaut.
+        <br />
+        Le mode "personnalisé" vous permet de n'afficher que les jours sélectionnés dans le réglage
+        "jours de la semaine à afficher".
+        <br />
+        Le mode "liste" n'est disponible que dans la version mobile. Si vous choisissez ce mode par
+        défaut et que vous consultez votre emploi du temps sur un ordinateur de bureau, ce réglage
+        sera conservé mais la consultation se fera en vue "calendrier" et le mode dépendra du réglage
+        "Jours de la semaine à afficher" :
+        <ul>
+          <li>mode "personnalisé" si des jours sont sélectionnés,</li>
+          <li>mode "semaine" le cas échéant.</li>
+        </ul>
+        <br />
+        Le mode d'affichage reste accessible dans l'onglet "consultation", mais il ne sera
+        effectif que pour la session en cours.
+      </p>
+      <v-select label="Mode par défaut"
+                :items="displayModes"
+                item-text="label"
+                item-value="value"
+                :value="userDisplayMode"
+                @click="updateUserDisplayMode">
+      </v-select>
+      <v-subheader class="text--primary"><strong>Jours de la semaine à afficher</strong></v-subheader>
       <p>
         Par défaut, on affiche la totalité des jours de la semaine (lundi au dimanche).
         <br />
         Vous pouvez choisir de n'afficher que certains jours en les selectionnant dans la liste
         déroulante ci-dessous.
       </p>
-      <display-selector v-if="false"
-                        :displayTypes="displayTypes"
-                        :userDisplayType="userDisplayType"
-                        @update-display-type="updateDisplayType">
-      </display-selector>
-      <p v-if="true">
-        <v-subheader class="text--primary"><strong>Jours à afficher</strong></v-subheader>
-        <v-row v-if="false">
-          <v-col v-for="(day, index) in displayedDays"
-                 :key="index">
-            <v-checkbox hide-details
-                        class="ma-0 pa-0"
-                        :label="day.label"
-                        :value="day.value">
-            </v-checkbox>
-          </v-col>
-        </v-row>
-        <v-select multiple
-                  eager
-                  attach
-                  chips
-                  deletable-chips
-                  label="Jours à afficher"
-                  :items="displayedDays"
-                  item-text="label"
-                  item-value="value"
-                  :value="userWeekdays"
-                  @change="updateUserWeekdays">
-        </v-select>
-      </p>
+      <v-select multiple
+                eager
+                attach
+                chips
+                deletable-chips
+                label="Jours à afficher"
+                :items="displayedDays"
+                item-text="label"
+                item-value="value"
+                :value="userWeekdays"
+                @change="updateUserWeekdays">
+      </v-select>
     </core-section>
     <core-section v-if="userCustomization.resources"
                   :title="{ class: 'headline', icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
@@ -222,6 +232,9 @@ export default {
     },
   }),
   computed: {
+    displayModes() {
+      return this.$store.getters['ui/getCalendarDisplayModes'];
+    },
     displayedDays() {
       return this.$store.getters['ui/getDisplayedDays'];
     },
@@ -233,6 +246,13 @@ export default {
     },
     userDisplayType() {
       return this.$store.getters['config/getUserDisplayType'];
+    },
+    userDisplayMode() {
+      if (this.userCustomization.configuration && this.userCustomization.configuration.displayMode) {
+        return this.userCustomization.configuration.displayMode;
+      }
+      return '';
+
     },
     userWeekdays() {
       if (this.userCustomization.configuration && this.userCustomization.configuration.weekdays) {
@@ -310,6 +330,31 @@ export default {
             timeout: 6000,
           };
         });
+    },
+    updateUserDisplayMode(payload) {
+      const newUserDisplayMode = {
+        changes: {
+          configuration: {
+            ...this.userCustomization.configuration,
+            ...{ displayMode: payload },
+          },
+        },
+        snackbar: {
+          success: {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          },
+          error: {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', newUserDisplayMode);
     },
     updateUserWeekdays(payload) {
       const base = [1, 2, 3, 4, 5, 6, 0];

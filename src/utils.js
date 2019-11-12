@@ -1,5 +1,4 @@
 const childrenEntryGenerator = (node) => {
-  console.log(node);
   const childrenEntry = { children: [] };
   // const addSelectable = item => ({ ...item, ...{ selectable: true } });
   const addChildren = item => (item.has_children ? { ...item, ...childrenEntry } : item);

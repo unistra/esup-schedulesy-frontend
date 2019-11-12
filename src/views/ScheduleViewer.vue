@@ -11,7 +11,8 @@
       </v-col>
     </v-row>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
-      <viewer-toolbar-md class="hidden-sm-and-down"
+      <viewer-toolbar-md v-if="showCalendar"
+                         class="hidden-sm-and-down"
                          :title="title"
                          :type="customTypeToLabel[customType]"
                          :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
@@ -20,7 +21,8 @@
                          @next="next"
                          @change-type="setType">
       </viewer-toolbar-md>
-      <viewer-toolbar-sm class="hidden-md-and-up"
+      <viewer-toolbar-sm v-if="showCalendar"
+                         class="hidden-md-and-up"
                          :title="title"
                          :type="customType"
                          :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
@@ -29,7 +31,7 @@
                          @next="next"
                          @change-type="setType">
       </viewer-toolbar-sm>
-      <v-sheet height="600">
+      <v-sheet height="600" v-if="showCalendar">
         <v-overlay absolute
                    :value="loading">
           <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -56,7 +58,6 @@
                     @change="updateRange">
         </v-calendar>
         <v-menu v-model="selectedOpen"
-                :close-on-content-click="false"
                 :activator="selectedElement">
           <viewer-event-detail :event="selectedEvent"
                                :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
@@ -79,7 +80,17 @@
           </v-card>
         </v-dialog>
       </v-sheet>
+      <viewer-events-list v-else
+                          :eventsList="events">
+      </viewer-events-list>
     </core-section>
+    <v-bottom-sheet v-model="bottomSheet" persistent hide-overlay>
+      <v-sheet min-height="48" class="d-flex">
+        <v-btn text height="48" class="flex-grow-1" @click="setToday"><strong>Aujourd'hui</strong></v-btn>
+        <v-btn text height="48" class="flex-grow-1" @click="showCalendar = false"><strong>Liste</strong></v-btn>
+        <v-btn text height="48" class="flex-grow-1" @click="showCalendar = true"><strong>Calendrier</strong></v-btn>
+      </v-sheet>
+    </v-bottom-sheet>
   </v-col>
 </template>
 
@@ -102,6 +113,7 @@ export default {
     ViewerToolbarSm,
     ViewerEventDetail: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerEventDetail.vue'),
     ViewerMap: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerMap.vue'),
+    ViewerEventsList: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerEventsList.vue'),
   },
   data: () => ({
     environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
@@ -127,8 +139,12 @@ export default {
       custom: 'Custom',
       day: 'Jour',
     },
+    showCalendar: true,
   }),
   computed: {
+    bottomSheet() {
+      return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';
+    },
     type() {
       return this.customType === 'custom' ? 'week' : this.customType;
     },
@@ -160,18 +176,8 @@ export default {
     eventsClassrooms() {
       return this.$store.getters['calendar/getEventsClassrooms'];
     },
-    selectedEventClassrooms() {
-      return this.selectedEvent.classrooms
-        ? objectFilter(this.eventsClassrooms, this.selectedEvent.classrooms)
-        : {};
-    },
     eventsTrainees() {
       return this.$store.getters['calendar/getEventsTrainees'];
-    },
-    selectedEventTrainees() {
-      return this.selectedEvent.trainees
-        ? objectFilter(this.eventsTrainees, this.selectedEvent.trainees)
-        : {};
     },
     eventsCategory5() {
       return this.$store.getters['calendar/getEventsCategory5'];
@@ -184,7 +190,7 @@ export default {
 
       const startDay = start.day;
       const endDay = end.day;
-      const weekNumber = moment(start).week();
+      const weekNumber = moment(start.date).week();
 
       const startMonth = this.monthFormatter(start);
       const endMonth = this.monthFormatter(end);
@@ -212,7 +218,7 @@ export default {
     },
   },
   methods: {
-    objectFilter: (toFilter, allowed=[]) => allowed.reduce((obj, key) => ({ ...obj, [key]: toFilter[key] }), {}),
+    objectFilter: (toFilter, allowed = []) => allowed.reduce((obj, key) => ({ ...obj, [key]: toFilter[key] }), {}),
     setType(type) {
       this.customType = type;
       this.setFocus();
@@ -258,10 +264,11 @@ export default {
     setFocus() {
       if (this.userConf.weekdays && this.userConf.weekdays.length) {
         const closestNextDayWithEvents = this.events
-          .filter(event => moment(event.start, 'YYYY-MM-DD') > moment(this.today, 'YYYY-MM-DD'))
+          .filter(event => moment(event.start, 'YYYY-MM-DD') >= moment(this.today, 'YYYY-MM-DD'))
           .filter(event => moment(event.start, 'YYYY-MM-DD').day() >= this.userConf.weekdays[0])
           .sort((a, b) => moment(a.start, 'YYYY-MM-DD') - moment(b.start, 'YYYY-MM-DD'))[0]
           .start.substring(0, 10);
+        console.log(closestNextDayWithEvents);
         this.focus = this.customType
           ? closestNextDayWithEvents
           : this.today;
