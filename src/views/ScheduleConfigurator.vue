@@ -100,7 +100,7 @@
                 item-text="label"
                 item-value="value"
                 :value="userDisplayMode"
-                @click="updateUserDisplayMode">
+                @change="updateUserDisplayMode">
       </v-select>
       <v-subheader class="text--primary"><strong>Jours de la semaine à afficher</strong></v-subheader>
       <p>
@@ -395,6 +395,33 @@ export default {
         });
       }
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log('************************');
+    console.log('BEFOREROUTEENTER CONFIGURATOR');
+    console.log('************************');
+    next();
+  },
+  beforeRouteUpdate(to, from, next) {
+    console.log('************************');
+    console.log('BEFOREROUTEUPDATE CONFIGURATOR');
+    console.log('************************');
+    next();
+  },
+  beforeRouteLeave(to, from, next) {
+    console.log('************************');
+    console.log('BEFOREROUTELEAVE CONFIGURATOR');
+    console.log('************************');
+    if (this.userCustomization.resources) next();
+    else {
+      next(false);
+      this.$store.dispatch('ui/updateSnackbar', {
+        isVisible: true,
+        color: 'warning',
+        message: 'Veuillez sélectionner au moins une ressource avant d\'accéder à la consultation',
+        timeout: 6000,
+      });
+    }
   },
 };
 </script>

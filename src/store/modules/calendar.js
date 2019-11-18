@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: {
     userEvents: {},
+    areUserEventsLoaded: false,
   },
   getters: {
     getEvents: (state) => {
@@ -26,6 +27,7 @@ export default {
   },
   actions: {
     loadUserEvents: ({ commit, rootGetters }) => new Promise((resolve, reject) => {
+      commit('UPDATE_ARE_USER_EVENTS_LOADED', false);
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_API_URL}/calendar/${rootGetters['auth/getLogin']}.json`)
         .then(
@@ -39,6 +41,11 @@ export default {
     }),
   },
   mutations: {
-    LOAD_USER_EVENTS: (state, payload) => { state.userEvents = payload; },
+    LOAD_USER_EVENTS: (state, payload) => {
+      console.log('LOADING USER EVENTS...');
+      state.userEvents = payload;
+      state.areUserEventsLoaded = true;
+    },
+    UPDATE_ARE_USER_EVENTS_LOADED: (state, payload) => { state.areUserEventsLoaded = payload; },
   },
 };

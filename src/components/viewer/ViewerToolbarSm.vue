@@ -33,7 +33,7 @@
              x-small
              :color="type === 'custom' ? 'primary' : undefined"
              @click="$emit('change-type', 'custom')">
-        Custom
+        Personnalisé
       </v-btn>
     <div v-if="showCustom" class="flex-grow-1"></div>
       <v-btn outlined

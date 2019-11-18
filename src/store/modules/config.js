@@ -8,17 +8,41 @@ const resourceTypes = {
   category5: 'Matières',
 };
 
+const customType = (userCustomization) => {
+  if (userCustomization.configuration && userCustomization.configuration.displayMode) {
+    switch (userCustomization.configuration.displayMode) {
+      case 'month':
+        return 'month';
+      case 'day':
+        return 'day';
+      case 'list':
+      case 'custom':
+        if (userCustomization.configuration
+          && userCustomization.configuration.weekdays
+          && userCustomization.configuration.weekdays.length) {
+          return 'custom';
+        }
+        return 'week';
+      default:
+        return 'week';
+    }
+  }
+  return 'week';
+};
+
 export default {
   namespaced: true,
   state: {
     resources: [],
     userCustomization: {},
+    isUserCustomizationLoaded: false,
     icsParams: {},
   },
   getters: {
     getResources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type) || {}),
     getDisplayTypes: state => state.displayTypes,
     getUserCustomization: state => state.userCustomization,
+    isUserCustomizationLoaded: state => state.isUserCustomizationLoaded,
     getUserDisplayType: (state) => {
       return state.userCustomization.display_configuration ? state.userCustomization.display_configuration : '';
     },
@@ -85,10 +109,29 @@ export default {
           (response) => {
             const userCustomization = response.data;
             commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-            if (userCustomization.configuration && userCustomization.configuration.weekdays && userCustomization.configuration.weekdays.length) {
-              dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
+            if (userCustomization.configuration && userCustomization.configuration.displayMode) {
+              switch (userCustomization.configuration.displayMode) {
+                case 'month':
+                  dispatch('ui/updateCalendarCustomType', 'month', { root: true });
+                  break;
+                case 'day':
+                  dispatch('ui/updateCalendarCustomType', 'day', { root: true });
+                  break;
+                case 'list':
+                case 'custom':
+                  if (userCustomization.configuration
+                    && userCustomization.configuration.weekdays
+                    && userCustomization.configuration.weekdays.length) {
+                    dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
+                  } else {
+                    dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
+                  }
+                  break;
+                default:
+                  dispatch('ui/updateCalendarCustomType', 'week', { root: true });
+              }
             }
-            resolve();
+            resolve(userCustomization);
           },
           (error) => {
             if (error.response.status === 404) {
@@ -118,8 +161,10 @@ export default {
         .patch(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`, payload.changes)
         .then(
           (response) => {
+            const userCustomization = response.data;
             dispatch('ui/updateSnackbar', payload.snackbar.success, { root: true });
-            commit('LOAD_USER_CUSTOMIZATION', response.data);
+            commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+            dispatch('ui/updateCalendarCustomType', customType(userCustomization), { root: true });
             resolve();
           },
           (error) => {
@@ -143,7 +188,10 @@ export default {
   },
   mutations: {
     LOAD_RESOURCE: (state, payload) => state.resources.push(payload),
-    LOAD_USER_CUSTOMIZATION: (state, payload) => { state.userCustomization = payload; },
+    LOAD_USER_CUSTOMIZATION: (state, payload) => {
+      state.userCustomization = payload;
+      state.isUserCustomizationLoaded = true;
+    },
     LOAD_CHILDREN: (state, payload) => {
       const updateChildren = (resources) => {
         resources.forEach((resource) => {

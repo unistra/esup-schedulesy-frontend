@@ -14,23 +14,17 @@ export default {
   components: {
     CoreSnackbar,
   },
-  data: () => ({
-    environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
-  }),
   created() {
-    if (this.$store.getters['auth/isLogged']) {
-      this.$store
-        .dispatch('config/loadUserCustomization')
-        .then(() => {
-          const userCustomization = this.$store.getters['config/getUserCustomization'];
-          if (this.environment !== 'ernest' && userCustomization.configuration && 'darkMode' in userCustomization.configuration) this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
-          if (userCustomization.resources) {
-            this.$router.push({ name: 'consult' });
-          } else {
-            this.$router.push({ name: 'config' });
-          }
-        });
-    }
+    console.log('IN CREATED');
+    this.$store
+      .dispatch('config/loadUserCustomization')
+      .then((userCustomization) => {
+        if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) {
+          this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
+        }
+        // if (to.name !== 'home') next();
+        // else next(userCustomization.resources ? ({ name: 'calendar' }) : ({ name: 'config' }));
+      });
   },
 };
 </script>

@@ -28,7 +28,7 @@
           <v-list-item-title>Jour</v-list-item-title>
         </v-list-item>
         <v-list-item v-if="showCustom" @click="$emit('change-type', 'custom')">
-          <v-list-item-title>Custom</v-list-item-title>
+          <v-list-item-title>Personnalisé</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$emit('change-type', 'week')">
           <v-list-item-title>Semaine</v-list-item-title>
