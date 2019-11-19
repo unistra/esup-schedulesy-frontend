@@ -42,7 +42,6 @@ export default {
   },
   mutations: {
     LOAD_USER_EVENTS: (state, payload) => {
-      console.log('LOADING USER EVENTS...');
       state.userEvents = payload;
       state.areUserEventsLoaded = true;
     },

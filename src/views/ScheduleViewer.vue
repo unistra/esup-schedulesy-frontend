@@ -68,31 +68,13 @@ export default {
   },
   methods: {
     setToday() {
-      console.log('************************');
-      console.log('IN SETTODAY');
       this.$refs.viewer.setToday();
-      console.log('************************');
     },
   },
-  beforeRouteEnter(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEENTER VIEWER');
-    console.log('************************');
-    next();
-  },
   beforeRouteUpdate(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEUPDATE VIEWER');
-    console.log('************************');
     this.$store.dispatch('calendar/loadUserEvents').then(() => {
       next();
     });
-  },
-  beforeRouteLeave(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTELEAVE VIEWER');
-    console.log('************************');
-    next();
   },
 };
 </script>

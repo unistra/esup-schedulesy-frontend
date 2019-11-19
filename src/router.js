@@ -11,9 +11,6 @@ const home = environment === 'ernest'
   : () => import(/* webpackChunkName: "home" */ '@/views/core/CoreRootApp.vue');
 
 const checkUserCustomizationLoaded = (to, from, next) => {
-  console.log('************************');
-  console.log('BEFOREENTER COREROOTAPP ');
-  console.log('************************');
   const proceed = () => {
     if (store.state.config.isUserCustomizationLoaded) {
       if (to.name !== 'home') {
@@ -44,25 +41,18 @@ const checkUserCustomizationLoaded = (to, from, next) => {
 };
 
 const loadUserEvents = (to, from, next) => {
-  console.log('************************');
-  console.log('BEFOREENTER VIEWER');
-  console.log('************************');
   store.dispatch('calendar/loadUserEvents').then(() => {
     next();
   });
 };
 
 const checkUserEventsLoaded = (to, from, next) => {
-  console.log('************************');
-  console.log('BEFOREENTER VIEWER CALENDAR OR LIST');
-  console.log('************************');
   const proceed = () => {
     if (store.state.calendar.areUserEventsLoaded) {
       next();
     }
   };
   if (!store.state.calendar.areUserEventsLoaded) {
-    console.log('IN USER EVENTS WATCHER');
     store.watch(
       state => state.calendar.areUserEventsLoaded,
       (value) => {

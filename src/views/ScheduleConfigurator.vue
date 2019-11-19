@@ -396,22 +396,7 @@ export default {
       }
     },
   },
-  beforeRouteEnter(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEENTER CONFIGURATOR');
-    console.log('************************');
-    next();
-  },
-  beforeRouteUpdate(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEUPDATE CONFIGURATOR');
-    console.log('************************');
-    next();
-  },
   beforeRouteLeave(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTELEAVE CONFIGURATOR');
-    console.log('************************');
     if (this.userCustomization.resources) next();
     else {
       next(false);

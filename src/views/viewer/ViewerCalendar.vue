@@ -256,24 +256,6 @@ export default {
     this.setFocus();
     this.$refs[this.calendarSettings.ref].checkChange();
   },
-  beforeRouteEnter(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEENTER VIEWER CALENDAR');
-    console.log('************************');
-    next();
-  },
-  beforeRouteUpdate(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEUPDATE VIEWER CALENDAR');
-    console.log('************************');
-    next();
-  },
-  beforeRouteLeave(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTELEAVE VIEWER CALENDAR');
-    console.log('************************');
-    next();
-  },
 };
 </script>
 

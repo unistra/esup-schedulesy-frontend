@@ -80,24 +80,6 @@ export default {
         .then(() => { this.$vuetify.theme.dark = value; });
     },
   },
-  beforeRouteEnter(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEENTER COREROOTAPP');
-    console.log('************************');
-    next();
-  },
-  beforeRouteUpdate(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTEUPDATE COREROOTAPP');
-    console.log('************************');
-    next();
-  },
-  beforeRouteLeave(to, from, next) {
-    console.log('************************');
-    console.log('BEFOREROUTELEAVE COREROOTAPP');
-    console.log('************************');
-    next();
-  },
 };
 </script>
 
