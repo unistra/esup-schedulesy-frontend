@@ -62,7 +62,6 @@ const checkUserEventsLoaded = (to, from, next) => {
       },
     );
   } else {
-    console.log('USER EVENTS LOADED - IN WATCHER');
     proceed();
   }
 };
