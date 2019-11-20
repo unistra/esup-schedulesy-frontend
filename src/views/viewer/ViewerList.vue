@@ -39,7 +39,7 @@ export default {
   components: {
     ViewerEventsList,
     ViewerEventDetail: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerEventDetail.vue'),
-    ViewerMap: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerMap.vue'),
+    ViewerMap: () => import(/* webpackChunkName: "geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
   data: () => ({
     today: '',

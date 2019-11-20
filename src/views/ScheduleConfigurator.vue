@@ -173,9 +173,7 @@
 </template>
 
 <script>
-import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
-import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
@@ -185,7 +183,6 @@ export default {
   components: {
     ResourceRemover: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourceRemover.vue'),
     ResourcesSelector: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourcesSelector.vue'),
-    DisplaySelector,
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,

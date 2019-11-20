@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const prefixer = require('postcss-prefix-selector');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+    .BundleAnalyzerPlugin;
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
@@ -44,6 +46,18 @@ module.exports = {
         COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
         BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
       }),
+      new BundleAnalyzerPlugin({
+        analyzerMode: process.env.NODE_ENV === 'development' ? 'server' : 'disabled',
+      }),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
     ],
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
   },
 };

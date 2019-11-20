@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
 export default {
@@ -29,7 +28,6 @@ export default {
     zoom: 18,
     url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    latlng: latLng(48.526535, 7.739203),
   }),
 };
 </script>

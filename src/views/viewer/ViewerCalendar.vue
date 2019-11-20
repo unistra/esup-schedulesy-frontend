@@ -69,13 +69,17 @@
 <script>
 import moment from 'moment';
 
+import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
+import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
+import ViewerEventDetail from '@/components/viewer/ViewerEventDetail.vue';
+
 export default {
   name: 'ViewerCalendar',
   components: {
-    ViewerToolbarMd: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerToolbarMd.vue'),
-    ViewerToolbarSm: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerToolbarSm.vue'),
-    ViewerEventDetail: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerEventDetail.vue'),
-    ViewerMap: () => import(/* webpackChunkName: "viewer" */ '@/components/viewer/ViewerMap.vue'),
+    ViewerToolbarMd,
+    ViewerToolbarSm,
+    ViewerEventDetail,
+    ViewerMap: () => import(/* webpackChunkName: "viewer-geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
   props: {
   },
