@@ -44,7 +44,7 @@ export default {
       this.$emit('update-resources', resourcesList);
     },
   },
-  beforeCreate() {
+  created() {
     this.$store.dispatch('config/loadResources');
   },
 };

@@ -262,7 +262,7 @@ export default {
     },
   },
   created() {
-    if (this.$store.getters['auth/isLogged']) this.$store.dispatch('config/loadIcsParams');
+    this.$store.dispatch('config/loadIcsParams');
   },
   methods: {
     removeResource(index) {

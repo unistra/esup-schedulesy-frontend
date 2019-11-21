@@ -69,19 +69,19 @@
 <script>
 import moment from 'moment';
 
+import ListCalendar from '@/mixins/ListCalendar.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
 import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 import ViewerEventDetail from '@/components/viewer/ViewerEventDetail.vue';
 
 export default {
   name: 'ViewerCalendar',
+  mixins: [ListCalendar],
   components: {
     ViewerToolbarMd,
     ViewerToolbarSm,
     ViewerEventDetail,
     ViewerMap: () => import(/* webpackChunkName: "viewer-geolocation" */ '@/components/viewer/ViewerMap.vue'),
-  },
-  props: {
   },
   data: () => ({
     customTypeToLabel: {
@@ -91,11 +91,6 @@ export default {
       day: 'Jour',
     },
     focus: null,
-    selectedEvent: {},
-    selectedEventGeolocation: [],
-    selectedElement: null,
-    selectedOpen: false,
-    showEventMap: false,
     start: null,
     end: null,
   }),
@@ -125,21 +120,6 @@ export default {
       }
       return [1, 2, 3, 4, 5, 6, 0];
     },
-    events() {
-      return this.$store.getters['calendar/getEvents'];
-    },
-    eventsInstructors() {
-      return this.$store.getters['calendar/getEventsInstructors'];
-    },
-    eventsClassrooms() {
-      return this.$store.getters['calendar/getEventsClassrooms'];
-    },
-    eventsTrainees() {
-      return this.$store.getters['calendar/getEventsTrainees'];
-    },
-    eventsCategory5() {
-      return this.$store.getters['calendar/getEventsCategory5'];
-    },
     title() {
       const { start, end } = this;
       if (!start || !end) {
@@ -166,6 +146,8 @@ export default {
           return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
         case 'day':
           return `${startDay} ${startMonth} ${startYear}`;
+        default:
+          break;
       }
       return '';
     },
@@ -176,25 +158,8 @@ export default {
     },
   },
   methods: {
-    objectFilter: (toFilter, allowed = []) => allowed.reduce((obj, key) => ({ ...obj, [key]: toFilter[key] }), {}),
     intervalFormat(interval) {
       return interval.time;
-    },
-    showEvent({ nativeEvent, event }) {
-      const open = () => {
-        this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
-        setTimeout(() => this.selectedOpen = true, 10);
-      };
-
-      if (this.selectedOpen) {
-        this.selectedOpen = false;
-        setTimeout(open, 10);
-      } else {
-        open();
-      }
-
-      nativeEvent.stopPropagation();
     },
     getEventColor(event) {
       return event.color;
@@ -244,16 +209,11 @@ export default {
       this.$refs.calendar.prev();
     },
     next() {
-      console.log('NEXT');
       this.$refs.calendar.next();
     },
     updateRange({ start, end }) {
       this.start = start;
       this.end = end;
-    },
-    showMap(classroom) {
-      this.selectedEventGeolocation = this.eventsClassrooms[classroom].geolocation;
-      this.showEventMap = !this.showEventMap;
     },
   },
   mounted() {
