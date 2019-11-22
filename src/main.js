@@ -6,9 +6,9 @@ import Cas from 'vue-cas-authentication';
 import UnistraSchedule from './UnistraSchedule.vue';
 import vuetify from '@/plugins/vuetify';
 import '@/plugins/leaflet';
+import axios from '@/plugins/axios';
 import router from '@/router/router';
 import store from '@/store/store';
-import axios from '@/axios';
 
 Vue.config.productionTip = false;
 const environment = process.env.VUE_APP_DEPLOYMENT_ENV;
