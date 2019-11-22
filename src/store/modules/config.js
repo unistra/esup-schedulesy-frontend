@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { forgeResourcesRoot, childrenEntryGenerator } from '@/utils';
+import { forgeResourcesRoot, childrenEntryGenerator } from '@/utils/store';
 
 const resourceTypes = {
   trainee: 'Etudiants',
