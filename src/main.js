@@ -6,7 +6,7 @@ import Cas from 'vue-cas-authentication';
 import UnistraSchedule from './UnistraSchedule.vue';
 import vuetify from '@/plugins/vuetify';
 import '@/plugins/leaflet';
-import router from '@/router';
+import router from '@/router/router';
 import store from '@/store/store';
 import axios from '@/axios';
 
