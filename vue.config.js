@@ -1,8 +1,7 @@
 const webpack = require('webpack');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const prefixer = require('postcss-prefix-selector');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-    .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
@@ -11,9 +10,9 @@ module.exports = {
   filenameHashing: false,
   lintOnSave: false,
   css: {
-    extract: {
-      filename: 'css/unistra-schedule.css',
-    },
+    extract: process.env.NODE_ENV === 'test'
+      ? false
+      : { filename: 'css/unistra-schedule.css' },
     loaderOptions: {
       sass: {
         data: '@import "~@/assets/main.scss"',
@@ -34,6 +33,7 @@ module.exports = {
     },
   },
   configureWebpack: {
+    devtool: 'inline-cheap-module-source-map',
     output: {
       filename: 'js/unistra-schedule.js',
     },
@@ -56,8 +56,24 @@ module.exports = {
     ],
     optimization: {
       splitChunks: {
-        chunks: 'all',
+        chunks: process.env.NODE_ENV === 'test' ? 'async' : 'all',
       },
     },
+  },
+  chainWebpack: (config) => {
+    if (process.env.NODE_ENV === 'test') {
+      const sassRule = config.module.rule('sass');
+      sassRule.uses.clear();
+      sassRule.use('null-loader').loader('null-loader');
+      const scssRule = config.module.rule('scss');
+      scssRule.uses.clear();
+      scssRule.use('null-loader').loader('null-loader');
+    }
+    // Allow to mix SASS and SCSS
+    // https://vuetifyjs.com/en/customization/sass-variables#single-file-components
+    ['vue-modules', 'vue', 'normal-modules', 'normal'].forEach((match) => {
+      config.module.rule('scss').oneOf(match).use('sass-loader')
+        .tap(opt => Object.assign(opt, { data: '@import "~@/styles/application.scss";' }));
+    });
   },
 };
