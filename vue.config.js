@@ -33,7 +33,6 @@ module.exports = {
     },
   },
   configureWebpack: {
-    devtool: 'inline-cheap-module-source-map',
     output: {
       filename: 'js/unistra-schedule.js',
     },

@@ -4,11 +4,7 @@ module.exports = {
   ],
   env: {
     test: {
-      plugins: ['istanbul', {
-        useInlineSourceMaps: false,
-        produceSourceMap: true,
-        esModules: true,
-      }],
+      plugins: ['istanbul'],
     },
   },
 };

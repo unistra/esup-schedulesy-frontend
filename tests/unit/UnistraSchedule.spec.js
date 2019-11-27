@@ -1,4 +1,4 @@
-import './setup';
+// import './setup';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import chai from 'chai';
 import sinon from 'sinon';
