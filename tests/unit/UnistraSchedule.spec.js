@@ -10,12 +10,8 @@ import UnistraSchedule from '@/UnistraSchedule.vue';
 const { expect } = chai;
 chai.use(sinonChai);
 
-console.log('IN UNISTRASCHEDULE UNIT TESTS FILE');
-console.log(process.env.NODE_ENV);
-
 const localVue = createLocalVue();
 localVue.use(Vuex);
-
 
 describe('UnistraSchedule', () => {
   let vuetify;
@@ -26,7 +22,7 @@ describe('UnistraSchedule', () => {
       darkMode: true,
     },
   };
-  const loadUserCustomization = sinon.fake.returns(fakeUserCustomization);
+  const loadUserCustomization = sinon.fake.resolves(fakeUserCustomization);
 
   beforeEach(() => {
     vuetify = new Vuetify();
@@ -51,13 +47,23 @@ describe('UnistraSchedule', () => {
     expect(UnistraSchedule.created).to.be.a('function');
   });
 
-  it('should call loadUserCustomization when created', () => {
-    const wrapper = shallowMount(UnistraSchedule, {
+  it('calls loadUserCustomization when created', () => {
+    shallowMount(UnistraSchedule, {
       localVue,
       vuetify,
       store,
       stubs: ['router-view'],
     });
     expect(loadUserCustomization).to.have.been.calledOnce;
+  });
+
+  it('renders core snackbar component', () => {
+    const wrapper = shallowMount(UnistraSchedule, {
+      localVue,
+      vuetify,
+      store,
+      stubs: ['router-view'],
+    });
+    expect(wrapper.find({ name: 'CoreSnackbar' }).exists()).to.be.true;
   });
 });

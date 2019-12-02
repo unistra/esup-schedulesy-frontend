@@ -15,13 +15,7 @@ export default {
     CoreSnackbar,
   },
   created() {
-    this.$store
-      .dispatch('config/loadUserCustomization')
-      .then((userCustomization) => {
-        if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) {
-          this.$vuetify.theme.dark = userCustomization.configuration.darkMode;
-        }
-      });
+    this.$store.dispatch('config/loadUserCustomization');
   },
 };
 </script>

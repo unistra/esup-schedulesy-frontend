@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Vuetify from '@/plugins/vuetify';
 import { forgeResourcesRoot, childrenEntryGenerator } from '@/utils/store';
 
 const resourceTypes = {
@@ -130,6 +131,9 @@ export default {
                 default:
                   dispatch('ui/updateCalendarCustomType', 'week', { root: true });
               }
+            }
+            if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) {
+              Vuetify.framework.theme.dark = userCustomization.configuration.darkMode;
             }
             resolve(userCustomization);
           },
