@@ -13,24 +13,21 @@
       </span>
       <a class="sun-cell"
          href="#"
-         title="Emploi du temps">
+         title="Mon emploi du temps">
         <span class="sun-cell-inner">
-          <strong>Emploi du temps</strong>
+          <strong>Mon emploi du temps</strong>
         </span>
       </a>
       <span class="sun-cell sun-empty-9"></span>
       <span class="sun-cell sun-empty-1"></span>
     </span>
     <span class="sun-row">
-      <a class="sun-cell"
-         href="https://services-numerique.unistra.fr"
-         title="Direction du numérique">
-        <span class="sun-cell-inner">Direction</span>
-      </a>
-      <a class="sun-cell"
-         href="https://services-numerique.unistra.fr"
-         title="Direction du numérique">
-        <span class="sun-cell-inner">du <strong>numérique</strong></span>
+      <a v-for="(span, index) in organization[0].spans"
+         :key="index"
+         class="sun-cell"
+         :href="organization[0].href"
+         :title="organization[0].title">
+        <span class="sun-cell-inner" v-html="span"></span>
       </a>
       <span class="sun-cell sun-empty-15"></span>
     </span>
@@ -38,10 +35,12 @@
       <span class="sun-cell sun-empty-12"></span>
       <span class="sun-cell sun-empty-1"></span>
       <span class="sun-cell sun-empty-1"></span>
-      <a class="sun-cell"
-         href="https://unistra.fr"
-         title="Université de Strasbourg">
-        <span class="sun-cell-inner">Université de Strasbourg</span>
+      <a v-for="(span, index) in organization[1].spans"
+         :key="index"
+         class="sun-cell"
+         :href="organization[1].href"
+         :title="organization[1].title">
+        <span class="sun-cell-inner" v-html="span"></span>
       </a>
       <span class="sun-cell sun-empty-5"></span>
     </span>
@@ -51,6 +50,12 @@
 <script>
 export default {
   name: 'Signature',
+  props: {
+    organization: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
     icons: {
       content: ['us-wifi', 'us-meeting', 'us-windows'],
@@ -61,7 +66,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/sun.css';
+@import '../../assets/sun.css';
 #signature {
   font-size: 1.39em;
 }

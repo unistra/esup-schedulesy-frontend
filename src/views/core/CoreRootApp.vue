@@ -7,7 +7,7 @@
         :max-height="imageHeight">
         <v-row class="lightbox fill-height" justify="center">
           <v-col offset-sm="2" align-self="center" class="d-flex justify-center justify-sm-start">
-            <signature />
+            <core-signature :organization="organization"/>
           </v-col>
         </v-row>
       </v-img>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Signature from '@/components/Signature.vue';
+import CoreSignature from '@/components/core/CoreSignature.vue';
 import CoreNavDrawer from '@/components/core/CoreNavDrawer.vue';
 import CoreAppBar from '@/components/core/CoreAppBar.vue';
 import CoreFooter from '@/components/core/CoreFooter.vue';
@@ -32,7 +32,7 @@ import CoreFooter from '@/components/core/CoreFooter.vue';
 export default {
   name: 'CoreRootApp',
   components: {
-    Signature,
+    CoreSignature,
     CoreNavDrawer,
     CoreAppBar,
     CoreFooter,
@@ -49,6 +49,10 @@ export default {
         default:
           return '300';
       }
+    },
+    organization() {
+      const userOrganization = this.$store.getters['auth/getOrganization'];
+      return this.$store.getters['ui/getSignature'](userOrganization);
     },
   },
   methods: {

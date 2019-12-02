@@ -10,6 +10,42 @@ export default {
       message: '',
       timeout: 0,
     },
+    signature: {
+      UDS: [
+        {
+          href: 'https://services-numerique.unistra.fr',
+          title: 'Direction du numérique',
+          spans: [
+            'Direction',
+            'du <strong>numérique</strong>'
+          ],
+        },
+        {
+          href: 'https://unistra.fr',
+          title: 'Université de Strasbourg',
+          spans: [
+            'Université de Strasbourg',
+          ],
+        },
+      ],
+      ENGEES: [
+        {
+          href: 'https://engees.unistra.fr/',
+          title: 'ENGEES',
+          spans: [
+            '<strong>Ecole nationale</strong>',
+            'du génie de l\'<strong>eau</strong>',
+          ],
+        },
+        {
+          href: 'https://engees.unistra.fr/',
+          title: 'ENGEES',
+          spans: [
+            'et de l\'<strong>environnement</strong> de Strasbourg',
+          ],
+        },
+      ],
+    },
     calendar: {
       displayModes: [
         { label: 'Mois', value: 'month' },
@@ -49,6 +85,7 @@ export default {
     getCalendarDisplayModes: state => state.calendar.displayModes,
     getCalendarCustomType: state => state.calendar.customType,
     getDisplayedDays: state => state.configurator.displayedDays,
+    getSignature: state => organization => state.signature[organization],
   },
   actions: {
     updateDrawerState: ({ commit }, payload) => commit('UPDATE_DRAWER_STATE', payload),
