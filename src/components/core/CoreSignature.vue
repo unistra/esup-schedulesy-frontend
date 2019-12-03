@@ -62,6 +62,31 @@ export default {
       cssClasses: '',
     },
   }),
+  mounted() {
+    const sunContainers = document.querySelectorAll('.sun');
+    sunContainers.forEach((sunContainer) => {
+      const links = sunContainer.querySelectorAll('a');
+      links.forEach((link) => {
+        const dataLink = link.attributes.href.nodeValue;
+        if (dataLink !== '#' && !link.classList.contains('sun-isolate')) {
+          const { filter } = Array.prototype;
+          const linksWithSameHrefValue = filter.call(links, (node) => {
+            return node !== link && node.attributes.href.nodeValue === dataLink && !node.classList.contains('sun-isolate');
+          });
+          link.onmouseover = () => {
+            linksWithSameHrefValue.forEach((linkWithSameHrefValue) => {
+              linkWithSameHrefValue.classList.add('sun-hover');
+            });
+          };
+          link.onmouseout = () => {
+            linksWithSameHrefValue.forEach((linkWithSameHrefValue)=> {
+              linkWithSameHrefValue.classList.remove('sun-hover');
+            });
+          };
+        }
+      });
+    });
+  },
 };
 </script>
 

@@ -17,7 +17,7 @@ export default {
           title: 'Direction du numérique',
           spans: [
             'Direction',
-            'du <strong>numérique</strong>'
+            'du <strong>numérique</strong>',
           ],
         },
         {
