@@ -54,7 +54,7 @@ export default {
         { label: 'Jour', value: 'day' },
         { label: 'Liste', value: 'list' },
       ],
-      customType: '',
+      customType: 'week',
       ref: 'calendar',
       locale: 'fr-FR',
       color: 'primary darken-1',
