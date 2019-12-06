@@ -3,9 +3,6 @@
     <v-app-bar-nav-icon class="hidden-md-and-up"
                         @click.stop="openNavDrawer">
     </v-app-bar-nav-icon>
-    <v-btn color="primary" icon class="hidden-sm-and-down">
-      <v-icon>mdi-home-outline</v-icon>
-    </v-btn>
     <v-toolbar-items class="hidden-sm-and-down">
       <v-tabs slider-size="4">
         <v-tab :to="{ name: 'config' }"><strong>Personnaliser</strong></v-tab>
