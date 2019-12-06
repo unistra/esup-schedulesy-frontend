@@ -17,9 +17,10 @@ const checkUserCustomizationLoaded = (to, from, next) => {
       }
     }
   };
-  if (!store.state.config.isUserCustomizationLoaded) {
+  if (!store.state.config.isUserCustomizationLoaded
+    && !store.state.auth.isUuidLoaded) {
     store.watch(
-      state => state.config.isUserCustomizationLoaded,
+      state => state.config.isUserCustomizationLoaded && store.state.auth.isUuidLoaded,
       (value) => {
         if (value === true) {
           proceed();

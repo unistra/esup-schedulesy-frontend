@@ -129,7 +129,8 @@
         pouvez également le consulter via un client de gestion d'agendas (type Google Agenda, 
         iCal ou Agenda Partage) sur votre ordinateur et/ou sur un appareil mobile.
         <br />
-        Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour.
+        Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour même si vous
+        modifiez votre personnalisation.
       </p>
       <p>
         Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier (type
@@ -245,11 +246,11 @@ export default {
       return this.$store.getters['config/getUserDisplayType'];
     },
     userDisplayMode() {
-      if (this.userCustomization.configuration && this.userCustomization.configuration.displayMode) {
+      if (this.userCustomization.configuration
+        && this.userCustomization.configuration.displayMode) {
         return this.userCustomization.configuration.displayMode;
       }
       return '';
-
     },
     userWeekdays() {
       if (this.userCustomization.configuration && this.userCustomization.configuration.weekdays) {
@@ -258,11 +259,8 @@ export default {
       return [];
     },
     icsURL() {
-      return this.$store.getters['config/getBaseIcsUrl'];
+      return `${process.env.VUE_APP_BACKEND_API_URL}/calendar/${this.$store.getters['auth/getUuid']}/export`;
     },
-  },
-  created() {
-    this.$store.dispatch('config/loadIcsParams');
   },
   methods: {
     removeResource(index) {

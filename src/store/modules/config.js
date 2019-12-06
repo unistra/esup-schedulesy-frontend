@@ -135,6 +135,7 @@ export default {
             if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) {
               Vuetify.framework.theme.dark = userCustomization.configuration.darkMode;
             }
+            dispatch('auth/loadUuid', null, { root: true });
             resolve(userCustomization);
           },
           (error) => {
@@ -150,6 +151,7 @@ export default {
                     const userCustomization = response.data;
                     commit('LOAD_USER_CUSTOMIZATION', userCustomization);
                     dispatch('ui/updateCalendarCustomType', 'week', { root: true });
+                    dispatch('auth/loadUuid', null, { root: true });
                     resolve();
                   },
                   postError => reject(postError),
