@@ -1,16 +1,13 @@
 <template>
-  <v-flex xs12
-          sm11
-          md10
-          lg9>
-    <v-row>
+  <v-col xs="12"
+         :sm="environment === 'ernest' ? 12 : 11"
+         :md="environment === 'ernest' ? 12 : 10"
+         :lg="environment === 'ernest' ? 12 : 9">
+    <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <v-sheet color="primary"
-                 class="pa-2 white--text"
-                 elevation="2">
-          <core-title :title="pageTitle">
-          </core-title>
-        </v-sheet>
+        <core-title class="primary--text"
+                    :title="pageTitle">
+        </core-title>
       </v-col>
     </v-row>
     <core-expansion-panels :panels="[htmlContent.howTo]">
@@ -44,10 +41,14 @@
       <template #actions>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn tile color="primary"
-                      @click="showResourcesSelector">
-            {{ show ? 'Fermer' : 'Modifier' }} la sélection
-            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          <v-btn tile
+                 color="primary"
+                 class="on-primary"
+                 @click="showResourcesSelector">
+            <strong>
+              {{ show ? 'Fermer' : 'Modifier' }} la sélection
+              <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+            </strong>
           </v-btn>
         </v-card-actions>
       </template>
@@ -73,41 +74,53 @@
         </resources-selector>
       </core-section>
     </v-expand-transition>
-    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Jours de la semaine à afficher', level: 2 }">
+    <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
+      <v-subheader class="text--primary"><strong>Mode d'affichage de la consultation</strong></v-subheader>
+      <p>
+        La consultation de votre emploi du temps offre le choix entre différents modes
+        d'affichage. Ce réglage vous permet de définir votre mode d'affichage par défaut.
+        <br />
+        Le mode "personnalisé" vous permet de n'afficher que les jours sélectionnés dans le réglage
+        "jours de la semaine à afficher".
+        <br />
+        Le mode "liste" n'est disponible que dans la version mobile. Si vous choisissez ce mode par
+        défaut et que vous consultez votre emploi du temps sur un ordinateur de bureau, ce réglage
+        sera conservé mais la consultation se fera en vue "calendrier" et le mode dépendra du réglage
+        "Jours de la semaine à afficher" :
+        <ul>
+          <li>mode "personnalisé" si des jours sont sélectionnés,</li>
+          <li>mode "semaine" le cas échéant.</li>
+        </ul>
+        <br />
+        Le mode d'affichage reste accessible dans l'onglet "consultation", mais il ne sera
+        effectif que pour la session en cours.
+      </p>
+      <v-select label="Mode par défaut"
+                :items="displayModes"
+                item-text="label"
+                item-value="value"
+                :value="userDisplayMode"
+                @change="updateUserDisplayMode">
+      </v-select>
+      <v-subheader class="text--primary"><strong>Jours de la semaine à afficher</strong></v-subheader>
       <p>
         Par défaut, on affiche la totalité des jours de la semaine (lundi au dimanche).
         <br />
         Vous pouvez choisir de n'afficher que certains jours en les selectionnant dans la liste
         déroulante ci-dessous.
       </p>
-      <display-selector v-if="false"
-                        :displayTypes="displayTypes"
-                        :userDisplayType="userDisplayType"
-                        @update-display-type="updateDisplayType">
-      </display-selector>
-      <p v-if="true">
-        <v-subheader class="text--primary"><strong>Jours à afficher</strong></v-subheader>
-        <v-row v-if="false">
-          <v-col v-for="(day, index) in displayedDays"
-                 :key="index">
-            <v-checkbox hide-details
-                        class="ma-0 pa-0"
-                        :label="day.label"
-                        :value="day.value">
-            </v-checkbox>
-          </v-col>
-        </v-row>
-        <v-select multiple
-                  chips
-                  deletable-chips
-                  label="Jours à afficher"
-                  :items="displayedDays"
-                  item-text="label"
-                  item-value="value"
-                  :value="userWeekdays"
-                  @change="updateUserWeekdays">
-        </v-select>
-      </p>
+      <v-select multiple
+                eager
+                attach
+                chips
+                deletable-chips
+                label="Jours à afficher"
+                :items="displayedDays"
+                item-text="label"
+                item-value="value"
+                :value="userWeekdays"
+                @change="updateUserWeekdays">
+      </v-select>
     </core-section>
     <core-section v-if="userCustomization.resources"
                   :title="{ class: 'headline', icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
@@ -116,7 +129,8 @@
         pouvez également le consulter via un client de gestion d'agendas (type Google Agenda, 
         iCal ou Agenda Partage) sur votre ordinateur et/ou sur un appareil mobile.
         <br />
-        Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour.
+        Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour même si vous
+        modifiez votre personnalisation.
       </p>
       <p>
         Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier (type
@@ -130,8 +144,11 @@
       </p>
       <template #actions>
         <v-card-actions>
-          <v-btn class="hidden-sm-and-down" tile color="primary" @click.stop="showQRCode = true">
-            Afficher QRCode
+          <v-btn class="hidden-sm-and-down on-primary"
+                 tile
+                 color="primary"
+                 @click.stop="showQRCode = true">
+            <strong>Afficher QRCode</strong>
             <v-icon right>mdi-qrcode</v-icon>
           </v-btn>
           <v-dialog v-model="showQRCode" max-width="250">
@@ -142,9 +159,10 @@
               <v-card-actions>
                 <div class="flex-grow-1"></div>
                 <v-btn color="primary"
+                       class="on-primary"
                        tile
                        @click.stop="showQRCode = false">
-                  FERMER
+                  <strong>FERMER</strong>
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -152,14 +170,11 @@
         </v-card-actions>
       </template>
     </core-section>
-  </v-flex>
+  </v-col>
 </template>
 
 <script>
-import axios from 'axios';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
-import jwt_decode from 'jwt-decode';
-import DisplaySelector from '@/components/configurator/DisplaySelector.vue';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
 import CoreTitle from '@/components/core/CoreTitle.vue';
@@ -169,13 +184,13 @@ export default {
   components: {
     ResourceRemover: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourceRemover.vue'),
     ResourcesSelector: () => import(/* webpackChunkName: "configurator" */ '@/components/configurator/ResourcesSelector.vue'),
-    DisplaySelector,
     VueQrcode,
     CoreSection,
     CoreExpansionPanels,
     CoreTitle,
   },
   data: () => ({
+    environment: process.env.VUE_APP_DEPLOYMENT_ENV.substr(0, 6),
     pageTitle: {
       level: 1,
       class: 'display-1',
@@ -213,17 +228,14 @@ export default {
         `,
       },
     },
-    displayedDays: [
-      { label: 'Lundi', value: 1 },
-      { label: 'Mardi', value: 2 },
-      { label: 'Mercredi', value: 3 },
-      { label: 'Jeudi', value: 4 },
-      { label: 'Vendredi', value: 5 },
-      { label: 'Samedi', value: 6 },
-      { label: 'Dimanche', value: 0 },
-    ],
   }),
   computed: {
+    displayModes() {
+      return this.$store.getters['ui/getCalendarDisplayModes'];
+    },
+    displayedDays() {
+      return this.$store.getters['ui/getDisplayedDays'];
+    },
     userCustomization() {
       return this.$store.getters['config/getUserCustomization'];
     },
@@ -233,6 +245,13 @@ export default {
     userDisplayType() {
       return this.$store.getters['config/getUserDisplayType'];
     },
+    userDisplayMode() {
+      if (this.userCustomization.configuration
+        && this.userCustomization.configuration.displayMode) {
+        return this.userCustomization.configuration.displayMode;
+      }
+      return '';
+    },
     userWeekdays() {
       if (this.userCustomization.configuration && this.userCustomization.configuration.weekdays) {
         return this.userCustomization.configuration.weekdays;
@@ -240,11 +259,8 @@ export default {
       return [];
     },
     icsURL() {
-      return this.$store.getters['config/getBaseIcsUrl'];
+      return `${process.env.VUE_APP_BACKEND_API_URL}/calendar/${this.$store.getters['auth/getUuid']}/export`;
     },
-  },
-  created() {
-    this.$store.dispatch('config/loadIcsParams');
   },
   methods: {
     removeResource(index) {
@@ -310,6 +326,31 @@ export default {
           };
         });
     },
+    updateUserDisplayMode(payload) {
+      const newUserDisplayMode = {
+        changes: {
+          configuration: {
+            ...this.userCustomization.configuration,
+            ...{ displayMode: payload },
+          },
+        },
+        snackbar: {
+          success: {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          },
+          error: {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', newUserDisplayMode);
+    },
     updateUserWeekdays(payload) {
       const base = [1, 2, 3, 4, 5, 6, 0];
       const newUserWeekdays = base.filter(day => payload.includes(day));
@@ -350,9 +391,23 @@ export default {
       }
     },
   },
+  beforeRouteLeave(to, from, next) {
+    if (this.userCustomization.resources) next();
+    else {
+      next(false);
+      this.$store.dispatch('ui/updateSnackbar', {
+        isVisible: true,
+        color: 'warning',
+        message: 'Veuillez sélectionner au moins une ressource avant d\'accéder à la consultation',
+        timeout: 6000,
+      });
+    }
+  },
 };
 </script>
 
 <style scoped>
-
+.on-primary {
+  color: var(--v-onprimary-base) !important;
+}
 </style>
