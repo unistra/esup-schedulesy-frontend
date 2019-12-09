@@ -45,6 +45,9 @@ module.exports = {
         COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
         BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
       }),
+<<<<<<< HEAD
+      new BundleAnalyzerPlugin(),
+=======
       new BundleAnalyzerPlugin({
         analyzerMode: process.env.NODE_ENV === 'development' ? 'server' : 'disabled',
       }),
@@ -52,6 +55,7 @@ module.exports = {
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
       }),
+>>>>>>> release/1.0.0
     ],
     optimization: {
       splitChunks: {
