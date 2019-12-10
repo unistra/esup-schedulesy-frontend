@@ -12,7 +12,7 @@ WORKING_DIR="$TEMP/git-clone"
 TEST=("root@django-test.u-strasbg.fr:/var/www/static/schedulesy")
 TEST_ERNEST=("root@ernest-dev-lb.di.unistra.fr:/var/www/html/alien/schedulesy")
 PREPROD=("root@django-rp-pprd.di.unistra.fr:/var/www/static/schedulesy")
-PROD=("root@rp2-m.u-strasbg.fr:/var/www/static/schedulesy" "root@rp2-s.u-strasbg.fr:/var/www/static/schedulesy")
+PROD=("root@rp10-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp10-s.di.unistra.fr:/var/www/static/schedulesy")
 
 ENVIRONMENT="$2"
 case "$ENVIRONMENT" in
