@@ -15,7 +15,7 @@ export default {
     CoreSnackbar,
   },
   created() {
-    this.$store.dispatch('config/loadUserCustomization');
+    if (this.$store.getters['auth/isLogged']) this.$store.dispatch('config/loadUserCustomization');
   },
 };
 </script>
