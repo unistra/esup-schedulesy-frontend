@@ -9,6 +9,7 @@ export default {
     isUuidLoaded: false,
   },
   getters: {
+    isLogged: state => !!state.accessToken,
     getLogin: state => (state.accessToken ? jwt_decode(state.accessToken).user_id : ''),
     getDirectoryId: state => (state.accessToken ? jwt_decode(state.accessToken).directory_id : ''),
     getOrganization: state => (state.accessToken ? jwt_decode(state.accessToken).organization : ''),
