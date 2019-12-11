@@ -185,18 +185,7 @@ export default {
       this.setFocus();
     },
     setFocus() {
-      if (this.userConf.weekdays && this.userConf.weekdays.length) {
-        const closestNextDayWithEvents = this.events
-          .filter(event => moment(event.start, 'YYYY-MM-DD') >= moment(this.calendarSettings.today, 'YYYY-MM-DD'))
-          .filter(event => moment(event.start, 'YYYY-MM-DD').day() >= this.userConf.weekdays[0])
-          .sort((a, b) => moment(a.start, 'YYYY-MM-DD') - moment(b.start, 'YYYY-MM-DD'))[0]
-          .start.substring(0, 10);
-        this.focus = this.customType
-          ? closestNextDayWithEvents
-          : this.calendarSettings.today;
-      } else {
-        this.focus = this.calendarSettings.today;
-      }
+      this.focus = this.calendarSettings.today;
     },
     viewDay({ date }) {
       this.focus = date;
