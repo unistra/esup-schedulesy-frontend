@@ -9,7 +9,7 @@ const checkUserCustomizationLoaded = (to, from, next) => {
       } else if (!store.state.config.userCustomization.resources) {
         next({ name: 'config' });
       } else if (Vuetify.framework.breakpoint.smAndDown
-                 && typeof store.state.config.userCustomization.configuration === 'object'
+                 && !!store.state.config.userCustomization.configuration
                  && 'displayMode' in store.state.config.userCustomization.configuration
                  && store.state.config.userCustomization.configuration.displayMode === 'list') {
         next({ name: 'list' });
