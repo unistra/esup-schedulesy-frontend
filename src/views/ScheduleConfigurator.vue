@@ -125,15 +125,15 @@
     <core-section v-if="userCustomization.resources"
                   :title="{ class: 'headline', icon: 'mdi-calendar-export', content: 'Export d\'agenda', level: 2 }">
       <p>
-        Votre emploi du temps universitaire est consultable via l'onglet "Consulter". Vous
-        pouvez également le consulter via un client de gestion d'agendas (type Google Agenda, 
-        iCal ou Agenda Partage) sur votre ordinateur et/ou sur un appareil mobile.
+        Autre fonctionnalité bonus, si la version navigateur ne vous suffit pas, vous pouvez
+        également l’exporter dans une application d’agenda (exemples : Agenda Android, iCal,
+        Outlook etc.) sur votre ordinateur et/ou sur un appareil mobile.
         <br />
         Votre emploi du temps exporté sera synchronisé avec ADE et donc toujours à jour même si vous
         modifiez votre personnalisation.
       </p>
       <p>
-        Dans votre client de gestion d’agendas, choisissez l’abonnement à un calendrier (type
+        Dans votre application d’agendas, choisissez l’abonnement à un calendrier (type
         iCal/ics) puis copiez-collez l’URL suivante:
         <br />
         <a :href="icsURL">{{ icsURL }}</a>
@@ -207,24 +207,31 @@ export default {
           content: 'Mode d\'emploi',
         },
         content: `
-          ADE est l’application de gestion des emplois du temps de l'Université : elle permet de gérer
-          les plannings des salles ainsi que les emplois du temps des enseignants et des étudiants.
-          <br />
-          <br />
-          L'outil de personnalisation de l’emploi du temps vous permet de le paramétrer en choisissant:
-          <ul>
-            <li>
-              les ressources à afficher (groupe d'étudiants et/ou matières, enseignants, salles),
-            </li>
-            <li>
-              les jours de la semaine à afficher (par défaut, la totalité des jours est affichée).
-            </li>
-          </ul>
-          <br />
-          Vous pourrez ensuite consulter votre emploi du temps personnalisé dans l'onglet "Consulter".
-          <br />
-          NB : Les choix que vous effectuerez seront sauvegardés automatiquement et conservés en mémoire
+          <p>
+          <strong>ADE</strong> est l’application de gestion des emplois du temps de l'Université :
+          elle permet de gérer les plannings des salles ainsi que les emplois du temps des
+          enseignants et des étudiants.
+          </p>
+          <p>
+          <strong>"Mon emploi du temps"</strong> est un outil qui vous permettra de consulter
+          facilement votre emploi du temps sur mobile ou sur ordinateur.
+          </p>
+          <p>
+          Pour cela effectuez d'abord votre sélection de ressources dans le cadre ci-dessous.
+          </p>
+          <p>
+          Les choix que vous effectuerez seront sauvegardés automatiquement et conservés en mémoire
           pour les consultations ultérieures de votre emploi du temps.
+          </p>
+          <p>
+          Votre emploi du temps personnalisé sera accessible <strong>dans l'onglet "Conuslter" en
+          haut à gauche</strong>.
+          </p>
+          <p>
+          Vous pourrez retrouver cet emploi du temps personnalisé <strong>sur votre navigateur
+          (Chrome, Firefox, Edge, Safari) sur mobile ou ordinateur</strong>, en passant par cette
+          application.
+          </p>
         `,
       },
     },
