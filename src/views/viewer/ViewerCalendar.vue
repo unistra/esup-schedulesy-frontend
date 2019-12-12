@@ -185,7 +185,14 @@ export default {
       this.setFocus();
     },
     setFocus() {
-      this.focus = this.calendarSettings.today;
+      const { today } = this.calendarSettings;
+      if (this.userConf.weekdays && this.userConf.weekdays.length) {
+        this.focus = this.customType === 'custom'
+          ? moment(today, 'YYYY-MM-DD').day(this.userConf.weekdays[0]).format('YYYY-MM-DD')
+          : today;
+      } else {
+        this.focus = today;
+      }
     },
     viewDay({ date }) {
       this.focus = date;
