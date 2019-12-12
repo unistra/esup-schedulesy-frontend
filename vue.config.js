@@ -6,6 +6,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
+  transpileDependencies: ['vuetify'],
   publicPath: process.env.VUE_APP_PUBLIC_PATH,
   filenameHashing: false,
   lintOnSave: false,
