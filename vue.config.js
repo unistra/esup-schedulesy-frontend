@@ -1,35 +1,21 @@
 const webpack = require('webpack');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
-const prefixer = require('postcss-prefix-selector');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
-  transpileDependencies: ['vuetify', 'leaflet', 'vue2-leaflet', 'moment', 'vue-cas-authentication'],
+  transpileDependencies: ['vuetify', 'vue-cas-authentication'],
   publicPath: process.env.VUE_APP_PUBLIC_PATH,
   filenameHashing: false,
   lintOnSave: false,
   css: {
     extract: process.env.NODE_ENV === 'test'
       ? false
-      : { filename: 'css/unistra-schedule.css' },
+      : { ignoreOrder: true },
     loaderOptions: {
       sass: {
         data: '@import "~@/assets/main.scss"',
-      },
-      postcss: {
-        plugins: () => [
-          prefixer({
-            prefix: '.unistra-schedule',
-            transform: (prefix, selector, prefixedSelector) => {
-              if (selector.substr(0, 4) === '.row' || selector.substr(0, 4) === '.col') {
-                return `${prefixedSelector}`;
-              }
-              return `${selector}`;
-            },
-          }),
-        ],
       },
     },
   },
@@ -54,11 +40,6 @@ module.exports = {
         contextRegExp: /moment$/,
       }),
     ],
-    optimization: {
-      splitChunks: {
-        chunks: process.env.NODE_ENV === 'test' ? 'async' : 'all',
-      },
-    },
   },
   chainWebpack: (config) => {
     if (process.env.NODE_ENV === 'test') {
