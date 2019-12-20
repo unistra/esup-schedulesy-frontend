@@ -1,6 +1,6 @@
 {
   "name": "unistra-schedule",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "scripts": {
     "serve": "vue-cli-service serve --mode dev",
     "serve:ernest": "vue-cli-service serve --mode dev_ernest",
@@ -8,6 +8,7 @@
     "build:test": "vue-cli-service build --mode test_env",
     "build:test_ernest": "vue-cli-service build --mode test_ernest",
     "build:preprod": "vue-cli-service build --mode preprod",
+    "build:prod": "vue-cli-service build --mode prod",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "nyc vue-cli-service test:unit --include tests/unit/setup.js"
