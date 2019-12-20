@@ -12,7 +12,7 @@ module.exports = {
   css: {
     extract: process.env.NODE_ENV === 'test'
       ? false
-      : { ignoreOrder: true },
+      : { filename: 'css/unistra-schedule.css', ignoreOrder: true },
     loaderOptions: {
       sass: {
         data: '@import "~@/assets/main.scss"',
@@ -40,8 +40,20 @@ module.exports = {
         contextRegExp: /moment$/,
       }),
     ],
+    optimization: {
+      splitChunks: {
+        chunks: process.env.NODE_ENV === 'test' ? 'async' : 'all',
+      },
+    },
   },
   chainWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      config.plugin('html').tap((opts) => {
+        opts[0].template = './prod/index.html';
+        opts[0].filename = './base.html';
+        return opts;
+      });
+    }
     if (process.env.NODE_ENV === 'test') {
       const sassRule = config.module.rule('sass');
       sassRule.uses.clear();
@@ -49,7 +61,7 @@ module.exports = {
       const scssRule = config.module.rule('scss');
       scssRule.uses.clear();
       scssRule.use('null-loader').loader('null-loader');
-    }
+    } 
     // Allow to mix SASS and SCSS
     // https://vuetifyjs.com/en/customization/sass-variables#single-file-components
     ['vue-modules', 'vue', 'normal-modules', 'normal'].forEach((match) => {
