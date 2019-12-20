@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: {
     userEvents: {},
+    areUserEventsLoaded: false,
   },
   getters: {
     getEvents: (state) => {
@@ -19,23 +20,31 @@ export default {
       }
       return [];
     },
-    getEventsInstructors: state => state.userEvents.instructors ? state.userEvents.instructors : null,
-    getEventsClassrooms: state => state.userEvents.classrooms ? state.userEvents.classrooms : null,
-    getEventsTrainees: state => state.userEvents.trainees ? state.userEvents.trainees : null,
-    getEventsCategory5: state => state.userEvents.category5 ? state.userEvents.category5 : null,
+    getEventsInstructors: state => (state.userEvents.instructors ? state.userEvents.instructors : null),
+    getEventsClassrooms: state => (state.userEvents.classrooms ? state.userEvents.classrooms : null),
+    getEventsTrainees: state => (state.userEvents.trainees ? state.userEvents.trainees : null),
+    getEventsCategory5: state => (state.userEvents.category5 ? state.userEvents.category5 : null),
   },
   actions: {
     loadUserEvents: ({ commit, rootGetters }) => new Promise((resolve, reject) => {
+      commit('UPDATE_ARE_USER_EVENTS_LOADED', false);
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_API_URL}/calendar/${rootGetters['auth/getLogin']}.json`)
-        .then(response => response.data.events)
-        .then((events) => {
-          commit('LOAD_USER_EVENTS', events);
-          resolve();
-        }).catch(error => reject(error));
+        .then(
+          (response) => {
+            const { events } = response.data;
+            commit('LOAD_USER_EVENTS', events);
+            resolve();
+          },
+          error => reject(error),
+        );
     }),
   },
   mutations: {
-    LOAD_USER_EVENTS: (state, payload) => { state.userEvents = payload; },
+    LOAD_USER_EVENTS: (state, payload) => {
+      state.userEvents = payload;
+      state.areUserEventsLoaded = true;
+    },
+    UPDATE_ARE_USER_EVENTS_LOADED: (state, payload) => { state.areUserEventsLoaded = payload; },
   },
 };
