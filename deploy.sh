@@ -9,24 +9,26 @@ REPOSITORY=$(pwd)
 DISTANT_REPO=$(git config --get remote.origin.url)
 WORKING_DIR="$TEMP/git-clone"
 
-TEST=("root@django-test.u-strasbg.fr:/var/www/static/schedulesy")
-TEST_ERNEST=("root@ernest-dev-lb.di.unistra.fr:/var/www/html/alien/schedulesy")
-PREPROD=("root@django-rp-pprd.di.unistra.fr:/var/www/static/schedulesy")
-PROD=("root@rp10-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp10-s.di.unistra.fr:/var/www/static/schedulesy")
+TEST_STATIC=("root@django-test.u-strasbg.fr:/var/www/static/schedulesy")
+TEST_TEMPLATE=("root@django-test.u-strasbg.fr:/home/django/schedulesy-test.app.unistra.fr/current/schedulesy/templates")
+PREPROD_STATIC=("root@django-rp-pprd.di.unistra.fr:/var/www/static/schedulesy")
+PREPROD_TEMPLATE=("root@django-pprd-w1:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates" "root@django-pprd-w2:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates")
+PROD_STATIC=("root@rp10-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp10-s.di.unistra.fr:/var/www/static/schedulesy")
+PROD_TEMPLATE=("root@django-w3:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates" "root@django-w4:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates")
 
 ENVIRONMENT="$2"
 case "$ENVIRONMENT" in
     test)
-        TARGET=$TEST
-	;;
-    test_ernest)
-	TARGET=$TEST_ERNEST
+	TARGET_STATIC=("${TEST_STATIC[@]}")
+	TARGET_TEMPLATE=("${TEST_TEMPLATE[@]}")
 	;;
     preprod)
-        TARGET=$PREPROD
+	TARGET_STATIC=("${PREPROD_STATIC[@]}")
+	TARGET_TEMPLATE=("${PREPROD_TEMPLATE[@]}")
 	;;
     prod)
-        TARGET=$PROD
+	TARGET_STATIC=("${PROD_STATIC[@]}")
+	TARGET_TEMPLATE=("${PROD_TEMPLATE[@]}")
 	;;
 esac
 
@@ -43,10 +45,14 @@ echo "📦 Packaging stuff"
 npm run build:$ENVIRONMENT
 echo "🚀 Deploying files"
 echo $(pwd)
-for i in "${TARGET[@]}"; do
-    echo "Scp files to $i"
+for i in "${TARGET_STATIC[@]}"; do
+    echo "Scp static files to $i"
     scp -r "dist/css" "$i"
     scp -r "dist/js" "$i"
+done
+for i in "${TARGET_TEMPLATE[@]}"; do
+    echo "Scp template to $i"
+    scp "dist/base.html" "$i"
 done
 
 # SENTRY
