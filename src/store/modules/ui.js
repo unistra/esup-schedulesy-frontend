@@ -13,7 +13,7 @@ export default {
     signature: {
       UDS: [
         {
-          href: 'https://services-numerique.unistra.fr',
+          href: 'https://services-numeriques.unistra.fr',
           title: 'Direction du numérique',
           spans: [
             'Direction',
