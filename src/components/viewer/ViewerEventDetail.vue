@@ -16,6 +16,15 @@
     </v-toolbar>
     <v-card-text class="pa-0">
       <v-list dense>
+        <v-list-item v-for="(category, index) in event.category5s"
+                     :key="index">
+          <v-list-item-icon>
+            <v-icon>mdi-certificate-outline</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            {{ category5s[category].name }}
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item v-if="event.trainees && event.trainees.length > 0">
           <v-list-item-icon>
             <v-icon>mdi-account-group</v-icon>
@@ -106,6 +115,10 @@ export default {
   name: 'ViewerEventDeatil',
   props: {
     event: {
+      type: Object,
+      required: true,
+    },
+    category5s: {
       type: Object,
       required: true,
     },
