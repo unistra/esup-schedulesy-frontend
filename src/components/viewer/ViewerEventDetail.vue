@@ -16,7 +16,7 @@
     </v-toolbar>
     <v-card-text class="pa-0">
       <v-list dense>
-        <v-list-item v-if="event.trainees && event.trainees > 0">
+        <v-list-item v-if="event.trainees && event.trainees.length > 0">
           <v-list-item-icon>
             <v-icon>mdi-account-group</v-icon>
           </v-list-item-icon>
