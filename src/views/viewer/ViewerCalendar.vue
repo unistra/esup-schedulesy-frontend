@@ -67,12 +67,14 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import moment from 'moment';
 
 import ListCalendar from '@/mixins/ListCalendar.vue';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
 import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 import ViewerEventDetail from '@/components/viewer/ViewerEventDetail.vue';
+import ViewerEventTitle from '@/components/viewer/ViewerEventTitle.vue';
 
 export default {
   name: 'ViewerCalendar',
@@ -81,6 +83,7 @@ export default {
     ViewerToolbarMd,
     ViewerToolbarSm,
     ViewerEventDetail,
+    ViewerEventTitle,
     ViewerMap: () => import(/* webpackChunkName: "viewer-geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
   data: () => ({
@@ -170,11 +173,19 @@ export default {
         instructors = '',
         classrooms = '',
       } = event.input;
+      const title = new Vue({
+        ...ViewerEventTitle,
+        parent: this,
+        propsData: {
+          title: name,
+          eventColor: event.input.color,
+        },
+      }).$mount().$el;
       const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
       const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
       if (event.start.hasTime) {
         if (timedEvent) {
-          return `<strong>${name}</strong>${htmlInstructors}${htmlClassrooms}`;
+          return `${title.outerHTML}${htmlInstructors}${htmlClassrooms}`;
         }
         return `<strong>${name}</strong>`;
       }
