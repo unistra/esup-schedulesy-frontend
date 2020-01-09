@@ -20,8 +20,8 @@ export default{
     eventsTrainees() {
       return this.$store.getters['calendar/getEventsTrainees'];
     },
-    eventsCategory5() {
-      return this.$store.getters['calendar/getEventsCategory5'];
+    eventsCategory5s() {
+      return this.$store.getters['calendar/getEventsCategory5s'];
     },
   },
   methods: {

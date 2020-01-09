@@ -23,7 +23,7 @@ export default {
     getEventsInstructors: state => (state.userEvents.instructors ? state.userEvents.instructors : null),
     getEventsClassrooms: state => (state.userEvents.classrooms ? state.userEvents.classrooms : null),
     getEventsTrainees: state => (state.userEvents.trainees ? state.userEvents.trainees : null),
-    getEventsCategory5: state => (state.userEvents.category5 ? state.userEvents.category5 : null),
+    getEventsCategory5s: state => (state.userEvents.category5s ? state.userEvents.category5s : null),
   },
   actions: {
     loadUserEvents: ({ commit, rootGetters }) => new Promise((resolve, reject) => {
