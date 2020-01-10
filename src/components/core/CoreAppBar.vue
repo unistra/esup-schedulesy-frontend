@@ -12,11 +12,11 @@
     <div class="flex-grow-1"></div>
     <v-tooltip left>
       <template v-slot:activator="{ on }">
-        <v-btn icon v-on="on" @click="$emit('dark-mode', !$vuetify.theme.dark)">
+        <v-btn icon v-on="on" @click="$emit('dark-mode', !$vuetify.theme.dark)" :aria-label="colorMode">
           <v-icon>mdi-lightbulb</v-icon>
         </v-btn>
       </template>
-      <span>{{ $vuetify.theme.isDark ? 'Light mode' : 'Dark mode' }}</span>
+      <span>{{ colorMode }}</span>
     </v-tooltip>
   </v-app-bar>
 </template>
@@ -27,6 +27,12 @@ export default {
   methods: {
     openNavDrawer() {
       this.$store.dispatch('ui/openNavDrawer');
+    },
+  },
+  computed: {
+    colorMode() {
+      const newTheme = this.$vuetify.theme.isDark ? 'clair' : 'sombre';
+      return `Mode ${newTheme}`;
     },
   },
 };
