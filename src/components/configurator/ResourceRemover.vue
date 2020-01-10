@@ -1,13 +1,23 @@
 <template>
   <v-list-item dense>
     <v-list-item-action class="my-0 mr-3">
-      <v-btn text
-             icon
-             x-small
-             color="red"
-             @click="removeResource">
-        <v-icon dark>mdi-close-outline</v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on"
+                 :aria-label="`Déselectionner la ressource ${resource.name}`"
+                 text
+                 icon
+                 x-small
+                 color="red"
+                 @click="removeResource">
+            <v-icon v-on="on"
+                    dark>
+              mdi-close-outline
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Déselectionner la ressource {{ resource.name }}</span>
+      </v-tooltip>
     </v-list-item-action>
     <v-list-item-content class="py-0">
       <p class="ma-0">
