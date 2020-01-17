@@ -224,7 +224,7 @@ export default {
           pour les consultations ultérieures de votre emploi du temps.
           </p>
           <p>
-          Votre emploi du temps personnalisé sera accessible <strong>dans l'onglet "Conuslter" en
+          Votre emploi du temps personnalisé sera accessible <strong>dans l'onglet "Consulter" en
           haut à gauche</strong>.
           </p>
           <p>
