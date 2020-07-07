@@ -1,10 +1,9 @@
 <template>
   <v-badge v-if="hasNote"
-           :color="dotColor"
+           color="grey darken-1"
+           inline
            left
-           dot
-           offset-x="6"
-           offset-y="5">
+           icon="mdi-comment-outline">
     <strong>{{ title }}</strong>
   </v-badge>
   <strong v-else>{{ title }}</strong>
