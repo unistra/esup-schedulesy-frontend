@@ -15,7 +15,7 @@ const environment = process.env.VUE_APP_DEPLOYMENT_ENV;
 
 if (environment !== 'dev' && environment !== 'ernestDev' && environment !== 'ernestTest') {
   Sentry.init({
-    dsn: 'https://74d930ab848d4d40a99c2e8326d5d079@sentry-test.app.unistra.fr/23',
+    dsn: 'https://2ab6b76118c54c5a982d095a1c9cdcc2@sentry.app.unistra.fr/5',
     release: VERSION,
     environment: process.env.VUE_APP_DEPLOYMENT_ENV,
     integrations: [
