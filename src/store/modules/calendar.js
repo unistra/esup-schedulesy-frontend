@@ -37,7 +37,6 @@ export default {
             const pastelize = toPastelize => chroma(toPastelize).set('hsl.s', '*0.8').set('hsl.l', '0.9').hex();
             let eventsColors = {};
             events.events.forEach((event) => {
-              console.log(event);
               const userCustomization = rootGetters['config/getUserCustomization'];
               const userTheme = userCustomization.configuration && userCustomization.configuration.theme
                 ? userCustomization.configuration.theme
