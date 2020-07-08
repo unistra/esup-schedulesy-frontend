@@ -41,7 +41,7 @@ export default {
               const userTheme = userCustomization.configuration && userCustomization.configuration.theme
                 ? userCustomization.configuration.theme
                 : 'default';
-              if (userTheme === 'pastel') {
+              if (userTheme === 'pastel' && event.color !== '#ffffff') {
                 const color = event.color;
                 if (Object.keys(eventsColors).includes(color.substr(1))) {
                   event.color = eventsColors[color.substr(1)]
