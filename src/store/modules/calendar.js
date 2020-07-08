@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import moment from 'moment';
+import chroma from 'chroma-js';
 
 export default {
   namespaced: true,
@@ -33,6 +34,24 @@ export default {
         .then(
           (response) => {
             const { events } = response.data;
+            const pastelize = toPastelize => chroma(toPastelize).set('hsl.s', '*0.8').set('hsl.l', '0.9').hex();
+            let eventsColors = {};
+            events.events.forEach((event) => {
+              const userCustomization = rootGetters['config/getUserCustomization'];
+              const userTheme = userCustomization.configuration && userCustomization.configuration.theme
+                ? userCustomization.configuration.theme
+                : 'default';
+              if (userTheme === 'pastel' && event.color !== '#ffffff') {
+                const color = event.color;
+                if (Object.keys(eventsColors).includes(color.substr(1))) {
+                  event.color = eventsColors[color.substr(1)]
+                } else {
+                  const newColor = pastelize(color);
+                  eventsColors[color.substr(1)] = newColor;
+                  event.color = newColor;
+                }
+              }
+            });
             commit('LOAD_USER_EVENTS', events);
             resolve();
           },
