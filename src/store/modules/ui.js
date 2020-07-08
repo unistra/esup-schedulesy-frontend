@@ -75,6 +75,10 @@ export default {
         { label: 'Samedi', value: 6 },
         { label: 'Dimanche', value: 0 },
       ],
+      themes: [
+        { label: 'Défaut', value: 'default' },
+        { label: 'Pastel', value: 'pastel' },
+      ],
     },
   },
   getters: {
@@ -84,6 +88,7 @@ export default {
     getCalendarToday: state => state.calendar.today,
     getCalendarDisplayModes: state => state.calendar.displayModes,
     getCalendarCustomType: state => state.calendar.customType,
+    getThemes: state => state.configurator.themes,
     getDisplayedDays: state => state.configurator.displayedDays,
     getSignature: state => organization => state.signature[organization],
   },

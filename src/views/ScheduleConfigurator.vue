@@ -75,6 +75,13 @@
       </core-section>
     </v-expand-transition>
     <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
+      <v-subheader class="text--primary"><strong>Thème</strong></v-subheader>
+      <v-select label="Thème"
+                :items="themes"
+                item-text="label"
+                item-value="value"
+                :value="userTheme"
+                @change="updateUserTheme" />
       <v-subheader class="text--primary"><strong>Mode d'affichage de la consultation</strong></v-subheader>
       <p>
         La consultation de votre emploi du temps offre le choix entre différents modes
@@ -174,6 +181,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
@@ -240,6 +248,9 @@ export default {
     displayModes() {
       return this.$store.getters['ui/getCalendarDisplayModes'];
     },
+    themes() {
+      return this.$store.getters['ui/getThemes'];
+    },
     displayedDays() {
       return this.$store.getters['ui/getDisplayedDays'];
     },
@@ -251,6 +262,13 @@ export default {
     },
     userDisplayType() {
       return this.$store.getters['config/getUserDisplayType'];
+    },
+    userTheme() {
+      if (this.userCustomization.configuration
+        && this.userCustomization.configuration.theme) {
+        return this.userCustomization.configuration.theme;
+      }
+      return 'default';
     },
     userDisplayMode() {
       if (this.userCustomization.configuration
@@ -384,6 +402,31 @@ export default {
         },
       };
       this.$store.dispatch('config/patchUserCustomization', newWeekdays);
+    },
+    updateUserTheme(payload) {
+      const newTheme = {
+        changes: {
+          configuration: {
+            ...this.userCustomization.configuration,
+            ...{ theme: payload },
+          },
+        },
+        snackbar: {
+          success: {
+            isVisible: true,
+            color: 'success',
+            message: 'Votre configuration d\'affichage a bien été mise à jour.',
+            timeout: 6000,
+          },
+          error: {
+            isVisible: true,
+            color: 'error',
+            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
+            timeout: 6000,
+          },
+        },
+      };
+      this.$store.dispatch('config/patchUserCustomization', newTheme);
     },
     showResourcesSelector() {
       this.show = !this.show;
