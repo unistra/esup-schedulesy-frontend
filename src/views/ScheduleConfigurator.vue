@@ -76,6 +76,15 @@
     </v-expand-transition>
     <core-section :title="{ class: 'headline', icon: 'mdi-shape', content: 'Configuration d\'affichage', level: 2 }">
       <v-subheader class="text--primary"><strong>Thème</strong></v-subheader>
+      <p>
+      </p>
+      Le thème Pastel propose une version plus claire et plus douce des couleurs. Il permet de gagner en lisibilité et offre un meilleur contraste entre la couleur de fond des évènements et le texte.
+      </p>
+      <p>
+        <strong class="red--text">
+          Attention : certaines nuances de couleur proches peuvent être plus difficiles à distinguer
+        </strong>
+      </p>
       <v-select label="Thème"
                 :items="themes"
                 item-text="label"
