@@ -13,11 +13,11 @@ module.exports = {
     extract: process.env.NODE_ENV === 'test'
       ? false
       : { filename: 'css/unistra-schedule.css', ignoreOrder: true },
-    loaderOptions: {
-      sass: {
-        data: '@import "~@/assets/main.scss"',
-      },
-    },
+    // loaderOptions: {
+    //   sass: {
+    //     data: '@import "~@/assets/main.scss"',
+    //   },
+    // },
   },
   configureWebpack: {
     output: {

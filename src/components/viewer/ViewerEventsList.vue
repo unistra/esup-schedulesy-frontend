@@ -15,6 +15,9 @@
                          :color="event.color"
                          colored-border
                          border="left">
+                  <template v-slot:prepend>
+                    <v-icon v-if="event.note.length > 0" class="mr-1">mdi-comment-outline</v-icon>
+                  </template>
                   <v-list-item-title>{{ event.name }}</v-list-item-title>
                   <v-list-item-subtitle v-text="genClassrooms(event)"></v-list-item-subtitle>
                 </v-alert>
