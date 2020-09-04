@@ -35,19 +35,17 @@ const checkUserCustomizationLoaded = (to, from, next) => {
 
 const loadUserEvents = (to, from, next) => {
   store.dispatch('calendar/loadUserEvents')
-    .then(() => {
+    .then((events) => {
       next();
     })
     .catch((error) => {
-      if (error.response.status === 413) {
-        store.dispatch('ui/updateSnackbar', {
-          isVisible: true,
-          color: 'warning',
-          message: 'Limite d\'évènements à afficher atteinte. Veuillez sélectionner moins de ressources',
-          timeout: 6000,
-        });
-        next({ name: 'config' });
-      }
+      store.dispatch('ui/updateSnackbar', {
+        isVisible: true,
+        color: 'warning',
+        message: error.message,
+        timeout: 6000,
+      });
+      next({ name: 'config' });
     });
 };
 

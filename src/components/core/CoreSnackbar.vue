@@ -15,13 +15,8 @@
 export default {
   name: 'CoreSnackbar',
   computed: {
-    snackbar: {
-      get() {
-        return this.$store.getters['ui/getSnackbar'];
-      },
-      set(value) {
-        console.log(value);
-      },
+    snackbar() {
+      return this.$store.getters['ui/getSnackbar'];
     },
   },
 };

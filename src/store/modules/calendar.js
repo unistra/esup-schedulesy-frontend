@@ -35,22 +35,11 @@ export default {
         .get(`${process.env.VUE_APP_BACKEND_API_URL}/calendar/${rootGetters['auth/getLogin']}.json`)
         .then(
           (response) => {
-            const { events } = response.data;
-            if (!Object.keys(events).length || !events.events.length) {
-              dispatch(
-                'ui/updateSnackbar',
-                {
-                  isVisible: true,
-                  color: 'warning',
-                  message: 'Les ressources que vous avez sélectionnées ne contiennent plus d\'évènements. Veuillez vérifier votre sélection de ressources.',
-                  timeout: 6000,
-                },
-                { root: true, },
-              );
-              router.push({ name: 'config' });
-            } else {
-              const pastelize = toPastelize => chroma(toPastelize).set('hsl.s', '*0.8').set('hsl.l', '0.9').hex();
-              let eventsColors = {};
+            let { events } = response.data;
+            const pastelize = toPastelize => chroma(toPastelize).set('hsl.s', '*0.8').set('hsl.l', '0.9').hex();
+            let eventsColors = {};
+            try {
+              if (!events.events.length) reject(new Error('Les ressources que vous avez sélectionnées ne contiennent plus d\'évènements. Veuillez vérifier votre sélection de ressources.'));
               events.events.forEach((event) => {
                 const userCustomization = rootGetters['config/getUserCustomization'];
                 const userTheme = userCustomization.configuration && userCustomization.configuration.theme
@@ -67,11 +56,16 @@ export default {
                   }
                 }
               });
+            } catch (error) {
+              if (error instanceof TypeError) reject(new Error('Les ressources que vous avez sélectionnées ne contiennent plus d\'évènements. Veuillez vérifier votre sélection de ressources.'));
+            } finally {
               commit('LOAD_USER_EVENTS', events);
-            }
-            resolve();
+            };
+            resolve(events);
           },
-          error => reject(error),
+          (error) => {
+            if (error.response.status === 413) reject(new Error('Limite d\'évènements à afficher atteinte. Veuillez sélectionner moins de ressources'));
+          },
         );
     }),
   },
