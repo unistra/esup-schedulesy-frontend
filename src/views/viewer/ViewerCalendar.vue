@@ -171,7 +171,7 @@ export default {
     eventName(event, timedEvent) {
       const {
         name,
-        note,
+        note = '',
         instructors = '',
         classrooms = '',
       } = event.input;
@@ -181,7 +181,7 @@ export default {
         propsData: {
           title: name,
           eventColor: event.input.color,
-          hasNote: note.length > 0,
+          hasNote: !!note,
         },
       }).$mount().$el;
       const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';

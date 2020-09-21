@@ -105,7 +105,7 @@
             </p>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="event.note.length > 0">
+        <v-list-item v-if="!!event.note">
           <v-list-item-icon>
             <v-icon>mdi-comment-outline</v-icon>
           </v-list-item-icon>
