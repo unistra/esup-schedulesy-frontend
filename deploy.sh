@@ -11,9 +11,9 @@ WORKING_DIR="$TEMP/git-clone"
 
 TEST_STATIC=("root@schedulesy-test.app.unistra.fr:/var/www/static/schedulesy")
 TEST_TEMPLATE=("root@schedulesy-test.app.unistra.fr:/home/django/schedulesy-test.app.unistra.fr/current/schedulesy/templates")
-PREPROD_STATIC=("root@django-rp-pprd.di.unistra.fr:/var/www/static/schedulesy")
+PREPROD_STATIC=("root@rp-dip-pprd-public.di.unistra.fr:/var/www/static/schedulesy")
 PREPROD_TEMPLATE=("root@django-pprd-w1:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates" "root@django-pprd-w2:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates")
-PROD_STATIC=("root@rp10-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp10-s.di.unistra.fr:/var/www/static/schedulesy")
+PROD_STATIC=("root@rp-dip-public-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp-dip-public-s.di.unistra.fr:/var/www/static/schedulesy")
 PROD_TEMPLATE=("root@django-w3:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates" "root@django-w4:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates")
 
 ENVIRONMENT="$2"

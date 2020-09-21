@@ -2,6 +2,8 @@ import Vue from 'vue';
 import moment from 'moment';
 import chroma from 'chroma-js';
 
+import router from '@/router/router';
+
 export default {
   namespaced: true,
   state: {
@@ -27,35 +29,43 @@ export default {
     getEventsCategory5s: state => (state.userEvents.category5s ? state.userEvents.category5s : null),
   },
   actions: {
-    loadUserEvents: ({ commit, rootGetters }) => new Promise((resolve, reject) => {
+    loadUserEvents: ({ dispatch, commit, rootGetters }) => new Promise((resolve, reject) => {
       commit('UPDATE_ARE_USER_EVENTS_LOADED', false);
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_API_URL}/calendar/${rootGetters['auth/getLogin']}.json`)
         .then(
           (response) => {
-            const { events } = response.data;
+            let { events } = response.data;
             const pastelize = toPastelize => chroma(toPastelize).set('hsl.s', '*0.8').set('hsl.l', '0.9').hex();
             let eventsColors = {};
-            events.events.forEach((event) => {
-              const userCustomization = rootGetters['config/getUserCustomization'];
-              const userTheme = userCustomization.configuration && userCustomization.configuration.theme
-                ? userCustomization.configuration.theme
-                : 'default';
-              if (userTheme === 'pastel' && event.color !== '#ffffff') {
-                const color = event.color;
-                if (Object.keys(eventsColors).includes(color.substr(1))) {
-                  event.color = eventsColors[color.substr(1)]
-                } else {
-                  const newColor = pastelize(color);
-                  eventsColors[color.substr(1)] = newColor;
-                  event.color = newColor;
+            try {
+              if (!events.events.length) reject(new Error('Les ressources que vous avez sélectionnées ne contiennent plus d\'évènements. Veuillez vérifier votre sélection de ressources.'));
+              events.events.forEach((event) => {
+                const userCustomization = rootGetters['config/getUserCustomization'];
+                const userTheme = userCustomization.configuration && userCustomization.configuration.theme
+                  ? userCustomization.configuration.theme
+                  : 'default';
+                if (userTheme === 'pastel' && event.color !== '#ffffff') {
+                  const color = event.color;
+                  if (Object.keys(eventsColors).includes(color.substr(1))) {
+                    event.color = eventsColors[color.substr(1)]
+                  } else {
+                    const newColor = pastelize(color);
+                    eventsColors[color.substr(1)] = newColor;
+                    event.color = newColor;
+                  }
                 }
-              }
-            });
-            commit('LOAD_USER_EVENTS', events);
-            resolve();
+              });
+            } catch (error) {
+              if (error instanceof TypeError) reject(new Error('Les ressources que vous avez sélectionnées ne contiennent plus d\'évènements. Veuillez vérifier votre sélection de ressources.'));
+            } finally {
+              commit('LOAD_USER_EVENTS', events);
+            };
+            resolve(events);
           },
-          error => reject(error),
+          (error) => {
+            if (error.response.status === 413) reject(new Error('Limite d\'évènements à afficher atteinte. Veuillez sélectionner moins de ressources'));
+          },
         );
     }),
   },
