@@ -1,8 +1,5 @@
 <template>
-  <v-col xs="12"
-         :sm="environment === 'ernest' ? 12 : 11"
-         :md="environment === 'ernest' ? 12 : 10"
-         :lg="environment === 'ernest' ? 12 : 9">
+  <v-col>
     <v-row v-if="environment !== 'ernest'">
       <v-col>
         <core-title class="primary--text"
@@ -189,7 +186,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import CoreSection from '@/components/core/CoreSection.vue';
 import CoreExpansionPanels from '@/components/core/CoreExpansionPanels.vue';
