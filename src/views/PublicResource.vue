@@ -1,7 +1,29 @@
 <template>
   <layout :name="formattedLayout">
-    <v-row class="fill-height">
-      <v-col>
+    <v-row class="fill-height flex-column no-gutters">
+      <v-col class="flex-grow-0">
+        <viewer-toolbar-md
+          class="hidden-sm-and-down"
+          :title="title"
+          :type="typeToLabel[formattedType]"
+          :showCustom="false"
+          @today="setToday"
+          @previous="prev"
+          @next="next"
+          @change-type="setType"
+        />
+        <viewer-toolbar-sm
+          class="hidden-md-and-up"
+          :title="title"
+          :type="formattedType"
+          :showCustom="false"
+          @today="setToday"
+          @previous="prev"
+          @next="next"
+          @change-type="setType"
+        />
+      </v-col>
+      <v-col class="flex-grow-1">
         <v-calendar
           v-model="focus"
           :locale="calendarSettings.locale"
@@ -69,7 +91,10 @@
 <script>
 import Vue from 'vue';
 import moment from 'moment';
+
 import Layout from '@/layouts/layout';
+import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
+import ViewerToolbarSm from '@/components/viewer/ViewerToolbarSm.vue';
 import ViewerEventDetail from '@/components/viewer/ViewerEventDetail.vue';
 import ViewerEventTitle from '@/components/viewer/ViewerEventTitle.vue';
 
@@ -97,23 +122,35 @@ export default {
   },
   components: {
     Layout,
+    ViewerToolbarMd,
+    ViewerToolbarSm,
     ViewerEventDetail,
     ViewerEventTitle,
     ViewerMap: () => import(/* webpackChunkName: "viewer-geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
-  data: () => ({
-    events: [],
-    eventsClassrooms: {},
-    eventsTrainees: {},
-    eventsInstructors: {},
-    eventsCategory5s: {},
-    focus: null,
-    selectedOpen: false,
-    selectedElement: null,
-    selectedEvent: {},
-    selectedEventGeolocation: [],
-    showEventMap: false,
-  }),
+  data: function() {
+    return {
+      localType: this.type,
+      typeToLabel: {
+        day: 'Jour',
+        week: 'Semaine',
+        month: 'Mois',
+      },
+      events: [],
+      eventsClassrooms: {},
+      eventsTrainees: {},
+      eventsInstructors: {},
+      eventsCategory5s: {},
+      focus: null,
+      start: null,
+      end: null,
+      selectedOpen: false,
+      selectedElement: null,
+      selectedEvent: {},
+      selectedEventGeolocation: [],
+      showEventMap: false,
+    };
+  },
   computed: {
     calendarSettings() {
       return this.$store.getters['ui/getCalendarSettings'];
@@ -124,7 +161,7 @@ export default {
         WEEK: 'week',
         MONTH: 'month',
       };
-      return types[this.type.toUpperCase()] || 'week';
+      return types[this.localType.toUpperCase()] || 'week';
     },
     formattedLayout () {
       const layouts = {
@@ -136,13 +173,48 @@ export default {
     formattedIntervalHeight() {
       return Number.parseInt(this.intervalHeight, 10) || this.calendarSettings.intervalHeight;
     },
+    title() {
+      const { start, end } = this;
+      if (!start || !end) {
+        return '';
+      }
+
+      const startDay = start.day;
+      const endDay = end.day;
+      const weekNumber = moment(start.date).week();
+
+      const startMonth = this.monthFormatter(start);
+      const endMonth = this.monthFormatter(end);
+
+      const startYear = start.year;
+      const endYear = end.year;
+
+      switch (this.formattedType) {
+        case 'month':
+          return `${startMonth} ${startYear}`;
+        case 'week':
+          if (this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs') {
+            return `${startMonth} ${startYear} - semaine ${weekNumber}`;
+          }
+          return `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
+        case 'day':
+          return `${startDay} ${startMonth} ${startYear}`;
+        default:
+          break;
+      }
+      return '';
+    },
+    monthFormatter() {
+      return this.$refs[this.calendarSettings.ref].getFormatter({
+        timeZone: 'UTC', month: 'long',
+      });
+    },
   },
   methods: {
     eventName(event, timedEvent) {
       const {
         name,
         note = '',
-        instructors = '',
         classrooms = '',
       } = event.input;
       const title = new Vue({
@@ -165,7 +237,7 @@ export default {
       return name;
     },
     setType(type) {
-      this.customType = type;
+      this.localType = type;
       this.setFocus();
     },
     setFocus() {
@@ -174,7 +246,7 @@ export default {
     },
     viewDay({ date }) {
       this.focus = date;
-      this.customType = 'day';
+      this.localType = 'day';
     },
     setToday() {
       this.setFocus();

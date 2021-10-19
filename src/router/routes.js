@@ -59,19 +59,19 @@ export default [
   },
   {
     path: '/public/:resourceId/:type',
-    name: 'publicResource',
+    name: 'publicResourceType',
     component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
     props: true,
   },
   {
     path: '/public/:resourceId/:type/:layout',
-    name: 'publicResource',
+    name: 'publicResourceTypeLayout',
     component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
     props: true,
   },
   {
     path: '/public/:resourceId/:type/:layout/:intervalHeight',
-    name: 'publicResource',
+    name: 'publicResourceFull',
     component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
     props: true,
   },
