@@ -33,6 +33,7 @@ const options = {
   appIsAllAuth: true,
   authCasLogoutUrl: 'cas-auth-logout',
   jwtServerUrl: process.env.VUE_APP_JWT_SERVER_URL,
+  serverCAS: process.env.VUE_APP_CAS_SERVER_URL,
 };
 Vue.use(Cas, {
   router,
