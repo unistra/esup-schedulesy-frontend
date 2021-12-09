@@ -41,15 +41,17 @@
             </p>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-for="instructor in event.instructors"
-                     :key="instructor">
-          <v-list-item-icon>
-            <v-icon>mdi-account</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <span>{{ instructors[instructor].name }}</span>
-          </v-list-item-content>
-        </v-list-item>
+        <template v-if="!noInstructors">
+          <v-list-item v-for="instructor in event.instructors"
+                       :key="instructor">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <span>{{ instructors[instructor].name }}</span>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
         <v-sheet v-for="classroom in event.classrooms"
                  :key="classroom">
           <v-tooltip top :disabled="classrooms[classroom].geolocation.length < 2">
@@ -136,9 +138,14 @@ export default {
       type: Object,
       required: true,
     },
+    noInstructors: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     instructors: {
       type: Object,
-      required: true,
+      required: false,
     },
     trainees: {
       type: Object,

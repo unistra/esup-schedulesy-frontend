@@ -14,6 +14,9 @@ export default [
     path: '',
     name: 'home',
     component: home,
+    meta: {
+      unistraCasAuthentication: true,
+    },
     beforeEnter: checkUserCustomizationLoaded,
     children: [
       {
@@ -42,6 +45,35 @@ export default [
         ],
       },
     ],
+  },
+  {
+    path: '/public/:resourceId',
+    name: 'publicResource',
+    component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
+    props: (route) => ({
+      resourceId: route.params.resourceId,
+      type: route.query.type,
+      layout: route.query.layout,
+      intervalHeight: route.query.interval_height,
+    }),
+  },
+  {
+    path: '/public/:resourceId/:type',
+    name: 'publicResourceType',
+    component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
+    props: true,
+  },
+  {
+    path: '/public/:resourceId/:type/:layout',
+    name: 'publicResourceTypeLayout',
+    component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
+    props: true,
+  },
+  {
+    path: '/public/:resourceId/:type/:layout/:intervalHeight',
+    name: 'publicResourceFull',
+    component: () => import(/* webpackChunkName: "publicResource" */ '@/views/PublicResource'),
+    props: true,
   },
   {
     path: '/auth/cas/logout',

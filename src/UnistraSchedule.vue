@@ -1,9 +1,7 @@
 <template>
-  <v-app id="unistra-schedule"
-         class=" unistra-schedule primary">
-    <core-snackbar></core-snackbar>
-    <router-view></router-view>
-  </v-app>
+  <component :is="layout">
+    <router-view :layout.sync="layout" />
+  </component>
 </template>
 
 <script>
@@ -11,6 +9,9 @@ import CoreSnackbar from '@/components/core/CoreSnackbar.vue';
 
 export default {
   name: 'UnistraSchedule',
+  data: () => ({
+    layout: 'div',
+  }),
   components: {
     CoreSnackbar,
   },

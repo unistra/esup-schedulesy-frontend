@@ -1,24 +1,38 @@
 <template>
   <v-toolbar flat>
-    <v-btn outlined tile class="mr-4" @click="$emit('today')">
+    <v-btn
+      outlined
+      tile
+      class="mr-4"
+      @click="$emit('today')"
+    >
       Aujourd'hui
     </v-btn>
-    <div class="flex-grow-1"></div>
-    <v-btn fab text small @click="$emit('previous')">
+    <v-spacer />
+    <v-btn
+      fab
+      text
+      small
+      @click="$emit('previous')"
+    >
       <v-icon small>mdi-chevron-left</v-icon>
     </v-btn>
     <v-toolbar-title>{{ title }}</v-toolbar-title>
-    <v-btn fab text small @click="$emit('next')">
+    <v-btn fab
+      text
+      small
+      @click="$emit('next')"
+    >
       <v-icon small>mdi-chevron-right</v-icon>
     </v-btn>
-    <div class="flex-grow-1"></div>
+    <v-spacer />
     <v-menu offset-y>
       <template v-slot:activator="{ on }">
         <v-btn
           tile
           outlined
           v-on="on"
-          >
+        >
           <span>{{ type }}</span>
           <v-icon right>mdi-menu-down</v-icon>
         </v-btn>
@@ -27,7 +41,10 @@
         <v-list-item @click="$emit('change-type', 'day')">
           <v-list-item-title>Jour</v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="showCustom" @click="$emit('change-type', 'custom')">
+        <v-list-item
+          v-if="showCustom"
+          @click="$emit('change-type', 'custom')"
+        >
           <v-list-item-title>Personnalisé</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$emit('change-type', 'week')">

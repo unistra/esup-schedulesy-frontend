@@ -5,7 +5,7 @@
     <v-list dense>
       <v-list-item :to="{ name: 'config' }">
         <v-list-item-action>
-          <v-icon>mdi-settings</v-icon>
+          <v-icon>mdi-cog</v-icon>
         </v-list-item-action>
         <v-list-item-content>Personnaliser</v-list-item-content>
       </v-list-item>

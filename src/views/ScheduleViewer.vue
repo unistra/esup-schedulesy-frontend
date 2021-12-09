@@ -1,41 +1,49 @@
 <template>
-  <v-col xs="12"
-         :sm="environment === 'ernest' ? 12 : 11"
-         :md="environment === 'ernest' ? 12 : 10"
-         :lg="environment === 'ernest' ? 12 : 9">
+  <v-col>
     <v-row v-if="environment !== 'ernest'">
       <v-col>
-        <core-title class="primary--text"
-                    :title="pageTitle">
-        </core-title>
+        <core-title
+          class="primary--text"
+          :title="pageTitle"
+        />
       </v-col>
     </v-row>
     <core-section :title="{ class: 'headline', icon: 'mdi-calendar', content: 'Emploi du temps', level: 2 }">
-      <router-view ref="viewer"></router-view>
+      <router-view ref="viewer" />
     </core-section>
-    <v-bottom-sheet v-model="bottomSheet"
-                    persistent
-                    hide-overlay>
-      <v-sheet min-height="64"
-               class="d-flex">
-        <v-btn text
-               height="64"
-               class="flex-grow-1"
-               @click="setToday">
+    <v-bottom-sheet
+      v-model="bottomSheet"
+      persistent
+      hide-overlay
+    >
+      <v-sheet
+        min-height="64"
+        class="d-flex"
+      >
+        <v-btn
+          text
+          height="64"
+          class="flex-grow-1"
+          @click="setToday"
+        >
           <strong>Aujourd'hui</strong>
         </v-btn>
-        <v-btn text
-               tile
-               height="64"
-               class="flex-grow-1"
-               :to="{ name: 'list' }">
+        <v-btn
+          text
+          tile
+          height="64"
+          class="flex-grow-1"
+          :to="{ name: 'list' }"
+        >
           <strong>Liste</strong>
         </v-btn>
-        <v-btn text
-               tile
-               height="64"
-               class="flex-grow-1"
-               :to="{ name: 'calendar' }">
+        <v-btn
+          text
+          tile
+          height="64"
+          class="flex-grow-1"
+          :to="{ name: 'calendar' }"
+        >
           <strong>Calendrier</strong>
         </v-btn>
       </v-sheet>

@@ -1,69 +1,84 @@
 <template>
   <v-sheet>
-    <viewer-toolbar-md class="hidden-sm-and-down"
-                       :title="title"
-                       :type="customTypeToLabel[customType]"
-                       :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
-                       @today="setToday"
-                       @previous="prev"
-                       @next="next"
-                       @change-type="setType">
-    </viewer-toolbar-md>
-    <viewer-toolbar-sm class="hidden-md-and-up"
-                       :title="title"
-                       :type="customType"
-                       :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
-                       @today="setToday"
-                       @previous="prev"
-                       @next="next"
-                       @change-type="setType">
-    </viewer-toolbar-sm>
-    <v-sheet height="600">
-      <v-calendar v-model="focus"
-                  :locale="calendarSettings.locale"
-                  :color="calendarSettings.color"
-                  :ref="calendarSettings.ref"
-                  :type="type"
-                  :weekdays="weekdays"
-                  :now="calendarSettings.today"
-                  :interval-height="calendarSettings.intervalHeight"
-                  :first-interval="calendarSettings.firstInterval"
-                  :interval-minutes="calendarSettings.intervalMinutes"
-                  :interval-count="calendarSettings.intervalCount"
-                  :interval-format="intervalFormat"
-                  :events="events"
-                  :event-name="eventName"
-                  :event-color="getEventColor"
-                  :event-text-color="calendarSettings.eventTextColor"
-                  @click:event="showEvent"
-                  @click:date="viewDay"
-                  @click:more="viewDay"
-                  @change="updateRange">
-      </v-calendar>
-      <v-menu v-model="selectedOpen"
-              :activator="selectedElement">
-        <viewer-event-detail :event="selectedEvent"
-          :category5s="objectFilter(eventsCategory5s, selectedEvent.category5s)"
-          :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
-          :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
-          :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
-          @close="selectedOpen = false"
-          @show-map="showMap">
-        </viewer-event-detail>
-      </v-menu>
-      <v-dialog v-model="showEventMap" fullscreen hide-overlay transition="dialog-bottom-transition">
-        <v-card tile>
-          <v-toolbar dark color="primary">
-            <v-btn icon dark @click="showEventMap = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-toolbar-title>Géolocalisation du bâtiment</v-toolbar-title>
-          </v-toolbar>
-          <viewer-map :coordinates="selectedEventGeolocation">
-          </viewer-map>
-        </v-card>
-      </v-dialog>
-    </v-sheet>
+    <viewer-toolbar-md
+      class="hidden-sm-and-down"
+      :title="title"
+      :type="customTypeToLabel[customType]"
+      :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
+      @today="setToday"
+      @previous="prev"
+      @next="next"
+      @change-type="setType"
+    />
+    <viewer-toolbar-sm
+      class="hidden-md-and-up"
+      :title="title"
+      :type="customType"
+      :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
+      @today="setToday"
+      @previous="prev"
+      @next="next"
+      @change-type="setType"
+    />
+    <v-calendar
+      v-model="focus"
+      :locale="calendarSettings.locale"
+      :color="calendarSettings.color"
+      :ref="calendarSettings.ref"
+      :type="type"
+      :weekdays="weekdays"
+      :now="calendarSettings.today"
+      :interval-height="calendarSettings.intervalHeight"
+      :first-interval="calendarSettings.firstInterval"
+      :interval-minutes="calendarSettings.intervalMinutes"
+      :interval-count="calendarSettings.intervalCount"
+      :interval-format="intervalFormat"
+      :events="events"
+      :event-name="eventName"
+      :event-color="getEventColor"
+      :event-text-color="calendarSettings.eventTextColor"
+      @click:event="showEvent"
+      @click:date="viewDay"
+      @click:more="viewDay"
+      @change="updateRange"
+    />
+    <v-menu
+      v-model="selectedOpen"
+      :activator="selectedElement"
+    >
+      <viewer-event-detail
+        :event="selectedEvent"
+        :category5s="objectFilter(eventsCategory5s, selectedEvent.category5s)"
+        :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
+        :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
+        :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
+        @close="selectedOpen = false"
+        @show-map="showMap"
+      />
+    </v-menu>
+    <v-dialog
+      v-model="showEventMap"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card tile>
+        <v-toolbar
+          dark
+          color="primary"
+        >
+          <v-btn
+            icon
+            dark
+            @click="showEventMap = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Géolocalisation du bâtiment</v-toolbar-title>
+        </v-toolbar>
+        <viewer-map :coordinates="selectedEventGeolocation" />
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
