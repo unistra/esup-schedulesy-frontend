@@ -264,9 +264,6 @@ export default {
     userResources() {
       return this.$store.getters['config/getUserResourcesUrls'];
     },
-    userDisplayType() {
-      return this.$store.getters['config/getUserDisplayType'];
-    },
     userTheme() {
       if (this.userCustomization.configuration
         && this.userCustomization.configuration.theme) {
@@ -335,25 +332,6 @@ export default {
         },
       };
       this.$store.dispatch('config/patchUserCustomization', payload);
-    },
-    updateDisplayType(displayType) {
-      this.axios.patch(`${this.urls.customization}/${this.userCustomization.username}.json`, { display_configuration: displayType })
-        .then(() => {
-          this.snackbar = {
-            isVisible: true,
-            color: 'success',
-            message: 'Votre configuration d\'affichage a bien été mise à jour.',
-            timeout: 6000,
-          };
-        })
-        .catch(() => {
-          this.snackbar = {
-            isVisible: true,
-            color: 'error',
-            message: 'Une erreur est survenue pendant la mise à jour de votre configuration d\'affichage',
-            timeout: 6000,
-          };
-        });
     },
     updateUserDisplayMode(payload) {
       const newUserDisplayMode = {

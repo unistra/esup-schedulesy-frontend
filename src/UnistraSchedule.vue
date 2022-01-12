@@ -16,7 +16,7 @@ export default {
     CoreSnackbar,
   },
   created() {
-    if (this.$store.getters['auth/isLogged']) this.$store.dispatch('config/loadUserCustomization');
+    if (localStorage.getItem('JWT__access__token')) this.$store.dispatch('config/loadUserCustomization');
   },
 };
 </script>

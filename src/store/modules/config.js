@@ -41,12 +41,8 @@ export default {
   },
   getters: {
     getResources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type) || {}),
-    getDisplayTypes: state => state.displayTypes,
     getUserCustomization: state => state.userCustomization,
     isUserCustomizationLoaded: state => state.isUserCustomizationLoaded,
-    getUserDisplayType: (state) => {
-      return state.userCustomization.display_configuration ? state.userCustomization.display_configuration : '';
-    },
     getUserResources: state => state.userCustomization.resources,
     getUserResourcesIds: (state) => {
       if (typeof state.userCustomization.resources === 'string' && state.userCustomization.resources.length > 0) {
@@ -62,14 +58,6 @@ export default {
           .map(resource => `${process.env.VUE_APP_BACKEND_API_URL}/resource/${resource}.json/`);
       }
       return [];
-    },
-    getBaseIcsUrl: (state, getters) => {
-      if (typeof state.icsParams.base_url === 'string' && state.icsParams.base_url.length > 0) {
-        const params = Object.entries(state.icsParams.params).map(param => `${param[0]}=${param[1]}`).join('&');
-        const resources = getters.getUserResourcesIds.map(resource => `resources=${resource}`).join('&');
-        return `${state.icsParams.base_url}?${params}&${resources}`;
-      }
-      return '';
     },
   },
   actions: {
@@ -179,18 +167,6 @@ export default {
           },
         );
     }),
-    loadIcsParams: ({ commit }) => new Promise((resolve, reject) => {
-      Vue.axios
-        .get(`${process.env.VUE_APP_BACKEND_API_URL}/ade_config.json`)
-        .then(
-          (response) => {
-            const icsParams = response.data;
-            commit('LOAD_ICS_PARAMS', icsParams);
-            resolve();
-          },
-          error => reject(error),
-        );
-    }),
   },
   mutations: {
     LOAD_RESOURCE: (state, payload) => state.resources.push(payload),
@@ -210,6 +186,5 @@ export default {
       };
       updateChildren(state.resources);
     },
-    LOAD_ICS_PARAMS: (state, payload) => { state.icsParams = payload; },
   },
 };

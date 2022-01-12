@@ -46,6 +46,5 @@ new Vue({
   vuetify,
   router,
   store,
-  axios,
   render: h => h(UnistraSchedule),
 }).$mount('#unistra-schedule-container');
