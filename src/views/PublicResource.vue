@@ -305,3 +305,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@media (max-width: 600px) {
+  /deep/ .v-calendar .v-size--default {
+    height: 28px;
+    width: 28px;
+  }
+}
+</style>
