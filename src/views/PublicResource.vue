@@ -40,12 +40,29 @@
           :events="events"
           :event-color="(event) => event.color"
           :event-text-color="calendarSettings.eventTextColor"
-          :event-name="eventName"
           @click:event="showEvent"
           @click:date="viewDay"
           @click:more="viewDay"
           @change="updateRange"
-        />
+        >
+          <template #event="props">
+            <div class="pl-1">
+              <span class="v-event-summary">
+                <template v-if="props.eventParsed.start.hasTime">
+                  <viewer-event-title
+                    :title="props.event.name"
+                    :has-note="props.timed && !!props.event.note"
+                  />
+                  <span
+                    v-if="props.timed"
+                    v-html="getEventExtraInfos(props.eventParsed)"
+                  />
+                </template>
+                <template v-else>{{ props.event.name }}</template>
+              </span>
+            </div>
+          </template>
+        </v-calendar>
         <v-menu
           v-model="selectedOpen"
           :activator="selectedElement"
@@ -89,7 +106,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import moment from 'moment';
 
 import Layout from '@/layouts/layout';
@@ -211,30 +227,13 @@ export default {
     },
   },
   methods: {
-    eventName(event, timedEvent) {
+    getEventExtraInfos(event) {
       const {
-        name,
-        note = '',
         classrooms = '',
       } = event.input;
-      const title = new Vue({
-        ...ViewerEventTitle,
-        parent: this,
-        propsData: {
-          title: name,
-          eventColor: event.input.color,
-          hasNote: !!note,
-        },
-      }).$mount().$el;
-      // const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
       const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
-      if (event.start.hasTime) {
-        if (timedEvent) {
-          return `${title.outerHTML}${htmlClassrooms}`;
-        }
-        return `<strong>${name}</strong>`;
-      }
-      return name;
+
+      return `${htmlClassrooms}`;
     },
     setType(type) {
       this.localType = type;

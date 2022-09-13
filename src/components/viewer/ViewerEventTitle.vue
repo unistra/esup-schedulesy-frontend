@@ -17,18 +17,9 @@ export default {
       type: String,
       required: true,
     },
-    eventColor: {
-      type: String,
-      required: true,
-    },
     hasNote: {
       type: Boolean,
       required: true,
-    },
-  },
-  computed: {
-    dotColor() {
-      return `#${(Number(`0x1${this.eventColor.substr(1).toUpperCase()}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()}`;
     },
   },
 };

@@ -34,14 +34,31 @@
       :interval-count="calendarSettings.intervalCount"
       :interval-format="intervalFormat"
       :events="events"
-      :event-name="eventName"
       :event-color="getEventColor"
       :event-text-color="calendarSettings.eventTextColor"
       @click:event="showEvent"
       @click:date="viewDay"
       @click:more="viewDay"
       @change="updateRange"
-    />
+    >
+      <template #event="props">
+        <div class="pl-1">
+          <span class="v-event-summary">
+            <template v-if="props.eventParsed.start.hasTime">
+              <viewer-event-title
+                :title="props.event.name"
+                :has-note="props.timed && !!props.event.note"
+              />
+              <span
+                v-if="props.timed"
+                v-html="getEventExtraInfos(props.eventParsed)"
+              />
+            </template>
+            <template v-else>{{ props.event.name }}</template>
+          </span>
+        </div>
+      </template>
+    </v-calendar>
     <v-menu
       v-model="selectedOpen"
       :activator="selectedElement"
@@ -183,31 +200,15 @@ export default {
     getEventColor(event) {
       return event.color;
     },
-    eventName(event, timedEvent) {
+    getEventExtraInfos(event) {
       const {
-        name,
-        note = '',
         instructors = '',
         classrooms = '',
       } = event.input;
-      const title = new Vue({
-        ...ViewerEventTitle,
-        parent: this,
-        propsData: {
-          title: name,
-          eventColor: event.input.color,
-          hasNote: !!note,
-        },
-      }).$mount().$el;
       const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
       const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
-      if (event.start.hasTime) {
-        if (timedEvent) {
-          return `${title.outerHTML}${htmlInstructors}${htmlClassrooms}`;
-        }
-        return `<strong>${name}</strong>`;
-      }
-      return name;
+
+      return `${htmlInstructors}${htmlClassrooms}`;
     },
     setType(type) {
       this.customType = type;
@@ -240,6 +241,9 @@ export default {
       this.start = start;
       this.end = end;
     },
+    logEventProps(props) {
+      console.log(props)
+    },
   },
   mounted() {
     this.setFocus();
@@ -254,5 +258,8 @@ export default {
     height: 28px;
     width: 28px;
   }
+}
+/deep/ .v-calendar .v-event-timed {
+  overflow: hidden;
 }
 </style>

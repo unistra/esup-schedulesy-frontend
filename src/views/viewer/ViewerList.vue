@@ -7,6 +7,7 @@
     <v-menu v-model="selectedOpen"
             :activator="selectedElement">
       <viewer-event-detail :event="selectedEvent"
+                           :category5s="objectFilter(eventsCategory5s, selectedEvent.category5s)"
                            :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
                            :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
                            :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
