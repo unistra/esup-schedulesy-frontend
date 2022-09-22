@@ -124,7 +124,7 @@ export default {
     type: {
       type: String,
       required: false,
-      default: 'week',
+      default: 'day',
     },
     layout: {
       type: String,
