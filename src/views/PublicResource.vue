@@ -177,7 +177,7 @@ export default {
         WEEK: 'week',
         MONTH: 'month',
       };
-      return types[this.localType.toUpperCase()] || 'week';
+      return types[this.localType.toUpperCase()] || 'day';
     },
     formattedLayout () {
       const layouts = {
