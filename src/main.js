@@ -30,7 +30,6 @@ if (environment !== 'dev' && environment !== 'ernestDev' && environment !== 'ern
 Vue.use(AsyncComputed);
 
 const options = {
-  appIsAllAuth: true,
   authCasLogoutUrl: 'cas-auth-logout',
   jwtServerUrl: process.env.VUE_APP_JWT_SERVER_URL,
   serverCAS: process.env.VUE_APP_CAS_SERVER_URL,

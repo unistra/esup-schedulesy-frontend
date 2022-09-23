@@ -43,8 +43,10 @@ export default{
       nativeEvent.stopPropagation();
     },
     showMap(classroom) {
-      this.selectedEventGeolocation = this.eventsClassrooms[classroom].geolocation;
-      this.showEventMap = !this.showEventMap;
+      this.showEventMap = true;
+      this.$nextTick(() => {
+        this.selectedEventGeolocation = this.eventsClassrooms[classroom].geolocation;
+      })
     },
   },
 }

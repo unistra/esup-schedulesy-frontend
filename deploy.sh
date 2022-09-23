@@ -12,9 +12,9 @@ WORKING_DIR="$TEMP/git-clone"
 TEST_STATIC=("root@schedulesy-test.app.unistra.fr:/var/www/static/schedulesy")
 TEST_TEMPLATE=("root@schedulesy-test.app.unistra.fr:/home/django/schedulesy-test.app.unistra.fr/current/schedulesy/templates")
 PREPROD_STATIC=("root@rp-dip-pprd-public.di.unistra.fr:/var/www/static/schedulesy")
-PREPROD_TEMPLATE=("root@django-pprd-w1:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates" "root@django-pprd-w2:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates")
+PREPROD_TEMPLATE=("root@django-pprd-w3.di.unistra.fr:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates" "root@django-pprd-w4.di.unistra.fr:/home/django/schedulesy-pprd.app.unistra.fr/current/schedulesy/templates")
 PROD_STATIC=("root@rp-dip-public-m.di.unistra.fr:/var/www/static/schedulesy" "root@rp-dip-public-s.di.unistra.fr:/var/www/static/schedulesy")
-PROD_TEMPLATE=("root@django-w3:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates" "root@django-w4:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates")
+PROD_TEMPLATE=("root@django-w7.di.unistra.fr:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates" "root@django-w8.di.unistra.fr:/home/django/monemploidutemps.unistra.fr/current/schedulesy/templates")
 
 ENVIRONMENT="$2"
 case "$ENVIRONMENT" in
