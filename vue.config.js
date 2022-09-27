@@ -7,7 +7,6 @@ const gitRevisionPlugin = new GitRevisionPlugin();
 module.exports = {
   transpileDependencies: ['vuetify', 'vue-cas-authentication'],
   publicPath: process.env.VUE_APP_PUBLIC_PATH,
-  filenameHashing: false,
   lintOnSave: false,
   css: {
     extract: process.env.NODE_ENV === 'test'
@@ -20,9 +19,6 @@ module.exports = {
     // },
   },
   configureWebpack: {
-    output: {
-      filename: 'js/unistra-schedule.js',
-    },
     plugins: [
       new GitRevisionPlugin({
         branch: true,
