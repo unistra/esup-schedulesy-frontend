@@ -61,7 +61,8 @@ export default {
     },
   },
   actions: {
-    loadResources: ({ commit }) => new Promise((resolve, reject) => {
+    loadResources: ({ commit, state }) => new Promise((resolve, reject) => {
+      if (state.resources.length) return
       Object.keys(resourceTypes).forEach((type) => {
         Vue.axios
           .get(`${process.env.VUE_APP_BACKEND_API_URL}/resource/${type}.json`)
@@ -91,7 +92,9 @@ export default {
           error => reject(error),
         );
     }),
-    loadUserCustomization: ({ dispatch, commit, rootGetters }) => new Promise((resolve, reject) => {
+    loadUserCustomization: ({ dispatch, commit, state, rootGetters }) => new Promise((resolve, reject) => {
+      const userCustomizationIsLoaded = !!Object.keys(state.userCustomization).length
+      if (userCustomizationIsLoaded) return
       Vue.axios
         .get(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`)
         .then(

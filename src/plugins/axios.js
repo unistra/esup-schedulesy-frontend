@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 
-Vue.use(VueAxios, axios);
+const authAxios = axios.create()
+Vue.use(VueAxios, authAxios);
 
-export default axios;
+export default authAxios;

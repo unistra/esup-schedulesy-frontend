@@ -107,6 +107,7 @@
 
 <script>
 import moment from 'moment';
+import axios from 'axios';
 
 import Layout from '@/layouts/layout';
 import ViewerToolbarMd from '@/components/viewer/ViewerToolbarMd.vue';
@@ -285,7 +286,7 @@ export default {
     },
   },
   mounted() {
-    this.axios
+    axios
       .get(`${process.env.VUE_APP_BACKEND_API_URL}/events/${this.resourceId}.json`)
       .then((response) => {
         this.events = response.data.events.events.map((event) => ({
