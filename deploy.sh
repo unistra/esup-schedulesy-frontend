@@ -49,6 +49,7 @@ for i in "${TARGET_STATIC[@]}"; do
     echo "Scp static files to $i"
     scp -r "dist/css" "$i"
     scp -r "dist/js" "$i"
+    scp -r "dist/img" "$i"
 done
 for i in "${TARGET_TEMPLATE[@]}"; do
     echo "Scp template to $i"
