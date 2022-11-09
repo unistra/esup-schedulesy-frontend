@@ -3,13 +3,13 @@
     id="unistra-schedule"
     class=" unistra-schedule primary"
   >
-    <v-content>
+    <v-main>
       <v-container
         class="pa-2 fill-height"
       >
         <slot />
       </v-container>
-    </v-content>
+    </v-main>
     <core-footer></core-footer>
     <core-snackbar></core-snackbar>
   </v-app>

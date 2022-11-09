@@ -1,20 +1,22 @@
 <template>
-  <v-sheet>
+  <div class="viewer">
     <viewer-toolbar-md
-      class="hidden-sm-and-down"
+      v-if="$vuetify.breakpoint.mdAndUp"
+      class="viewer__header"
       :title="title"
       :type="customTypeToLabel[customType]"
-      :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
+      :showCustom="weekdays.length > 0"
       @today="setToday"
       @previous="prev"
       @next="next"
       @change-type="setType"
     />
     <viewer-toolbar-sm
-      class="hidden-md-and-up"
+      v-else
+      class="viewer__header"
       :title="title"
       :type="customType"
-      :showCustom="!!userConf.weekdays && userConf.weekdays.length > 0"
+      :showCustom="weekdays.length > 0"
       @today="setToday"
       @previous="prev"
       @next="next"
@@ -25,15 +27,15 @@
       :locale="calendarSettings.locale"
       :color="calendarSettings.color"
       :ref="calendarSettings.ref"
-      :type="type"
-      :weekdays="weekdays"
+      :type="_type"
+      :weekdays="_weekdays"
       :now="calendarSettings.today"
-      :interval-height="calendarSettings.intervalHeight"
+      :interval-height = "intervalHeight || calendarSettings.intervalHeight"
       :first-interval="calendarSettings.firstInterval"
       :interval-minutes="calendarSettings.intervalMinutes"
       :interval-count="calendarSettings.intervalCount"
       :interval-format="intervalFormat"
-      :events="events"
+      :events="viewerEvents"
       :event-color="getEventColor"
       :event-text-color="calendarSettings.eventTextColor"
       @click:event="showEvent"
@@ -65,10 +67,10 @@
     >
       <viewer-event-detail
         :event="selectedEvent"
-        :category5s="objectFilter(eventsCategory5s, selectedEvent.category5s)"
-        :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
-        :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
-        :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
+        :category5s="objectFilter(category5s, selectedEvent.category5s)"
+        :trainees="objectFilter(trainees, selectedEvent.trainees)"
+        :instructors="objectFilter(instructors, selectedEvent.instructors)"
+        :classrooms="objectFilter(classrooms, selectedEvent.classrooms)"
         @close="selectedOpen = false"
         @show-map="showMap"
       />
@@ -96,11 +98,10 @@
         <viewer-map :coordinates="selectedEventGeolocation" />
       </v-card>
     </v-dialog>
-  </v-sheet>
+  </div>
 </template>
 
 <script>
-import Vue from 'vue';
 import moment from 'moment';
 
 import ListCalendar from '@/mixins/ListCalendar.vue';
@@ -119,6 +120,23 @@ export default {
     ViewerEventTitle,
     ViewerMap: () => import(/* webpackChunkName: "viewer-geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
+  props: {
+    type: {
+      type: String,
+      required: false,
+      default: 'week',
+    },
+    weekdays: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    intervalHeight: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+  },
   data: () => ({
     customTypeToLabel: {
       month: 'Mois',
@@ -129,30 +147,19 @@ export default {
     focus: null,
     start: null,
     end: null,
+    customType: '',
+    _intervalHeight: 0,
   }),
   computed: {
     calendarSettings() {
       return this.$store.getters['ui/getCalendarSettings'];
     },
-    type() {
+    _type() {
       return this.customType === 'custom' ? 'week' : this.customType;
     },
-    customType: {
-      get() {
-        return this.$store.getters['ui/getCalendarCustomType'];
-      },
-      set(value) {
-        this.$store.dispatch('ui/updateCalendarCustomType', value);
-      },
-    },
-    userConf() {
-      return this.$store.getters['config/getUserCustomization'].configuration
-        ? this.$store.getters['config/getUserCustomization'].configuration
-        : {};
-    },
-    weekdays() {
-      if (this.customType === 'custom' && this.userConf.weekdays && this.userConf.weekdays.length) {
-        return this.userConf.weekdays;
+    _weekdays() {
+      if (this.customType === 'custom' && this.weekdays.length) {
+        return this.weekdays;
       }
       return [1, 2, 3, 4, 5, 6, 0];
     },
@@ -172,7 +179,7 @@ export default {
       const startYear = start.year;
       const endYear = end.year;
 
-      switch (this.type) {
+      switch (this._type) {
         case 'month':
           return `${startMonth} ${startYear}`;
         case 'week':
@@ -205,8 +212,8 @@ export default {
         instructors = '',
         classrooms = '',
       } = event.input;
-      const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.eventsInstructors[instructor].name}`).join('') : '';
-      const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.eventsClassrooms[classroom].name}`).join('') : '';
+      const htmlInstructors = instructors.length ? instructors.map(instructor => `<br>${this.instructors[instructor].name}`).join('') : '';
+      const htmlClassrooms = classrooms.length ? classrooms.map(classroom => `<br>${this.classrooms[classroom].name}`).join('') : '';
 
       return `${htmlInstructors}${htmlClassrooms}`;
     },
@@ -216,13 +223,8 @@ export default {
     },
     setFocus() {
       const { today } = this.calendarSettings;
-      if (this.userConf.weekdays && this.userConf.weekdays.length) {
-        this.focus = this.customType === 'custom'
-          ? moment(today, 'YYYY-MM-DD').day(this.userConf.weekdays[0]).format('YYYY-MM-DD')
-          : today;
-      } else {
-        this.focus = today;
-      }
+      if (this.weekdays.length && this.customType === 'custom') this.focus =  moment(today, 'YYYY-MM-DD').day(this.weekdays[0]).format('YYYY-MM-DD')
+      else  this.focus = today;
     },
     viewDay({ date }) {
       this.focus = date;
@@ -241,9 +243,9 @@ export default {
       this.start = start;
       this.end = end;
     },
-    logEventProps(props) {
-      console.log(props)
-    },
+  },
+  created() {
+    this.customType = this.type;
   },
   mounted() {
     this.setFocus();

@@ -1,6 +1,11 @@
-import Vue from 'vue';
 import Vuetify from '@/plugins/vuetify';
 import { forgeResourcesRoot, childrenEntryGenerator } from '@/utils/store';
+import { getCustomization, postCustomization, patchCustomization } from '@/services/customizationService'
+import { getUsername, getDirectoryId, getUuid } from '@/services/authService'
+import { getResource } from '@/services/resourcesService'
+
+const apiUrl = process.env.VUE_APP_BACKEND_API_URL
+const username = getUsername()
 
 const resourceTypes = {
   trainee: 'Etudiants',
@@ -9,174 +14,88 @@ const resourceTypes = {
   category5: 'Matières',
 };
 
-const customType = (userCustomization) => {
-  if (userCustomization.configuration && userCustomization.configuration.displayMode) {
-    switch (userCustomization.configuration.displayMode) {
-      case 'month':
-        return 'month';
-      case 'day':
-        return 'day';
-      case 'list':
-      case 'custom':
-        if (userCustomization.configuration
-          && userCustomization.configuration.weekdays
-          && userCustomization.configuration.weekdays.length) {
-          return 'custom';
-        }
-        return 'week';
-      default:
-        return 'week';
-    }
-  }
-  return 'week';
-};
-
 export default {
   namespaced: true,
   state: {
     resources: [],
     userCustomization: {},
-    isUserCustomizationLoaded: false,
+    userUuid: '',
     icsParams: {},
   },
   getters: {
-    getResources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type) || {}),
-    getUserCustomization: state => state.userCustomization,
-    isUserCustomizationLoaded: state => state.isUserCustomizationLoaded,
-    getUserResources: state => state.userCustomization.resources,
-    getUserResourcesIds: (state) => {
-      if (typeof state.userCustomization.resources === 'string' && state.userCustomization.resources.length > 0) {
-        return state.userCustomization.resources
-          .split(',');
-      }
-      return [];
+    userResourcesIds: (state) => state.userCustomization?.resources !== "" ? state.userCustomization.resources?.split(',') : [],
+    userHasResources: (state, { userResourcesIds }) => !!userResourcesIds?.length, 
+    userResourcesUrls: (state, { userResourcesIds }) => {
+      const forgeResourceUrl = (resource) => `${apiUrl}/resource/${resource}.json/`
+      return userResourcesIds?.map((resourceId) => [forgeResourceUrl(resourceId), resourceId]) || []
     },
-    getUserResourcesUrls: (state) => {
-      if (typeof state.userCustomization.resources === 'string' && state.userCustomization.resources.length > 0) {
-        return state.userCustomization.resources
-          .split(',')
-          .map(resource => `${process.env.VUE_APP_BACKEND_API_URL}/resource/${resource}.json/`);
-      }
-      return [];
-    },
+    userConfiguration: (state) => state.userCustomization?.configuration || {},
+    userDisplayMode: (state, { userConfiguration }) => userConfiguration.displayMode,
+    userTheme: (state, { userConfiguration }) => userConfiguration.theme || 'default',
+    userWeekDays: (state, { userConfiguration }) => userConfiguration?.weekdays,
+    userUuid: (state) => state.userUuid,
+    resources: state => Object.keys(resourceTypes).map(type => state.resources.find(resource => resource.category === type) || {}),
   },
   actions: {
-    loadResources: ({ commit, state }) => new Promise((resolve, reject) => {
+    loadResources: async ({ commit, state }) => {
       if (state.resources.length) return
-      Object.keys(resourceTypes).forEach((type) => {
-        Vue.axios
-          .get(`${process.env.VUE_APP_BACKEND_API_URL}/resource/${type}.json`)
-          .then(
-            (response) => {
-              const rawResources = response.data;
-              commit('LOAD_RESOURCE', forgeResourcesRoot(rawResources, resourceTypes));
-              resolve();
-            },
-            error => reject(error),
-          );
-      });
-    }),
-    loadResourceChildren: ({ commit }, payload) => new Promise((resolve, reject) => {
-      Vue.axios
-        .get(`${payload.id}`)
-        .then(
-          (response) => {
-            const rawNode = response.data;
-            const node = {
-              ...rawNode,
-              ...{ children: rawNode.children.filter(child => child.has_children || child.selectable).map(child => childrenEntryGenerator(child)) },
-            };
-            commit('LOAD_CHILDREN', node);
-            resolve();
-          },
-          error => reject(error),
-        );
-    }),
-    loadUserCustomization: ({ dispatch, commit, state, rootGetters }) => new Promise((resolve, reject) => {
-      const userCustomizationIsLoaded = !!Object.keys(state.userCustomization).length
-      if (userCustomizationIsLoaded) return
-      Vue.axios
-        .get(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`)
-        .then(
-          (response) => {
-            const userCustomization = response.data;
-            commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-            if (userCustomization.configuration && userCustomization.configuration.displayMode) {
-              switch (userCustomization.configuration.displayMode) {
-                case 'month':
-                  dispatch('ui/updateCalendarCustomType', 'month', { root: true });
-                  break;
-                case 'day':
-                  dispatch('ui/updateCalendarCustomType', 'day', { root: true });
-                  break;
-                case 'list':
-                case 'custom':
-                  if (userCustomization.configuration
-                    && userCustomization.configuration.weekdays
-                    && userCustomization.configuration.weekdays.length) {
-                    dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
-                  } else {
-                    dispatch('ui/updateCalendarCustomType', 'custom', { root: true });
-                  }
-                  break;
-                default:
-                  dispatch('ui/updateCalendarCustomType', 'week', { root: true });
-              }
-            }
-            if (userCustomization.configuration && 'darkMode' in userCustomization.configuration) {
-              Vuetify.framework.theme.dark = userCustomization.configuration.darkMode;
-            }
-            dispatch('auth/loadUuid', null, { root: true });
-            resolve(userCustomization);
-          },
-          (error) => {
-            if (error.response.status === 404) {
-              const user = {
-                username: rootGetters['auth/getLogin'],
-                directory_id: rootGetters['auth/getDirectoryId'],
-              };
-              Vue.axios
-                .post(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization.json`, user)
-                .then(
-                  (response) => {
-                    const userCustomization = response.data;
-                    commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-                    dispatch('ui/updateCalendarCustomType', 'week', { root: true });
-                    dispatch('auth/loadUuid', null, { root: true });
-                    resolve();
-                  },
-                  postError => reject(postError),
-                );
-            } else {
-              reject(error);
-            }
-          },
-        );
-    }),
-    patchUserCustomization: ({ dispatch, commit, rootGetters }, payload) => new Promise((resolve, reject) => {
-      Vue.axios
-        .patch(`${process.env.VUE_APP_BACKEND_LEGACY_URL}/customization/${rootGetters['auth/getLogin']}.json`, payload.changes)
-        .then(
-          (response) => {
-            const userCustomization = response.data;
-            dispatch('ui/updateSnackbar', payload.snackbar.success, { root: true });
-            commit('LOAD_USER_CUSTOMIZATION', userCustomization);
-            dispatch('ui/updateCalendarCustomType', customType(userCustomization), { root: true });
-            resolve();
-          },
-          (error) => {
-            dispatch('ui/updateSnackbar', payload.snackbar.error, { root: true });
-            reject(error);
-          },
-        );
-    }),
+
+      const resourceUrl = (resourceType) => `${process.env.VUE_APP_BACKEND_API_URL}/resource/${resourceType}.json`
+      const fetchedResources = await Promise.all(Object.keys(resourceTypes).map((type) => getResource(resourceUrl(type))))
+      fetchedResources.forEach((fetchedResource) => {
+        commit('LOAD_RESOURCE', forgeResourcesRoot(fetchedResource, resourceTypes));
+      })
+    },
+    loadResourceChildren: async ({ commit }, resourceUrl) => {
+      const rawNode = await getResource(resourceUrl)
+      const node = {
+        ...rawNode,
+        ...{
+          children: rawNode.children
+            .filter((child) => child.has_children || child.selectable)
+            .map(child => childrenEntryGenerator(child))
+        },
+      }
+      commit('LOAD_CHILDREN', node)
+    },
+    loadUserCustomization: async ({ commit, state }) => {
+      const isLoaded = !!state.userCustomization?.id
+      if (isLoaded) return
+
+      let userCustomization
+      try {
+        userCustomization = await getCustomization(username)
+      } catch (error) {
+        if (error?.response?.status === 404) {
+          const user = {
+            username,
+            directory_id: getDirectoryId(),
+          }
+          const userCustomization = postCustomization(user)
+          commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+        } else {
+          throw error
+        }
+      }
+      commit('LOAD_USER_CUSTOMIZATION', userCustomization)
+    },
+    updateUserCustomization: async ({ commit }, payload) => {
+      const userCustomization = await patchCustomization(username, payload)
+      commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+    },
+    loadUserUuid: async ({ commit }) => {
+      const userUuid = await getUuid()
+      commit('LOAD_USER_UUID', userUuid)
+    },
   },
   mutations: {
-    LOAD_RESOURCE: (state, payload) => state.resources.push(payload),
     LOAD_USER_CUSTOMIZATION: (state, payload) => {
       state.userCustomization = payload;
-      state.isUserCustomizationLoaded = true;
     },
+    LOAD_USER_UUID: (state, userUuid) => {
+      state.userUuid = userUuid
+    },
+    LOAD_RESOURCE: (state, payload) => state.resources.push(payload),
     LOAD_CHILDREN: (state, payload) => {
       const updateChildren = (resources) => {
         resources.forEach((resource) => {

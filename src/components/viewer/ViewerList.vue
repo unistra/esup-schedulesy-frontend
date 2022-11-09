@@ -1,19 +1,23 @@
 <template>
   <v-sheet>
-    <viewer-events-list :eventsList="events"
-                        :classrooms="eventsClassrooms"
-                        @show-event="showEvent">
-    </viewer-events-list>
-    <v-menu v-model="selectedOpen"
-            :activator="selectedElement">
-      <viewer-event-detail :event="selectedEvent"
-                           :category5s="objectFilter(eventsCategory5s, selectedEvent.category5s)"
-                           :trainees="objectFilter(eventsTrainees, selectedEvent.trainees)"
-                           :instructors="objectFilter(eventsInstructors, selectedEvent.instructors)"
-                           :classrooms="objectFilter(eventsClassrooms, selectedEvent.classrooms)"
-                           @close="selectedOpen = false"
-                           @show-map="showMap">
-      </viewer-event-detail>
+    <viewer-events-list
+      :eventsList="viewerEvents"
+      :classrooms="classrooms"
+      @show-event="showEvent"
+    />
+    <v-menu
+      v-model="selectedOpen"
+      :activator="selectedElement"
+    >
+      <viewer-event-detail
+        :event="selectedEvent"
+        :category5s="objectFilter(category5s, selectedEvent.category5s)"
+        :trainees="objectFilter(trainees, selectedEvent.trainees)"
+        :instructors="objectFilter(instructors, selectedEvent.instructors)"
+        :classrooms="objectFilter(classrooms, selectedEvent.classrooms)"
+        @close="selectedOpen = false"
+        @show-map="showMap"
+      />
     </v-menu>
     <v-dialog v-model="showEventMap" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card tile>
@@ -54,7 +58,7 @@ export default {
   },
   mounted() {
     const now = this.$store.getters['ui/getCalendarToday'];
-    this.today = this.events
+    this.today = this.viewerEvents
       .filter(event => moment(event.start, 'YYYY-MM-DD') >= moment(now, 'YYYY-MM-DD'))
       .sort((a, b) => moment(a.start, 'YYYY-MM-DD') - moment(b.start, 'YYYY-MM-DD'))[0]
       .start.substring(0, 10);
