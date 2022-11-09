@@ -347,7 +347,7 @@ export default {
       this.updateUserCustomization(payload);
     },
     updateResources(selectedResources) {
-      const resources = selectedResources.map(resource => resource.match(/(\d+)/g)[0]).join()
+      const resources = selectedResources.map((resource) => resource.match(/(\d+)(?=\.json)/g)[0]).join()
       const payload = {
         changes: { resources },
         success: 'Votre sélection de ressources a bien été mise à jour.',
