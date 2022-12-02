@@ -9,7 +9,7 @@ export const getCustomization = async (username) => {
 }
 
 export const postCustomization = async (user) => {
-  const response = await axios.get(`${backendLegacyURL}/customization.json`, user)
+  const response = await axios.post(`${backendLegacyURL}/customization.json`, user)
 
   return response.data
 }

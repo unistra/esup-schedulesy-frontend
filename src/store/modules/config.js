@@ -71,8 +71,7 @@ export default {
             username,
             directory_id: getDirectoryId(),
           }
-          const userCustomization = postCustomization(user)
-          commit('LOAD_USER_CUSTOMIZATION', userCustomization);
+          userCustomization = await postCustomization(user)
         } else {
           throw error
         }
