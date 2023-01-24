@@ -39,7 +39,7 @@ export default{
       return this.events.trainees
     },
     category5s () {
-      return this.events.categries
+      return this.events.category5s
     }
   },
   methods: {
