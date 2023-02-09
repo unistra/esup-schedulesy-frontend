@@ -86,6 +86,9 @@ export default {
         : 'Salle non spécifiée';
     },
   },
+  mounted() {
+    this.$emit('mounted')
+  }
 };
 </script>
 

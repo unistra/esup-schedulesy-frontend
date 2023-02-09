@@ -3,6 +3,7 @@
     <viewer-events-list
       :eventsList="viewerEvents"
       :classrooms="classrooms"
+      @mounted="scrollToToday"
       @show-event="showEvent"
     />
     <v-menu
@@ -48,21 +49,22 @@ export default {
     ViewerEventDetail: () => import(/* webpacChunkName: "viewer" */ '@/components/viewer/ViewerEventDetail.vue'),
     ViewerMap: () => import(/* webpackChunkName: "geolocation" */ '@/components/viewer/ViewerMap.vue'),
   },
-  mounted() {
-    const today = this.$store.getters['ui/getCalendarToday'];
+  methods: {
+    scrollToToday() {
+      const today = this.$store.getters['ui/getCalendarToday'];
 
-    // Get the events until today included
-    const eventsUntilToday = this.viewerEvents
-      .filter((event) => moment(event.start, 'YYYY-MM-DD') <= moment(today, 'YYYY-MM-DD'))
-      .sort((a, b) => moment(b.start, 'YYYY-MM-DD hh:mm') - moment(a.start, 'YYYY-MM-DD hh:mm'))
-    console.log(eventsUntilToday)
+      // Get the events until today included
+      const eventsUntilToday = this.viewerEvents
+        .filter((event) => moment(event.start, 'YYYY-MM-DD') <= moment(today, 'YYYY-MM-DD'))
+        .sort((a, b) => moment(b.start, 'YYYY-MM-DD hh:mm') - moment(a.start, 'YYYY-MM-DD hh:mm'))
 
-    // If no event today or before => stay on top of the ListCalendar
-    if (!eventsUntilToday) return
+      // If no event today or before => stay on top of the ListCalendar
+      if (!eventsUntilToday) return
 
-    // Go to today or the first date before today with events
-    const eventDate = eventsUntilToday[0].start.substring(0, 10);
-    this.$vuetify.goTo(`#d-${eventDate}`);
+      // Go to today or the first date before today with events
+      const eventDate = eventsUntilToday[0].start.substring(0, 10);
+      this.$vuetify.goTo(`#d-${eventDate}`);
+    },
   },
 };
 </script>
