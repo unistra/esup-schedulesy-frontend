@@ -1,5 +1,5 @@
 <template>
-  <v-expansion-panels>
+  <v-expansion-panels class="mt-2">
     <v-expansion-panel v-for="(panel, index) in panels"
                        :key="index">
       <v-expansion-panel-header class="px-4">

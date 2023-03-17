@@ -22,11 +22,11 @@
       <span class="sun-cell sun-empty-1"></span>
     </span>
     <span class="sun-row">
-      <a v-for="(span, index) in organization[0].spans"
+      <a v-for="(span, index) in signature[0].spans"
          :key="index"
          class="sun-cell"
-         :href="organization[0].href"
-         :title="organization[0].title">
+         :href="signature[0].href"
+         :title="signature[0].title">
         <span class="sun-cell-inner" v-html="span"></span>
       </a>
       <span class="sun-cell sun-empty-15"></span>
@@ -35,11 +35,11 @@
       <span class="sun-cell sun-empty-12"></span>
       <span class="sun-cell sun-empty-1"></span>
       <span class="sun-cell sun-empty-1"></span>
-      <a v-for="(span, index) in organization[1].spans"
+      <a v-for="(span, index) in signature[1].spans"
          :key="index"
          class="sun-cell"
-         :href="organization[1].href"
-         :title="organization[1].title">
+         :href="signature[1].href"
+         :title="signature[1].title">
         <span class="sun-cell-inner" v-html="span"></span>
       </a>
       <span class="sun-cell sun-empty-5"></span>
@@ -48,12 +48,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Signature',
   props: {
     organization: {
-      type: Array,
-      required: true,
+      type: String,
+      required: false,
+      default: 'UDS',
     },
   },
   data: () => ({
@@ -62,6 +65,14 @@ export default {
       cssClasses: '',
     },
   }),
+  computed: {
+    ...mapGetters({
+      getSignature: 'ui/getSignature',
+    }),
+    signature() {
+      return this.getSignature(this.organization)
+    },
+  },
   mounted() {
     const sunContainers = document.querySelectorAll('.sun');
     sunContainers.forEach((sunContainer) => {
