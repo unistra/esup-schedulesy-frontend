@@ -1,20 +1,14 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-card>
-        <v-sheet>
-        <v-card-title>
-          <core-title :title="title">
-          </core-title>
-        </v-card-title>
-        </v-sheet>
-        <v-card-text class="text--primary">
-          <slot></slot>
-        </v-card-text>
-        <slot name="actions"></slot>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-card class="mt-2">
+    <v-card-title v-if="title.content">
+      <core-title :title="title">
+      </core-title>
+    </v-card-title>
+    <v-card-text class="text--primary">
+      <slot></slot>
+    </v-card-text>
+    <slot name="actions"></slot>
+  </v-card>
 </template>
 
 <script>
@@ -28,12 +22,9 @@ export default {
   props: {
     title: {
       type: Object,
-      required: true,
+      required: false,
+      default: () => ({}),
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

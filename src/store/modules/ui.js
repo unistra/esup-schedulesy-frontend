@@ -8,7 +8,7 @@ export default {
       isVisible: false,
       color: '',
       message: '',
-      timeout: 0,
+      timeout: -1,
     },
     signature: {
       UDS: [

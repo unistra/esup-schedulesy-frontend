@@ -1,8 +1,5 @@
 <template>
-  <v-footer
-    app
-    absolute
-  >
+  <v-footer>
     <v-spacer />
     <span>{{ year }} - <strong> Université de Strasbourg</strong> - {{ version }} - Tous droits réservés</span>
     <v-spacer />

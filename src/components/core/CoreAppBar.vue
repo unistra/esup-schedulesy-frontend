@@ -11,8 +11,8 @@
     </v-app-bar-nav-icon>
     <v-toolbar-items class="hidden-sm-and-down">
       <v-tabs slider-size="4">
-        <v-tab :to="{ name: 'config' }"><strong>Personnaliser</strong></v-tab>
-        <v-tab :to="{ name: 'calendar' }"><strong>Consulter</strong></v-tab>
+        <v-tab to="/config"><strong>Personnaliser</strong></v-tab>
+        <v-tab to="/"><strong>Consulter</strong></v-tab>
       </v-tabs>
     </v-toolbar-items>
     <v-spacer />

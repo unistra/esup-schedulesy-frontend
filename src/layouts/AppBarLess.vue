@@ -16,17 +16,17 @@
           align-self="center"
           class="d-flex justify-center justify-sm-start"
         >
-          <core-signature :organization="organization" />
+          <core-signature />
         </v-col>
       </v-row>
     </v-img>
-    <v-content>
-      <v-container
-        class="pa-2 fill-height"
-      >
-        <slot />
+    <v-main>
+      <v-container class="pa-2">
+        <v-row justify="center">
+          <slot />
+        </v-row>
       </v-container>
-    </v-content>
+    </v-main>
     <core-footer></core-footer>
     <core-snackbar></core-snackbar>
   </v-app>
@@ -56,9 +56,6 @@ export default {
         default:
           return '300';
       }
-    },
-    organization() {
-      return this.$store.getters['ui/getSignature']('UDS');
     },
   },
 };

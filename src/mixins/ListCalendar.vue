@@ -1,5 +1,14 @@
 <script>
+import moment from 'moment';
+
 export default{
+  props: {
+    events: {
+      type: Object,
+      required: false,
+      default : () => ({}),
+    }
+  },
   data: () => ({
     selectedOpen: false,
     selectedElement: null,
@@ -8,21 +17,30 @@ export default{
     showEventMap: false,
   }),
   computed: {
-    events() {
-      return this.$store.getters['calendar/getEvents'];
+    viewerEvents() {
+      if (this.events?.events?.length) {
+        return this.events.events.map(event => ({
+          ...event,
+          ...{
+            start: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.startHour}`,
+            end: `${moment(event.date, 'DD/MM/YYYY').format().substring(0, 10)} ${event.endHour}`,
+          },
+        }));
+      }
+      return [];
     },
-    eventsInstructors() {
-      return this.$store.getters['calendar/getEventsInstructors'];
+    instructors() {
+      return this.events.instructors
     },
-    eventsClassrooms() {
-      return this.$store.getters['calendar/getEventsClassrooms'];
+    classrooms() {
+      return this.events.classrooms
     },
-    eventsTrainees() {
-      return this.$store.getters['calendar/getEventsTrainees'];
+    trainees() {
+      return this.events.trainees
     },
-    eventsCategory5s() {
-      return this.$store.getters['calendar/getEventsCategory5s'];
-    },
+    category5s () {
+      return this.events.category5s
+    }
   },
   methods: {
     objectFilter: (toFilter, allowed = []) => allowed.reduce((obj, key) => ({ ...obj, [key]: toFilter[key] }), {}),
@@ -45,7 +63,7 @@ export default{
     showMap(classroom) {
       this.showEventMap = true;
       this.$nextTick(() => {
-        this.selectedEventGeolocation = this.eventsClassrooms[classroom].geolocation;
+        this.selectedEventGeolocation = this.classrooms[classroom].geolocation;
       })
     },
   },
