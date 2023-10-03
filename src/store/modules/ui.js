@@ -63,7 +63,7 @@ export default {
       intervalHeight: 20,
       firstInterval: 14,
       intervalMinutes: 30,
-      intervalCount: 26,
+      intervalCount: 30,
     },
     configurator: {
       displayedDays: [
